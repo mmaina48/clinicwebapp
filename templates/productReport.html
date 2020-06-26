@@ -1,0 +1,194 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div class="content-wrapper">
+	<div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Product Report</h2>
+            <hr>
+            </div>
+        </div>
+    </div>
+
+	<section class="content">
+
+		<!-- Alert Message -->
+	    
+	    <div class="row">
+            <div class="col-sm-12">
+                <div class="column">
+
+                  <a href="" class="btn btn-info m-b-5 m-r-2"><i class="ti-plus"> </i> Add Product </a>
+
+                  <a href="" class="btn btn-success m-b-5 m-r-2"><i class="ti-plus"> </i> Import Products (CSV) </a>
+
+                  <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>  All Products </a>
+
+                </div>
+            </div>
+        </div>
+<hr>
+
+        		<div class="row">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		        <div class="card">
+		            <div class="card-header">
+						<h3 class="mb-0">Product Details</h3>
+					   
+					</div>
+		            <div class="panel-body">
+						<h4> <span style="font-weight:normal;">Product Name: </span><span style="color:#005580;">Acidex 20</span></h4>
+						<h4> <span style="font-weight:normal;">Product Type:</span> <span style="color:#005580;"></span></h4>
+						<h4> <span style="font-weight:normal;">Price:</span> <span style="color:#005580;">
+						Ksh 120</span></h4>
+						<table class="table">
+							<tr>
+								<th>Total Purchase = <span style="color:#ff0000;">50</span></th>
+								<th>Total Sales = <span style="color:#ff0000;"> 4</span></th>
+								<th>Stock = <span style="color:#ff0000;"> 46</span></th>
+							</tr>
+						</table>
+		            </div>
+		        </div>
+		    </div>
+		 </div>
+<br>
+		<!-- Total Purchase report -->
+		<div class="row">
+		    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		        <div class="card">
+		            <div class="card-header">
+						<h3 class="mb-0">Purchase Report</h3>
+					</div>
+		            <div class="card-body">
+		                <div class="table-responsive">
+		                    <table id="dataTableExample2" class="table table-bordered table-striped table-hover">
+				            	<thead>
+									<tr>
+										<th>Date</th>
+										<th>Invoice No</th>
+											<th>Invoice ID</th>
+										<th>Manufacturer  Name</th>
+										<th>Quantity</th>
+									<th>Purchase Price</th>
+										<th style="text-align:right;">Total Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+																
+									<tr>
+										<td>12 - NOV - 2019</td>
+										<td>
+											<a href="">
+												12314
+											</a>
+										</td>
+											<td>
+											<a href="">
+												20191112085249
+											</a>
+										</td>
+										<td>
+											<a href="">ACI HealthCare Limited</a>
+										</td>
+										<td  style="text-align:right;">50.00</td>
+										<td  style="text-align:right;">$ 100.00</td>
+										<td style="text-align:right;"> $ 5000.00</td>
+									</tr>
+								
+																</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="3" style="text-align:right;"><b>Total</b></td>
+										<td></td>
+										<td  style="text-align:right;"> 50</td>
+										<td style="text-align:right;"><b>Grand Total</b></td>
+										<td style="text-align:right;"><b> $ 5,000.00</b></td>
+									</tr>
+								</tfoot>
+		                    </table>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+<br>
+		<!--Total sales report -->
+		<div class="row">
+		    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		        <div class="card">
+		            <div class="card-header">
+						<h3 class="mb-0">Sales Report</h3>
+					</div>
+		            <div class="card-body">
+		                <div class="table-responsive">
+		                    <table id="dataTableExample3" class="table table-bordered table-striped table-hover">
+		             			<thead>
+									<tr>
+										<th>Date</th>
+										<th>Invoice ID</th>
+										<th>Invoice No</th>
+										<th>Customer Name</th>
+										<th>Quantity</th>
+										<th>Sale Price</th>
+										<th style="text-align:right;">Total Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+																
+									<tr>
+										<td>12 - NOV - 2019</td>
+										<td>
+											<a href="">
+												5687254397
+											</a>
+										</td>
+											<td>
+											<a href="https://pharmacyv5.bdtask.com/pharmacare_v9.2_demo/Cinvoice/invoice_inserted_data/5687254397">
+												1010
+											</a>
+										</td>
+										<td>
+											<a href="https://pharmacyv5.bdtask.com/pharmacare_v9.2_demo/Ccustomer/customer_ledger/8">Justin Tuto</a>
+										</td>
+										<td  style="text-align:right;">1</td>
+										<td  style="text-align:right;"> $ 120.00</td>
+										<td style="text-align:right;"> $ 120.00</td>
+									</tr>
+					
+																</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="3" style="text-align:right;"><b>Total</b></td>
+										<td></td>
+										<td  style="text-align:right;">4</td>
+										<td><b>Grand Total</b></td>
+										<td  style="text-align:right;"><b> $ 480.00</b></td>
+									</tr>
+								</tfoot>
+		                    </table>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+        	</section>
+</div>
+</div>
+      {% endblock %}

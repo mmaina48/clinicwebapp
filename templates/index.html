@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Store HTML Table Values in a Javascript ArrayUsing jQuery and Ajax</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="jquery.json-2.4.min.js"></script>
+</head>
+<body>
+    <table border="1" id="sampleTbl" width="515">
+        <thead>
+            <tr>
+                <th align="center" width="20">Task No.</th>
+                <th width="150">Date</th>
+                <th width="170">Description</th>
+                <th width="170">Task</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tutu">
+                <td align="center">1</td>
+                <td><input type="text" value="December 24 2012"></td>
+                <td><input type="text" value="Michael"></td>
+                <td><input type="text" value="IT"></td>
+                
+            </tr>
+            <tr  class="tutu">
+                <td align="center">2</td>
+                <td><input type="text" value="jOHN"></td>
+                <td><input type="text" value="ttt"></td>
+                <td><input type="text" value="pppp"></td>
+            </tr>
+            <tr  class="tutu">
+                <td align="center">3</td>
+                <td>March 7, 2013</td>
+                <td>Birthday</td>
+                <td>Get present</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <input type="button" value="1. Read Table Values" name="read" onClick="readTblValues()"/>
+    <input type="button" value="2. Store values in JS Array" name="store" onClick="storeAndShowTableValues()"/>    
+    <input type="button" value="3. Convert JS Array to json" name="convert" onClick="convertArrayToJSON()"/>
+    <input type="button" value="4. Send json array to Server" name="send" onClick="sendTblDataToServer()"/>
+    
+    <br><br>
+    <div id="tbTableValues"></div>
+    <div id="tbTableValuesArray"></div>
+    <div id="tbConvertToJSON"></div>
+    <div id="tbServerResponse"></div>
+    
+    
+    <script>
+/*
+ * Robert Scavilla
+ * https://github.com/rscavilla/store-html-table-values-in-a-javascript-array
+ */
+        function readTblValues()
+        {
+            var TableData = '';
+
+            $('#tbTableValues').val('');    // clear textbox
+
+            $('#sampleTbl tr').each(function (row, tr) {
+                TableData = TableData
+                        
+                        + $(tr).find('td input:text,td select').val() + ' '  // Date
+                        + $(tr).find('td input:text,td select').val() + ' '  // Description
+                        + $(tr).find('td input:text,td select').val() + ' '  // Task
+                        + '\n';
+            });
+            console.log(TableData)
+        }
+
+        function storeAndShowTableValues()
+        {
+            var TableData;
+            TableData = storeTblValues();
+           console.log(TableData)
+        }
+        function storeTblValues()
+        {
+            var TableData = new Array();
+
+            $('#sampleTbl .tutu').each(function (row, tr) {
+                TableData[row] = {
+                
+                     "date": $(tr).find('td input:text,td select').text()
+                    , "description": $(tr).find('td input:text,td select').text()
+                    , "task": $(tr).find('td input:text,td select').text()
+                }
+            });
+            TableData.shift();  // first row will be empty - so remove
+            return TableData;
+        }
+
+        function convertArrayToJSON()
+        {
+            var TableData;
+            TableData = JSON.stringify(storeTblValues());
+           console.log(TableData)
+
+
+        }
+        function mymin(){
+            $("#empTable").keyup(function(){
+    $(this).closest('tr').find("input").each(function() {
+        alert(this.value)
+    });
+});
+        }
+       
+    </script>
+</body>
+</html>

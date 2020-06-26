@@ -1,0 +1,108 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Income and Expense Statement</h2>
+              <hr>
+            </div>
+        </div>
+    </div>
+   
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            
+            <!-- ============================================================== -->
+        <!-- data table  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+           <form class="form-inline justify-content-left">
+        
+             <label>Start Date:</label>
+             <input type="date" class="form-control datepicker dtpDate" id="min" placeholder="" name="Start_Date">
+             <label >End Date:</label> 
+             <input type="date" class="form-control datepicker todtpDate" id="max" placeholder="" name="Start_Date">
+             <label>  </label>
+             <button type="button" id="filter" onclick="submit_date()" class="btn btn-success">Find</button>
+        </form>
+    </div>
+   </div>
+    </div>
+   <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"">
+        <div class="card" id="carddisply" style="display:none;" >
+            
+          <div class="card-body">
+    <div id="statement">
+        <p>No Data Found!</p>
+    </div>
+          </div>
+          </div>
+    </div>
+   </div>
+      {% endblock %}
+      {% block script %}
+        <script>
+         function submit_date(){
+           document.getElementById('carddisply').style.display='block'
+           var start_date= document.getElementById('min');
+           var end_date= document.getElementById('max');
+
+            var entry_date ={
+                 start_date: start_date.value,
+                 end_date: end_date.value
+                 };
+
+           fetch(`${window.origin}/processprofitlossreport/`,{
+
+                 method: "POST",
+                 credentials: "include",
+                 body: JSON.stringify(entry_date),
+                 cache: "no-cache",
+                 headers: new Headers({
+                   "content-type":"application/json"
+                 })
+              })
+              .then(function(response){
+                 
+                 if(response.status !== 200){
+
+                   console.log(`Response status not 200: ${response.status}`)
+                   return;
+                 }
+                  
+                  response.json().then(function(data){
+                    for(let i = 0; i < data.length; i++){
+                     let childArray = data[i]; 
+                     for(let j = 0; j < childArray.length; j++)
+                         { console.log(childArray[j]); }
+                         }
+                  })
+
+              })
+         }
+
+        </script>
+      {% endblock %}
+
+

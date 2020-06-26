@@ -1,0 +1,133 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">All Purchase Records</h2>
+               <hr>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            
+            <!-- ============================================================== -->
+        <!-- data table  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    
+  
+        <form class="form-inline justify-content-left">
+        
+          <label>Start Date:</label>
+          <input type="date" class="form-control datepicker" id="min" placeholder="" name="Start_Date">
+        
+          <label >End Date:</label> 
+          <input type="date" class="form-control datepicker" id="max" placeholder="" name="Start_Date">
+          <label>  </label>
+          <button type="button" id="filter" class="btn btn-success">Find</button>
+        </form>
+    </div>
+   </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- data table  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example" class="table table-striped table-bordered second" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <tr>
+
+                                        <th>Purchase Date</th>
+                                          <th>Invoice No</th>
+                                          <th>Supplier Name</th>
+                                          <th>Total Amount</th>
+                                          <th>Payment Amount</th>
+                                          <th>Payment Mode</th>
+                                          <th>Action</th>
+                                      </tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for Purchase in Purchases %}
+                                <tr>
+                                   <td>{{Purchase.purchase_date}}</td>
+                                    <td>{{Purchase.invoice_no}}</td>
+                                    <td>{{Purchase.supplier_name}}</td>
+                                    <td>{{Purchase.total_amount}}</td>
+                                    <td>{{Purchase.payment_amount}}</td>
+                                    <td>{{Purchase.payment_type}}</td>
+                                    <td><a href="{{url_for('PurchaseDetail', purchase_id =Purchase.id) }}" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-pencil"></span>view</a>
+                                        
+                                    </td>
+                                </tr> 
+                                {% endfor %}                     
+                            </tbody>
+                            
+                        </table>
+                       
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end data table  -->
+        <!-- ============================================================== -->
+    </div>
+  </div>
+      {% endblock %}
+
+      {% block script %}
+      <script>
+           $('#filter').click(function(){
+        $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            var min = $('#min').val();
+            var max = $('#max').val();
+            var startDate =(data[0]);
+            console.log(startDate)
+            if (min == null && max == null) return true;
+            if (min == null && startDate <= max) return true;
+            if (max == null && startDate >= min) return true;
+            if (startDate <= max && startDate >= min) return true;
+            return false;
+        }
+        );
+
+            var table = $('#example').DataTable();
+
+            table.draw();
+            // Event listener to the two range filtering inputs to redraw on input
+            // $('#filter').click(function () {
+            //     table.draw();
+            // });
+        });
+      </script>
+      {% endblock %}

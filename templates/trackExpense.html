@@ -1,0 +1,114 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Pay Expense</h2>
+               
+                <hr>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- Start validation form -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+            
+                <div class="card-body">
+                    <section class="content">
+                        <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="panel panel-bd lobidrag">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                               <hr>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                          
+                                     <form action="{{url_for('TrackExpenses')}}" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                                            <div class="row">
+                                      <div class="col-sm-12">
+                                            <div class="form-group row">
+                                                <label for="date" class="col-sm-4 col-form-label">Date <i class="text-danger">*</i></label>
+                                                <div class="col-sm-3">
+                                                    <input type="date" name="dtpDate" id="dtpDate" class="form-control datepicker" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class="col-sm-12" id="payment_from_1">
+                                            <div class="form-group row">
+                                                <label for="expense_type" class="col-sm-4 col-form-label">Expense Type</label>
+                                                <div class="col-sm-3">
+                                                    <input type="text" name="expense_type" list="expelist" class="form-control" />
+                                                    <datalist id="expelist">
+                                                        {% for entry in entries %}
+                                                       <option value={{ entry }}>
+                                                       {% endfor %}
+                                                            </datalist>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" id="payment_from_1">
+                                            <div class="form-group row">
+                                                <label for="payment_type" class="col-sm-4 col-form-label">Payment Type <i class="text-danger">*</i></label>
+                                                <div class="col-sm-3"> 
+                                                    <input type="text" name="paytype" list="cars" class="form-control" />
+                                                    <datalist id="cars">
+                                                      <option value="Cash">Cash</option>
+                                                      <option value="Mpesa">Mpesa</option>
+                                                    </datalist>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-12" id="payment_from_1">
+                                     <div class="form-group row">
+                                    <label for="date" class="col-sm-4 col-form-label">Amount<i class="text-danger">*</i></label>
+                                    <div class="col-sm-3">
+                                         <input type="number" name="amount" id="amount" class="form-control"  required type="number">
+                                    </div>
+                                </div> 
+                                </div>
+                                   <div class="form-group row text-center">                                  
+                                        <div class="col-sm-12 text-right">       
+                                            <input type="submit" id="add_receive" class="btn btn-success btn-large" name="save" value="Save" tabindex="9"/>
+                                        </div>
+                                    </div>
+                              </form>            </div>  
+                    </div>
+                </div>
+            </div>
+            </section>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end validation form -->
+        <!-- ============================================================== -->
+    </div>
+      </div>
+      {% endblock %}
+      

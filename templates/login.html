@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+ 
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{url_for('.static', filename='bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle.css')}}">
+    <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle2.css')}}">
+    <link rel="stylesheet" href="{{url_for('.static', filename='fontawesome-all.css')}}">
+    <style>
+    html,
+    body {
+        height: 100%;
+    }
+
+    body {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- login page  -->
+    <!-- ============================================================== -->
+    
+    <div class="splash-container">
+        <div class="card ">
+            <div class="card-header text-center"><span class="splash-description">Please enter your user information.</span></div>
+            <div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {%if messages %}
+                        {%for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                           
+                          </button>
+                          <span>
+                            <b></b> {{ message }}</span>
+                        </div>
+                        {%endfor%}
+                  {%endif %}
+                {%endwith%}
+              </div>
+            <div class="card-body">
+               
+                <form method="POST" action="/login">
+                    <div class="form-group">
+                        {{ form.csrf_token() }}
+                        {{ form.username(class="form-control", placeholder="username") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password(class="form-control",placeholder="password", type="password") }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+                </form>
+            </div>
+            <div class="card-footer bg-white p-0  ">
+    
+            </div>
+        </div>
+    </div>
+  
+    <!-- ============================================================== -->
+    <!-- end login page  -->
+    <!-- ============================================================== -->
+
+</body>
+ 
+</html>

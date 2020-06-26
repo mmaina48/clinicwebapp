@@ -1,0 +1,198 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">All Purchase Records</h2>
+               
+                <hr>
+            </div>
+        </div>
+    </div>
+<!-- Printable area end -->
+<style type="text/css">
+
+    BODY, TD
+    {
+        background-color: #ffffff;
+        color: #000000;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 10pt;
+    }
+    th, td {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+</style>
+<!-- Content Wrapper. Contains page content -->
+
+
+
+<div class="content-wrapper">
+
+
+    <section class="content">
+        <!-- Alert Message -->
+        
+                <body>
+        <div id="printableArea">
+            <table border="0">
+                <tr>
+                    <td>
+                        <table border="0" width="100%" >
+                            <tr>
+                                
+                                <td align="center" style="border-bottom:2px #333 solid;"><span>
+                                        <img src="https://softest8.bdtask.com/pharmacysasmodel/my-assets/image/logo/ef9ff92adbea3b2d1afe4cfa8b02c04c.png" class="" alt=""></span><br>
+                                    B-25, Mannan Plaza, 4th Floor, Khilkhet
+Dhaka-1229, Bangladesh <br>
+                                    1922296392
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td align="center"><b>Abul Malek</b><br>
+                                    DEMO Address
+                                    <br>
+                                    12234234
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center"><nobr><date>Date:21 - JUN - 2020<time></nobr></td>
+                            </tr>
+                        </table>
+
+                        <table width="100%">
+                            <tr>
+                                <td>Qty</th>
+                                <td>Medicine</td>
+                                <td align="right">Price</td>
+                                <td align="right">Discount</td>
+                                <td align="right">Total</td>
+                            </tr>
+                            
+                            <tr>
+
+                                <td align="left"><nobr>5</nobr></td>
+                                <td align="left"><nobr>Clogrel Plus<nobr></td>
+                                <td align="right"><nobr>$12.00</nobr></td>
+                                <td align="right"><nobr>$0</nobr></td>
+                                <td align="right"><nobr>$ 60.00</nobr></td>
+
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                            </tr>
+                            <tr>
+                                <td align="left"><nobr></nobr></td>
+                                <td align="left" colspan="3"><nobr>Sub Total</nobr></td>
+                                <td align="right"><nobr>$ 60.00</nobr></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                            </tr>
+                            <tr>
+                                <td align="left"><nobr></nobr></td>
+                                <td align="left" colspan="3"><nobr>Tax</nobr></td>
+                                <td align="right"><nobr>$ 0.00</nobr></td>
+                            </tr>
+                            <tr>
+                                <td align="left"><nobr></nobr></td>
+                                <td align="left" colspan="3"><nobr>Total Discount</nobr></td>
+                                <td align="right"><nobr>$ 0.00</nobr></td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                            </tr>
+                            <tr>
+                                <td align="left"><nobr></nobr></td>
+                                <td align="left" colspan="3"><nobr><strong>Grand Total</strong></nobr></td>
+                                <td align="right"><nobr><strong>$ 60.00</strong></nobr></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                            </tr>
+                            <tr>
+                                <td align="left"><nobr></nobr></td>
+                                <td align="left" colspan="3"><nobr>Paid</nobr></td>
+                                <td align="right"><nobr>$ 0</nobr></td>
+                            </tr>
+
+                            <tr>
+                                <td align="left"><nobr></nobr></td>
+
+
+                                <td align="left" colspan="3">
+                                    <nobr>
+                                        Due                                    </nobr>
+                                </td>
+                                <td align="right">
+                                    <nobr>
+                                     $ 180.00                                    </nobr>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                            </tr>
+                        </table>
+                        <table width="100%">
+                            <tr>
+                                <td>Receipt  No:1012</td>
+                                <td>User: Admin User</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Powered  By: bdtask Shop, <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dcbeb8a8bdafb79cbbb1bdb5b0f2bfb3b1">[email&#160;protected]</a>
+                        
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="panel-footer text-left">
+            <a  class="btn btn-danger" href="https://pharmacyv5.bdtask.com/pharmacare_v9.2_demo/Cinvoice">Cancel</a>
+            <button  class="btn btn-info" onclick="printDiv('printableArea')"><span class="fa fa-print"></span></button>
+
+        </div>
+        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+            </section> <!-- /.content -->
+</div> <!-- /.content-wrapper -->
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        // document.body.style.marginTop="-45px";
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+  </div>
+      {% endblock %}
+
+      {% block script %}
+    
+      {% endblock %}

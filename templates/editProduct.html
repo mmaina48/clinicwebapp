@@ -1,0 +1,96 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Edit Product Page</h2>
+               
+               <hr>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- Start validation form -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h3 class="card-header">Edit {{d.product_name}}</h3>
+            
+                <div class="card-body">
+                    <form class="needs-validation" novalidate action="" method="POST">
+                        <div class="row">
+                            
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="validationCustom03">Product Nmae</label>
+                                <input type="text" class="form-control" name="product_name" id="validationCustom03" placeholder="Enter Product Name" value="{{d.product_name}}" required="">
+                                <div class="invalid-feedback">
+                                    Please Fill this Field.
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="validationCustom04">Product Type</label>
+                                <input type="text" class="form-control" name="product_type" id="validationCustom04" value="{{d.product_type}}" placeholder="Enter Product Type" required="">
+                                <div class="invalid-feedback">
+                                    Please Fill this Field.
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label>Selling Price</label>
+                    
+                                <input required="" type="number" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" value="{{d.sell_price}}" class="form-control">
+                                <div class="invalid-feedback">
+                                    Please provide a valid Selling price.
+                                </div>
+                            </div>
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                    <label>Reorder Level</label>
+                                    <input required="" type="number" name="reoder_level"min="0" max="1000000000000" placeholder="Enter Reorder-Level" value="{{d.reoder_level}}" class="form-control">
+                                    <div class="invalid-feedback">
+                                        Please provide a valid Reorder-Level.
+                                    </div>
+                                </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            <button class="btn btn-primary" type="submit">Save</button>
+                            <a href = "{{ url_for('allProducts')}}"><button class="btn btn-warning"  style="float: right;" type="button">Cancel</button></a>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end validation form -->
+        <!-- ============================================================== -->
+    </div>
+      </div>
+      {% endblock %}
