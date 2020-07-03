@@ -26,6 +26,13 @@
             </div>
         </div>
     </div>
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="column">
+          <a href="{{url_for('AddSupplier')}}" style="float: right;"  class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add Supplier</a>
+          </div>
+      </div>
+  </div>
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
@@ -55,11 +62,20 @@
                                     <td>{{supplier.supplier_name}}</td>
                                     <td>{{supplier.supplier_phone}}</td>
                                     <td>{{supplier.openbalance}}</td>
-                                    <td><a href="{{url_for('EditSupplier', supplier_id =supplier.id) }}" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span>Update</a>
-                                        
-                                      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{supplier.id}}" >Delete</button>
-                                   
-                                     <div class="modal fade" id="deleteModal{{supplier.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <td>
+                                      
+                                      <div class="btn-group">
+                                      <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select
+                                      </button>
+                                      <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{{url_for('EditSupplier', supplier_id =supplier.id) }}">Upadate</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{supplier.id}}" href="#">Delete</a>
+                    
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="modal fade" id="deleteModal{{supplier.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                       <div class="modal-dialog">
                                         <form class="modal-content"  action="{{url_for('deleteSupplier', supplier_id =supplier.id) }}" method="POST" >
                                           <div class="container">
@@ -68,13 +84,13 @@
                                     
                                             <div class="modal-footer">
                                               <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Delete</button>
+                                              <button type="submit" class="btn btn-danger">Delete</button>
                                             </div>
                                           </div>
                                         </form>
                                         </div>
                                       </div>
-                                    </div>
+                                 
                                     </td>
                                 </tr> 
                                 {% endfor %}                     

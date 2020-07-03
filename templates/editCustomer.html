@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
-                <h2 class="pageheader-title">Edit {{patient.name}} Record</h2>
+                <h2 class="pageheader-title">{{patient.name}} OPD {{patient.patient_id}} </h2>
                
                 <hr>
             </div>
@@ -90,7 +90,7 @@
                                 <label for="example-text-input" class="col-sm-4 col-form-label"></label>
                                 <div class="col-sm-6">
                                     <input type="submit" id="add-customer" class="btn btn-primary btn-large" name="add-customer" value="Save" tabindex="7"/>
-                                   
+                                    <a href = "{{ url_for('AllCustomers')}}"><button class="btn btn-warning"  style="float: right;" type="button">Cancel</button></a>
                                 </div>
                             </div>
                         </div>

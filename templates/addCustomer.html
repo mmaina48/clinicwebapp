@@ -21,14 +21,24 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
                 <h2 class="pageheader-title">New Patient</h2>
+                
                <hr>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="column">
+            <a href="{{url_for('AllCustomers')}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Patients</a>
+            </div>
+        </div>
+    </div>
+   
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
              <!-- New customer -->
+             <div class="row">
              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
             <div class="card-body">
@@ -61,7 +71,7 @@
                             <div class="form-group row">
                                 <label for="mobile" class="col-sm-3 col-form-label">Gender:<i class="text-danger">*</i></label>
                                 <div class="col-sm-6">
-                                    <select name="gendertype" id="gendertype" class="form-control" required="" >
+                                    <select name="gendertype" id="gendertype" class="form-control" required="" tabindex="3" >
                                         <option value="none" selected="" disabled="">Select Gender
                                         </option>
                                         <option value="Female">Female</option>
@@ -72,19 +82,19 @@
                             <div class="form-group row">
                                 <label for="mobile" class="col-sm-3 col-form-label">Mobile No:<i class="text-danger">*</i></label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" required="" name ="patient_phone" id="mobile" type="text" placeholder="Mobile" min="0" tabindex="3">
+                                    <input class="form-control" required="" name ="patient_phone" id="mobile" type="text" placeholder="Mobile"  tabindex="3">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="mobile" class="col-sm-3 col-form-label">National ID</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" required="" name ="patient_National_id" id="National" type="number" placeholder="National ID"  min="0" tabindex="3">
+                                    <input class="form-control" required="" name ="patient_National_id" id="National" type="text" placeholder="National ID"  min="0" tabindex="3">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="mobile" class="col-sm-3 col-form-label">NHIF</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" name ="patient_nhif_no" id="mobile" type="number" placeholder="NHIF"  tabindex="3">
+                                    <input class="form-control" name ="patient_nhif_no" id="mobile" type="text" placeholder="NHIF"  tabindex="3">
                                 </div>
                             </div>
                             
@@ -99,9 +109,11 @@
                             <div class="form-group row">
                                 <label for="example-text-input" class="col-sm-4 col-form-label"></label>
                                 <div class="col-sm-6">
-                                    <input type="submit" id="add-customer" class="btn btn-primary btn-large" name="add-customer" value="Save" tabindex="7"/>
-                                    <input type="submit" value="Save And Add Another" name="add-customer-another" class="btn btn-large btn-success" id="add-customer-another" tabindex="6">
+                                    
+                                    <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Save And New" tabindex="7"/>
+                                    <a href = "{{ url_for('AllCustomers')}}"><button class="btn btn-warning"  type="button">Back</button></a>
                                 </div>
+                               
                             </div>
                         </div>
                         </form>                </div>
@@ -110,5 +122,6 @@
         </div>
         </div>
         </div>
+    </div>
       </div>
       {% endblock %}
