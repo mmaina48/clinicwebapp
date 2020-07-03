@@ -139,6 +139,17 @@ def deletePatient(patient_id):
 
 
 # Invoices
+@app.route('/patientBill/<int:patient_id>/new/', methods=['GET'])
+@login_required
+def newpatientBill(patient_id):
+    patient =Customer.query.filter_by(id=patient_id).one()
+    previusdebt=patient.debt
+    products=[p.product_name for p in Product.query.all()]
+    patients=[s.name for s in Customer.query.all()]
+    patientids=[s.patient_id for s in Customer.query.all()]
+   
+    return render_template('addpatientInvoice.html', patient_id=patient_id,patient=patient,products=products,patients=patients,previusdebt=previusdebt,patientids=patientids)
+
 
 @app.route('/addinvoices/',methods=['GET'])
 @login_required
