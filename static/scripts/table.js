@@ -54,6 +54,7 @@ $.ajax({
        
     },
     error: function(error){
+        alert("The Make sure all required Field are not empty!")
         $('#errorAlert').text(data.error).show();
 		$('#successAlert').hide();
         console.log(error);

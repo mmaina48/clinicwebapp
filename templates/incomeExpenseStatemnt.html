@@ -20,89 +20,129 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
-                <h2 class="pageheader-title">Income and Expense Statement</h2>
+                <h3 class="pageheader-title">Accounts Report</h3>
+                <h5>Profit Loss Statement</h5>
               <hr>
             </div>
         </div>
     </div>
-   
+      <!-- Printable area start -->
+<script type="text/javascript">
+  function printDiv() {
+      var divName = "printArea";
+      var printContents = document.getElementById(divName).innerHTML;
+      var originalContents = document.body.innerHTML;
+      document.body.innerHTML = printContents;
+      // document.body.style.marginTop="-45px";
+      window.print();
+      document.body.innerHTML = originalContents;
+  }
+  </script>
+  <div class="row">
+    <div class="col-sm-12">
+        <div class="column text-right" >
+          <a href="{{url_for('IncomeExpense')}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-plus"> </i>Generate a new Report</a>
+        </div>
+    </div>
+</div>
+  <!-- Printable area end -->
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="card">
-            
-            <!-- ============================================================== -->
-        <!-- data table  -->
-        <!-- ============================================================== -->
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-           <form class="form-inline justify-content-left">
-        
-             <label>Start Date:</label>
-             <input type="date" class="form-control datepicker dtpDate" id="min" placeholder="" name="Start_Date">
-             <label >End Date:</label> 
-             <input type="date" class="form-control datepicker todtpDate" id="max" placeholder="" name="Start_Date">
-             <label>  </label>
-             <button type="button" id="filter" onclick="submit_date()" class="btn btn-success">Find</button>
-        </form>
-    </div>
-   </div>
-    </div>
+  
    <div class="row">
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"">
-        <div class="card" id="carddisply" style="display:none;" >
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card" id="carddisply"  >
             
           <div class="card-body">
     <div id="statement">
-        <p>No Data Found!</p>
+      <section class="content">
+        <div class="row">
+<div class="col-sm-12 col-md-12">
+    <div class="panel panel-bd lobidrag">
+        <div class="panel-heading">
+            <div class="panel-title">
+              
+        </div>
+        <div id="printArea">
+            <div class="panel-body">
+              <table width="100%" class="table_boxnew" cellpadding="5" cellspacing="0"> 
+                <tr>
+                    <td colspan="2" align="center" style="font-size:20px;"><b><br/>From:{{header_startdate}} To:{{header_enddate}}</b></td>
+                </tr>
+                <tr>
+                  <td width="85%" bgcolor="#B0E0E6" align="center" style="font-size:18px; border-left:solid 1px #000; border-top:solid 1px #000;">Particulars</td>
+                  <td width="15%" bgcolor="#B0E0E6" align="center" style="font-size:18px; border-left:solid 1px #000; border-right:solid 1px #000;border-top:solid 1px #000;">Amount</td>
+                </tr>
+                        <tr>
+        <td colspan="2" style="font-size:20px; font-weight:bold; border-right:solid 1px #000; border-left:solid 1px #000; border-top:solid 1px #000;">Income</td>
+    </tr>
+          <tr>
+      <td align="left" style="border-left:solid 1px #000; border-top:solid 1px #000; font-size:17px; font-weight:bold; ">Product Sale</td>
+      <td align="right" style="border-left:solid 1px #000;  border-right:solid 1px #000; border-top:solid 1px #000;">{{Totalproductsale_Amount}}</td>
+    </tr>
+          <tr>
+      <td align="left" style="border-left:solid 1px #000; border-top:solid 1px #000; font-size:17px; font-weight:bold; ">Service Income</td>
+      <td align="right" style="border-left:solid 1px #000;  border-right:solid 1px #000; border-top:solid 1px #000;">{{Totalservsale_Amount}}</td>
+    </tr>
+                      <tr bgcolor="#B0E0E6">
+                    <td align="right"><strong>Total Revenue</strong></td>
+                    <td align="right" style="border-style: double;
+                    border-left: none; border-right:none; border-top:none;"><strong >{{total_income}}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right"></td>
+                </tr>
+                        <tr>
+        <td colspan="2" style="font-size:20px; font-weight:bold; border-right:solid 1px #000; border-left:solid 1px #000; border-top:solid 1px #000;">Expense</td>
+    </tr>
+    {% for key, value in expensesresult.items() %}
+          <tr>
+      <td align="left" style="border-left:solid 1px #000; border-top:solid 1px #000; font-size:17px; font-weight:bold; ">{{key}}</td>
+      <td align="right" style="border-left:solid 1px #000;  border-right:solid 1px #000; border-top:solid 1px #000;">{{value}}</td>
+    </tr>
+    {% endfor %}
+                      <tr  bgcolor="#B0E0E6">
+                    <td align="right"><strong></strong></td>
+                    <td align="right" style="border-style: double;
+                    border-left: none; border-right:none; border-top:none;"><strong>{{total_expense_amount}}</strong></td>
+                </tr>
+                <tr>
+                    <td align="right" style="border-left:solid 1px #000; border-bottom:solid 1px #000; border-top:solid 1px #000;" id="print"><h4>Net-Income</h4></td>
+                    <td align="right" style="border:solid 1px #000;" id="Profit_loss"><b>{{Profit_loss}}</b></td>
+                </tr>
+              
+              </table>
+            </div>
+        </div>
+        <div class="text-center" id="print" style="margin: 20px">
+            <input type="button" class="btn btn-warning" name="btnPrint" id="btnPrint" value="Print" onclick="printDiv();"/>
+            
+        </div>
+    </div>
+</div>
+</div>
+</section>
     </div>
           </div>
           </div>
     </div>
    </div>
       {% endblock %}
+
       {% block script %}
-        <script>
-         function submit_date(){
-           document.getElementById('carddisply').style.display='block'
-           var start_date= document.getElementById('min');
-           var end_date= document.getElementById('max');
+     <script>
+       $( document ).ready(function() {
+        var Profit_loss = document.getElementById('Profit_loss').children[0].innerHTML
+        var text=document.getElementById('print').children[0].innerHTML
+        var int_Profit_loss=parseInt(Profit_loss)
+      
+    
+});
+      
+      
+     </script>
+        {% endblock %}
+        
 
-            var entry_date ={
-                 start_date: start_date.value,
-                 end_date: end_date.value
-                 };
-
-           fetch(`${window.origin}/processprofitlossreport/`,{
-
-                 method: "POST",
-                 credentials: "include",
-                 body: JSON.stringify(entry_date),
-                 cache: "no-cache",
-                 headers: new Headers({
-                   "content-type":"application/json"
-                 })
-              })
-              .then(function(response){
-                 
-                 if(response.status !== 200){
-
-                   console.log(`Response status not 200: ${response.status}`)
-                   return;
-                 }
-                  
-                  response.json().then(function(data){
-                    for(let i = 0; i < data.length; i++){
-                     let childArray = data[i]; 
-                     for(let j = 0; j < childArray.length; j++)
-                         { console.log(childArray[j]); }
-                         }
-                  })
-
-              })
-         }
-
-        </script>
-      {% endblock %}
-
-
+     

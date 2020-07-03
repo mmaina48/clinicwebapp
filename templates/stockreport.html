@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
-                <h3 class="mb-2">My Inventory</h3>
+                <h3 class="mb-2">Stock Levels </h3>
                
               <hr>
             </div>
@@ -44,10 +44,7 @@
                                   <th>Product Name</th>
                                   <th>Expiry Date</th>
                                   <th>In Quantity</th>
-                                  <th>Buying price</th>
-                                  <th>Stock</th>
-                                  
-                                  <th>Action</th>
+                                  <th>Current Quantity</th>
                               </tr>
                           </thead>
                           <tbody>
@@ -56,10 +53,8 @@
                                   <td>{{product.product_name}}</td>
                                   <td>{{product.expiry_date}}</td>
                                   <td>{{product.in_quantity}}</td>
-                                  <td>{{product.buying_price}}</td>
-                                  <td>{{product.quantity}}</td>
+                                  <td align="center">{{product.quantity}}</td>
                                  
-                                  <td><a href="{{url_for('ProductSale',product=product.product_name)}}"><span class="badge badge-success">Sales</span></a>
                                    
                               </tr>
                               {% endfor %} 

@@ -29,7 +29,7 @@
     <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong>Success!</strong>Invoice succesfully Added!</div>
     <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong></strong> Patient Not Found!</div>
+        <strong></strong> Item not Found! Check if all item type is either service or medication</div>
     
     <!-- ============================================================== -->
     <!-- end pageheader -->
@@ -107,7 +107,7 @@
                                                         </datalist>
                                             </td>
                                             <td>
-                                                <input type="text" name="productType" class="form-control text-center " readonly value=""  id="productType"/>
+                                                <input type="text" name="productType"  class="form-control text-center " readonly value=""  id="productType"/>
                                             </td>
                                             <td style="width: 120px">
                                                 <select name="Expiry_date" id="ExpDate" class="form-control  text-left" tabindex="7" style="border-color: green;">
@@ -117,7 +117,7 @@
                                             <td>
                                                 <input type="text" name="Aval_quantity" class="form-control text-center available_quantity_1" readonly value=""  id="avlquantity_1"/>
                                             </td>
-                                            <td >
+                                            <td style="width: 120px" >
                                                 <input type="text" name="quantity"  class="form-control text-left" value="" tabindex="9" onkeyup="checkqty()"  id="quantity"/>
                                             </td>
                                             <td>
@@ -128,7 +128,7 @@
                                             </td>
     
                                             <td>
-                                              <button style="text-align: right;" onclick="addRow()" class="btn btn-info" type="button" tabindex="12" id="plus">Add-Row</button>
+                                              <button style="text-align: right;" onclick="addRow()" class="btn btn-info btn-sm" type="button" tabindex="12" id="plus">Add-Row</button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -219,6 +219,8 @@
         var td = document.createElement('td'); // table definition.
         td = tr.insertCell(c);
 
+
+
         if (c == 7) {     
             var button = document.createElement('input');
             button.setAttribute('type', 'button');
@@ -246,7 +248,7 @@
             var element = document.createElement('input');
             element.setAttribute('text', 'text');
             element.setAttribute('name', 'productType');
-            element.setAttribute('readonly','')
+            element.setAttribute('readonly','');
             element.setAttribute('id', 'productType');
             element.setAttribute('class','form-control text-center')
            
@@ -281,7 +283,7 @@
         }
         else if(c==5){
             var ele = document.createElement('input')
-            ele.setAttribute('type', 'number')
+            ele.setAttribute('type', 'text')
             ele.setAttribute('name', "selling_price[]")
             ele.setAttribute('readonly','')
             ele.setAttribute('id', "selling_price")
@@ -291,7 +293,7 @@
         }
         else {
             var ele = document.createElement('input');
-            ele.setAttribute('type', 'number')
+            ele.setAttribute('type', 'text')
             ele.setAttribute('name', 'total_price')
             ele.setAttribute('readonly','')
             ele.setAttribute('class','form-control text-right txtcal')
@@ -306,7 +308,8 @@
 function removeRow(oButton) {
     var empTab = document.getElementById('normalinvoice');
     empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
-   
+    var total=oButton.parentNode.parentNode.children[6].children[0].value
+    document.getElementById("grand_total_price").value -=total
 }
 
 $('#insert_sale').on('change',"input" ,function(e) {
@@ -351,6 +354,7 @@ $('#insert_sale').on('change',"input" ,function(e) {
 
             fetch('/productdata/' + prod).then(function(response){
                 response.json().then(function(data){
+                    console.log(data)
                     var lentha=data.Product.length
 
                     let optionHTML = '';
@@ -416,7 +420,9 @@ $('#insert_sale').on('change',"input" ,function(e) {
                     }
                     else{
                     
-                        
+                        avlqty.value=''
+                        expiry_options.innerHTML= ''
+
                     }
                 });
                  
@@ -425,6 +431,12 @@ $('#insert_sale').on('change',"input" ,function(e) {
                   // third fetch call
                   fetch('/productprice/' + prod).then(function(response){
                  response.json().then(function(data){
+                    var lentha=data.Productprice.length
+                    if (lentha ===0){
+                        alert('items is not Found')
+                        target.value= '';
+                        return false;
+                    }
                   let unit_price='';
                   let producttype='';
                             for(let prod of data.Productprice){
@@ -606,7 +618,6 @@ $('#insert_sale').on('change',"input" ,function(e) {
                 });           
     //  detect if quantity field changes
   
-   
 function checkqty()
 {
 
@@ -630,8 +641,9 @@ function checkqty()
 }
 
 function send() {
+    
     var checkdate= document.getElementById('dtpDate').value
-
+    
     var myTab =  document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
     var arrValues = new Array();
     // loop through each row of the table.
@@ -689,7 +701,7 @@ function send() {
                     // document.getElementById("insert_sale").reset();
                 },
                 error: function(error){
-                    alert("Please Make sure the Patient name and Date fied are not empty!")
+                    alert("Please Make sure the Date fied or Qty are not empty!")
                     $('#errorAlert').text(data.error).show();
                     $('#successAlert').hide();
                 

@@ -52,6 +52,8 @@ class Purchase(db.Model):
     payment_type=db.Column(db.String(25),nullable=False)
     payment_amount=db.Column(db.Integer, nullable=False)
     total_amount= db.Column(db.Integer, nullable=False)
+    due_balance=db.Column(db.Integer, nullable=False)
+    paydue_amount=db.Column(db.Integer, nullable=False)
     supplier_id = db.Column(db.Integer(), db.ForeignKey('supplier.id'))
     purchaseitem_line = db.relationship('PurchaseItems', backref='purchase')
 
@@ -70,6 +72,7 @@ class PurchaseItems(db.Model):
     purchase_id = db.Column(db.Integer(), db.ForeignKey('purchases.id'))  # Foreign key
     product_id = db.Column(db.Integer(), db.ForeignKey('product.id'))
    
+
 
 class Product(db.Model):  
     """ Product model """  
@@ -94,7 +97,8 @@ class Order(db.Model):
     net_total= db.Column(db.Integer, nullable=False)
     payment_amount=db.Column(db.Integer, nullable=False)
     payment_type=db.Column(db.String(25),nullable=False)
-    total_due=db.Column(db.Integer, nullable=False)
+    due_balance=db.Column(db.Integer, nullable=False)
+    paydue_amount=db.Column(db.Integer, nullable=False)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
     orderitems_line = db.relationship('OrderItems', backref='order')
 
@@ -105,6 +109,7 @@ class OrderItems(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(25), nullable=True)
     product_type = db.Column(db.String(25), nullable=False)
+    expiry_date = db.Column(db.Date(), nullable=True)
     quantity=db.Column(db.Integer, nullable=True)
     buying_price=db.Column(db.Integer, nullable=True)
     total_amount=db.Column(db.Integer, nullable=True)

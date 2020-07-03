@@ -330,9 +330,10 @@
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: #292730;
+  background-color: #55505f;
   opacity: 0.9;
   padding-top: 50px;
+  z-index: 9999
 }
 
 /* Modal Content/Box */
@@ -342,6 +343,9 @@
   margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
   border: 1px solid rgb(10, 10, 10);
   width: 80%; /* Could be more or less, depending on screen size */
+}
+.modal-backdrop {
+  z-index: 1071;
 }
 /*  Larger Screen Styling */
 @media (min-width: 564px) {

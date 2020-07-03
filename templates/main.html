@@ -54,6 +54,7 @@
                                 </a>
                                 <div class="dropdown-menu">
                                   <a class="dropdown-item" href="{{url_for('AddExpenseCategory')}}">Add Expense</a>
+                                  <a class="dropdown-item" href="{{url_for('AllExpenses')}}">All Expenses</a>
                                   <a class="dropdown-item" href="{{url_for('TrackExpenses')}}">Pay Expense</a>
                                   <a class="dropdown-item" href="{{url_for('AllTrackedExpenses')}}">All Paid Expenses</a>
                                 </div>
@@ -65,8 +66,9 @@
                                   Reports
                                 </a>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item" href="{{url_for('StockReport')}}">Stock Report</a>
+                                 
                                   <a class="dropdown-item" href="{{url_for('MedicationSalesReport')}}">Sales Report(Med)</a>
+                                  <a class="dropdown-item" href="{{url_for('StockReport')}}">Stock Report(Batch)</a>
                                   <a class="dropdown-item" href="{{url_for('IncomeExpense')}}">Income/Expence</a>
                                 </div>
                             </li>
@@ -125,7 +127,7 @@
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('AllSuppliers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Suppliers<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllPurchase')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Purchases<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('AllPurchase')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>Purchase Report<span class="badge badge-success">6</span></a>
                             </li>
                           
                         </ul>
@@ -210,7 +212,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
-  
+   
+    
     {% block script %}
     {% endblock %}
     <script type="text/javascript">
@@ -267,17 +270,6 @@ $(document).ready( function() {
         })();
         </script>
 
-<script>
-    // Get the modal
-    var modal = document.getElementById('id01');
-    
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
-    </script>
 
     
 <script>
