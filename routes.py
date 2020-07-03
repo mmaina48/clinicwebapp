@@ -74,8 +74,21 @@ def AllCustomers():
 @app.route('/addpatient/',methods=['GET','POST'])
 @login_required
 def AddCustomer():
+    # generating an patient id function
+    
+    pid=db.session.query(db.func.max(Customer.id)).one()
+    print(pid)
+    def patientid(setids):
+        import datetime
+        id=['0' if v is None else v for v in setids]
+        year=str(datetime.date.today().year) + '/100'
+        patient_id=year+ str(id[0])
+        return patient_id
+    
+    opd=patientid(pid)
+    
     if request.method == 'POST':
-        newcustomer = Customer(name=request.form['patient_name'],age=request.form['age'],gender=request.form['gendertype'],patient_phone=request.form['patient_phone'],\
+        newcustomer = Customer(patient_id=request.form['patient_opd'],name=request.form['patient_name'],age=request.form['age'],gender=request.form['gendertype'],patient_phone=request.form['patient_phone'],\
             nhif_no=request.form['patient_nhif_no'],National_id=request.form['patient_National_id'])
         db.session.add(newcustomer)
         try:
@@ -87,7 +100,7 @@ def AddCustomer():
             flash(f'This customer already exists','danger')
             return redirect(url_for('AddCustomer'))
     else:
-        return render_template('addCustomer.html')
+        return render_template('addCustomer.html',opd=opd)
     
 #Edit Patient
 @app.route('/patients/<int:customer_id>/edit/', methods = ['GET', 'POST'])

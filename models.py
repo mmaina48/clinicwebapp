@@ -25,6 +25,7 @@ class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.Date(), default=datetime.utcnow)
     name=db.Column(db.String(), nullable=True)
+    patient_id=db.Column(db.String(), nullable=True)
     age=db.Column(db.Integer,nullable=True)
     gender=db.Column(db.String(), nullable=True)
     patient_phone=db.Column(db.Integer, unique=True,nullable=False)
