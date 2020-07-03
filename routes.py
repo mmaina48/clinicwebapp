@@ -139,6 +139,7 @@ def deletePatient(patient_id):
 
 
 # Invoices
+
 @app.route('/addinvoices/',methods=['GET'])
 @login_required
 def AddInvoice():
@@ -490,7 +491,7 @@ def supplierdata(supplier):
     return jsonify({'Supplies': dataArray})
 
 
-# SALES
+# ProductSALES
 @app.route('/productsalesreport/<product>',methods=['GET'])
 @login_required
 def ProductSale(product):
@@ -715,6 +716,16 @@ def TrackExpenses():
 def AllTrackedExpenses():
     trackedexpense=TrackExpense.query.all()
     return render_template("expenseStatement.html",trackedexpense=trackedexpense)
+
+# delete a tracked expense
+@app.route('/trackedexpense/<int:Expense_id>/delete/', methods = ['POST'])
+@login_required
+def deleteTrackedExpense(Expense_id):
+        expenseToDelete = TrackExpense.query.filter_by(id = Expense_id).one()
+        db.session.delete(expenseToDelete)
+        db.session.commit()
+        flash(f'Expense successfully Deleted!','danger')
+        return redirect(url_for('AllTrackedExpenses'))
 
 # All stock
 @app.route('/stockreport/',methods=['GET','POST'])
