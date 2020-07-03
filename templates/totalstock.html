@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
-                <h3 class="mb-2">Stock Levels Per Bitch </h3>
+                <h3 class="mb-2">Stock Report</h3>
                
               <hr>
             </div>
@@ -31,41 +31,43 @@
     <!-- ============================================================== -->
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
+            <h3 class="card-header">All Sales</h3>
             <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           
+
               <div class="card-body">
                   <div class="table-responsive">
                       <table id="example" class="table table-striped table-bordered second" style="width:100%">
                           <thead>
                               <tr>
-                                  <th>Product Name</th>
-                                  <th>Expiry Date</th>
-                                  <th>In Quantity</th>
-                                  <th>Unit Cost</th>
-                                  <th>Puchase Cost</th>
+                                  <th align="left">Product Name</th>
+                                  <th>In Quantity </th>
                                   <th>Current Quantity</th>
-                                 
+                                  <th>Cost of Purchase</th>
                               </tr>
                           </thead>
                           <tbody>
                             {% for product in stock %}
                               <tr>
-                                  <td>{{product.product_name}}</td>
-                                  <td>{{product.expiry_date}}</td>
-                                  <td>{{product.in_quantity}}</td>
-                                  <td>{{product.buying_price}}</td>
-                                  <td>{{product.total_amount}}</td>
-                                   
-                                  <td align="center">{{product.quantity}}</td>
-                                  
+                                  <td>{{product.product_name}}</td>       
+                                  <td>{{product.In_Quantity}}</td>
+                                  <td>{{product.Current_Quantity}}</td>
+                                  <td>{{product.Cost_of_Goods}}</td>
+        
                               </tr>
                               {% endfor %} 
                           </tbody>
                           <tfoot>
-                             
+                           
+                              <tr>
+                                <th colspan="3"  style="text-align:right;"><b>Total:</b></th>
+                                <th id="val" ></th>
+                               
+                            </tr>
+                            
                           </tfoot>
                       </table>
                   </div>
@@ -82,3 +84,16 @@
     </div>
   </div>
       {% endblock %}
+      {% block script %}
+      <script>
+      $( document ).ready(function() {
+        var table = document.getElementById("example").getElementsByTagName('tbody')[0]
+        totalAmount = 0;
+        for(var i = 0; i < table.rows.length; i++)
+        {
+          totalAmount =  parseInt(totalAmount) + parseInt(table.rows[i].cells[3].innerHTML);
+        }
+        document.getElementById("val").innerHTML =totalAmount;
+    });
+  </script>
+    {% endblock %}

@@ -734,18 +734,25 @@ def StockReport():
     stock=PurchaseItems.query.all()
     return render_template("stockreport.html",stock=stock)
 
-@app.route('/salesreport/',methods=['GET','POST'])
+# Product purchase sales report
+@app.route('/productsalepurchasereport/',methods=['GET','POST'])
 @login_required
 def ProductDetailsReport():
     return render_template("productReport.html")
 
-# sales report (med)
+# sales report (cummulative)
 @app.route('/medicationsalesreport/',methods=['GET','POST'])
 @login_required
 def MedicationSalesReport():
     sales=OrderItems.query.with_entities(OrderItems.product_name,OrderItems.buying_price,func.sum(OrderItems.quantity).label('total_quantity') ,func.sum(OrderItems.total_amount).label('total_amount')).group_by(OrderItems.product_name).filter_by(product_type='Medication').all()
     return render_template("medsalesreport.html",sales=sales)
 
+# stock report (cumulative)
+@app.route('/medicationstockreport/',methods=['GET','POST'])
+@login_required
+def MedicationStockReport():
+    stock=PurchaseItems.query.with_entities(PurchaseItems.product_name,func.sum(PurchaseItems.in_quantity).label('In_Quantity') ,func.sum(PurchaseItems.quantity).label('Current_Quantity') ,func.sum(PurchaseItems.total_amount).label('Cost_of_Goods')).group_by(PurchaseItems.product_name).all()
+    return render_template("totalstock.html",stock=stock)
 
 # Invoicereceipt
 @app.route('/receipt/',methods=['GET','POST'])
