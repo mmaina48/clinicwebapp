@@ -596,43 +596,29 @@ def ProductPurchaseDetail(product):
 @app.route('/Purchase/<int:purchase_id>/delete',methods=['POST'])
 @login_required
 def DeletePurchase(purchase_id):
-    # PurchaseToDelete =Purchase.query.filter_by(id = purchase_id).one()
-    #     supplierId=PurchaseToDelete.supplier_id
-    #     balance=PurchaseToDelete.due_balance
-    #     debt_pay=PurchaseToDelete.paydue_amount
+    PurchaseToDelete =Purchase.query.filter_by(id = purchase_id).one()
+
+    supplierId=PurchaseToDelete.supplier_id
+    balance=PurchaseToDelete.due_balance
+    debt_pay=PurchaseToDelete.paydue_amount
         
-    #     patientToAdd=Customer.query.filter_by(id=customerId).one()
-    #     patientToAdd.debt -=int(balance)
-    #     patientToAdd.debt +=int(debt_pay)
-       
+    # Get the supplier for this purchase
+    suppliert_obj=Supplier.query.filter_by(id=supplierId).one()
+    suppliert_obj.openbalance -=int(balance)
+    suppliert_obj.openbalance +=int(debt_pay)
+   
         
-    #     orderitems=OrderItems.query.filter_by(order_id=invoice_id,product_type='Medication').all()
-    #     print(orderitems)
-    #     for item in orderitems:
-    #         prodname=item.product_name
-    #         prodexpiry=item.expiry_date
-    #         prodquanty=item.quantity
-
-    #         stock_item=PurchaseItems.query.filter_by(product_name=prodname,expiry_date=prodexpiry).first()
-    #         print(stock_item.quantity)
-    #         stock_item.quantity += prodquanty
-
-    #         db.session.add(stock_item)
-    #         db.session.commit()
-
-    #         db.session.delete(item)
-    #         db.session.commit()
-
-    #     allorderservice=OrderItems.query.filter_by(order_id=invoice_id,product_type='Service').all()
-    #     for service in allorderservice:
-    #         db.session.delete(service)
-    #         db.session.commit()
+    purchaseitems=PurchaseItems.query.filter_by(purchase_id=purchase_id).all()
+    print(purchaseitems)
+    for item in purchaseitems:
+        db.session.delete(item)
+        db.session.commit()
             
-    #     db.session.add(patientToAdd)
-    #     db.session.commit()
+    db.session.add(suppliert_obj)
+    db.session.commit()
 
-    #     db.session.delete(InvoiceToDelete)
-    #     db.session.commit()
+    db.session.delete(PurchaseToDelete)
+    db.session.commit()
 
     flash(f'Puchase  successfully Deleted!','danger')
     return redirect(url_for('AllPurchase'))
