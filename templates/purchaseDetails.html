@@ -61,6 +61,8 @@
                                 Date :&nbsp;<span style="font-weight:bold">{{purchase.purchase_date}}</span><br />Invoice No :&nbsp;<span style="font-weight:bold">{{purchase.invoice_no}}</span><br/>
                                 Total Amount :&nbsp;<span style="font-weight:bold">{{purchase.total_amount}}</span><br>
                                 Paid Amount :&nbsp;<span style="font-weight:bold">{{purchase.payment_amount}}</span><br>
+                                Due Amount :&nbsp;<span style="font-weight:bold" id="due">{{purchase.due_balance}}</span><br>
+                                Debt payed Amount :&nbsp;<span style="font-weight:bold" id="pay_due">{{purchase.paydue_amount}}</span><br>
                                 </th>
                                 
                             </div>
@@ -110,4 +112,9 @@
             </div>
                     </section>
   </div>
+      {% endblock %}
+      {% block script%}
+      <script>
+       
+      </script>
       {% endblock %}
