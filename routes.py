@@ -1,4 +1,4 @@
-from flask import  render_template,url_for,redirect,flash,request,jsonify,make_response
+from flask import  render_template,url_for,redirect,flash,request,jsonify,make_response,session,g
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from main import app,db
 from forms import LoginForm,RegisterForm
@@ -13,6 +13,7 @@ import itertools
 from operator import itemgetter 
 from datetime import date,datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 login_manager=LoginManager()
 login_manager.init_app(app)
@@ -22,7 +23,28 @@ login_manager.login_view='login'
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+@app.before_request
+def before_request():
+    g.user = current_user
+
+# functions to DEFINE PERMISSIONS
+def required_roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if get_current_user_role() not in roles:
+                flash(f'You are not authorised to access this page.','danger')
+                return redirect(url_for('dashbord'))
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
     
+def get_current_user_role():
+    return g.user.role
+
+   
+
 @app.route('/')
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -180,7 +202,6 @@ def PatientIddata(patientid):
     def insert_str(string, str_to_insert, index):
         return string[:index] + str_to_insert + string[index:]
     ids=insert_str(patientid,'/',4)
-    print(ids)
     data= Customer.query.filter_by(patient_id=ids).all()
     dataArray=[]
     for patient in data:
@@ -222,7 +243,7 @@ def Productqty(product_id):
 @app.route('/processinvoicedata', methods=['POST'])
 def processinvoicedata():
     table= request.json
-    print(table)
+   
     key_list = [] 
     filter_key=[]
     product_list=[]
@@ -347,14 +368,12 @@ def deleteInvoice(invoice_id):
        
         
         orderitems=OrderItems.query.filter_by(order_id=invoice_id,product_type='Medication').all()
-        print(orderitems)
         for item in orderitems:
             prodname=item.product_name
             prodexpiry=item.expiry_date
             prodquanty=item.quantity
 
             stock_item=PurchaseItems.query.filter_by(product_name=prodname,expiry_date=prodexpiry).first()
-            print(stock_item.quantity)
             stock_item.quantity += prodquanty
 
             db.session.add(stock_item)
@@ -661,7 +680,6 @@ def DeletePurchase(purchase_id):
    
         
     purchaseitems=PurchaseItems.query.filter_by(purchase_id=purchase_id).all()
-    print(purchaseitems)
     for item in purchaseitems:
         db.session.delete(item)
         db.session.commit()
