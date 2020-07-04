@@ -6,7 +6,7 @@ from models import User,Product,Supplier,product_orders,product_purchases,Purcha
     PurchaseItems,Customer,OrderItems
 import time,datetime
 from sqlalchemy import desc,asc
-from sqlalchemy import and_
+from sqlalchemy import and_,or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
 import itertools
@@ -156,17 +156,38 @@ def newpatientBill(patient_id):
 def AddInvoice():
     products=[p.product_name for p in Product.query.all()]
     patients=[s.name for s in Customer.query.all()]
-    return render_template('addInvoice.html',products=products,patients=patients)
+    patientids=[s.patient_id for s in Customer.query.all()]
+    return render_template('addInvoice.html',products=products,patients=patients,patientids=patientids)
 
-# CUSTOMEZ API ENDPOINT
+# patient data API ENDPOINT
 @app.route('/patientdata/<patient>')
 def Patientdata(patient):
     data= Customer.query.filter_by(name=patient).all()
+    # data= Customer.query.filter(or_(name=patient,patient_id=patient)).all()
     dataArray=[]
     for patient in data:
         patientobj={}
         patientobj['id']=patient.id
         patientobj['name']=patient.name
+        patientobj['patient_Id']=patient.patient_id
+        patientobj['debt']=patient.debt
+        dataArray.append(patientobj)
+    return jsonify({'Patient': dataArray})
+
+# patient data API ENDPOINT by patient_id
+@app.route('/patientdatabyId/<patientid>')
+def PatientIddata(patientid):
+    def insert_str(string, str_to_insert, index):
+        return string[:index] + str_to_insert + string[index:]
+    ids=insert_str(patientid,'/',4)
+    print(ids)
+    data= Customer.query.filter_by(patient_id=ids).all()
+    dataArray=[]
+    for patient in data:
+        patientobj={}
+        patientobj['id']=patient.id
+        patientobj['name']=patient.name
+        patientobj['patient_Id']=patient.patient_id
         patientobj['debt']=patient.debt
         dataArray.append(patientobj)
     return jsonify({'Patient': dataArray})
@@ -201,6 +222,7 @@ def Productqty(product_id):
 @app.route('/processinvoicedata', methods=['POST'])
 def processinvoicedata():
     table= request.json
+    print(table)
     key_list = [] 
     filter_key=[]
     product_list=[]
@@ -220,6 +242,8 @@ def processinvoicedata():
                     patient_name=data[i]
                 elif i=="invoice_date":
                     invoice_date=data[i]
+                elif i=="patient_Id":
+                    patient_Id=data[i]
                 elif i=="paytype":
                     paytype=data[i]
                 elif i=="productname":
@@ -257,7 +281,7 @@ def processinvoicedata():
     invoiceDate = invoice_date
     invoiceDate_object = datetime.strptime(invoiceDate, "%Y-%m-%d").date()
 
-    newinvoice=Order(customer_name=patient_name,created_on=invoiceDate_object,payment_type=paytype,\
+    newinvoice=Order(customer_name=patient_name,patient_id=patient_Id,created_on=invoiceDate_object,payment_type=paytype,\
         payment_amount=paid_amount,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
     
     for (prod,prodtyp,expry,qty,price,total) in zip(product_list,product_type,expiry_array,quantityarray,price,total_price):

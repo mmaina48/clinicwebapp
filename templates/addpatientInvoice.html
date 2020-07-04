@@ -346,17 +346,51 @@ $('#insert_sale').on('change',"input" ,function(e) {
                         return false;
                     }
                   let previousbal='';
+                  let patientid='';
                   
                             for(let patient of data.Patient){
                                 previousbal +=  patient.debt
-              
+                                patientid =patient.patient_Id
                              }
                             document.getElementById('previous').value=previousbal
+                            document.getElementById('patient_Id').value=patientid
                  });
                 
                 });
             
             }
+            if(target.matches("input#patient_Id")){
+            var target=target.value
+            prod=target
+            console.log(prod)
+            originalString = prod; 
+            newString = originalString.replace('/', '');
+            console.log(newString)
+            fetch('/patientdatabyId/' + newString).then(function(response){
+                response.json().then(function(data){
+                    console.log(data)
+                    var lentha=data.Patient.length
+                    if (lentha==0){
+                    alert("That Patient is not registered!");
+                       $("#patient_name").val() = '';
+                        return false;
+                    }
+                  let previousbal='';
+                  let patientname='';
+                  
+                            for(let patient of data.Patient){
+                                previousbal +=  patient.debt
+                                patientname =patient.name
+              
+                             }
+                            document.getElementById('previous').value=previousbal
+                            document.getElementById('patient_name').value=patientname
+                 });
+                
+                });
+            
+            }
+            
         });
 
      $('#normalinvoice').on("click","input" ,function(e) {

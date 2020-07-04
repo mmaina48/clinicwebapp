@@ -93,6 +93,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.Date(), nullable=False)
     customer_name = db.Column(db.String(), nullable=False)
+    patient_id=db.Column(db.String(), nullable=True)
     previous=db.Column(db.Integer, nullable=False)
     total_amount= db.Column(db.Integer, nullable=False)
     net_total= db.Column(db.Integer, nullable=False)

@@ -47,7 +47,7 @@
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Patient Name' id="patient_name" tabindex="1"  list="id_data" required value="Walking Customer"  />
+                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Patient Name' id="patient_name" tabindex="1"  list="id_data" required  value="Walking Customer" />
                                             <datalist id="id_data">
                                                 {% for entry in patients %}
                                                 <option value="{{entry}}">{{ entry }}</option>
@@ -56,17 +56,8 @@
                                         </div>  
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="date" class="col-sm-2 col-form-label">Date</label>
-                                        <div class="col-sm-6">
-                                    <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-    
-                            <div class="row">
+
+                                <!-- date -->
                                 <div class="col-sm-6" id="payment_from_1">
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Payment Type</label>
@@ -75,6 +66,35 @@
                                                 <option value="Cash">Cash Payment</option>
                                                 <option value="Mpesa">Mpesa Payment</option> 
                                             </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- date -->
+                            </div>
+    
+                            <div class="row">
+                                <!-- patient id -->
+                                <div class="col-sm-6" id="payment_from_1">
+                                    <div class="form-group row">
+                                        <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1"  list="id_data2" required   />
+                                            <datalist id="id_data2">
+                                                {% for entry in patientids %}
+                                                <option value="{{entry}}">{{ entry }}</option>
+                                               {% endfor %}
+                                                    </datalist>
+                                        </div>  
+                                    </div>
+                                </div>
+                               
+                                <!-- patient -->
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Date</label>
+                                        <div class="col-sm-6">
+                                    <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
                                         </div>
                                     </div>
                                 </div>
@@ -326,17 +346,51 @@ $('#insert_sale').on('change',"input" ,function(e) {
                         return false;
                     }
                   let previousbal='';
+                  let patientid='';
                   
                             for(let patient of data.Patient){
                                 previousbal +=  patient.debt
-              
+                                patientid =patient.patient_Id
                              }
                             document.getElementById('previous').value=previousbal
+                            document.getElementById('patient_Id').value=patientid
                  });
                 
                 });
             
             }
+            if(target.matches("input#patient_Id")){
+            var target=target.value
+            prod=target
+            console.log(prod)
+            originalString = prod; 
+            newString = originalString.replace('/', '');
+            console.log(newString)
+            fetch('/patientdatabyId/' + newString).then(function(response){
+                response.json().then(function(data){
+                    console.log(data)
+                    var lentha=data.Patient.length
+                    if (lentha==0){
+                    alert("That Patient is not registered!");
+                       $("#patient_name").val() = '';
+                        return false;
+                    }
+                  let previousbal='';
+                  let patientname='';
+                  
+                            for(let patient of data.Patient){
+                                previousbal +=  patient.debt
+                                patientname =patient.name
+              
+                             }
+                            document.getElementById('previous').value=previousbal
+                            document.getElementById('patient_name').value=patientname
+                 });
+                
+                });
+            
+            }
+            
         });
 
      $('#normalinvoice').on("click","input" ,function(e) {
