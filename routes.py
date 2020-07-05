@@ -1,7 +1,7 @@
 from flask import  render_template,url_for,redirect,flash,request,jsonify,make_response,session,g
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from main import app,db
-from forms import LoginForm,RegisterForm
+from forms import LoginForm,RegisterForm,allroles
 from models import User,Product,Supplier,product_orders,product_purchases,Purchase,Order,Expense,TrackExpense,\
     PurchaseItems,Customer,OrderItems
 import time,datetime
@@ -66,7 +66,7 @@ def signup():
     form=RegisterForm()
     if form.validate_on_submit():
         hashed_password= generate_password_hash(form.password.data, method='sha256')
-        newuser = User(username=form.username.data, password=hashed_password )
+        newuser = User(username=form.username.data,role=dict(allroles).get(form.memberrole.data), password=hashed_password )
         db.session.add(newuser)
         try:
             db.session.commit()
@@ -77,6 +77,15 @@ def signup():
             flash(f'This User already exists','danger')
             return redirect(url_for('signup'))
     return render_template('adduser.html', form=form)
+
+# Users
+#all system Users
+@app.route('/allusers/',methods=['GET','POST'])
+@login_required
+@required_roles('Admin')
+def AllUsers():
+    users=User.query.all()
+    return render_template('allusers.html')
 
 @app.route('/Dashboard/',methods=['GET','POST'])
 @login_required

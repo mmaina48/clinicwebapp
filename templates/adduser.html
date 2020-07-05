@@ -35,25 +35,35 @@
   <!-- ============================================================== -->
   <!-- end pageheader -->
   <!-- ============================================================== -->
-  <div class="row">
+  <div class="row" class="">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-          <div class="card">
+          <div class="card" style="width: 80%;" class="justify-content-center">
               <h3 class="card-header">Please enter user information.</h3>
           
               <div class="card-body">
         <form action="{{url_for('signup')}}" method="POST">
-            <div class="card">
+          
+            <div class="card" >
+              <div class="row"></div>
                 <div class="card-body">
                       {{ form.csrf_token() }}
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                       <label  class="col-form-label">username:</label>
                     {{form.username(class="form-control")}}
-                    <br>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                    <label  class="col-form-label">Role:</label>
+                    {{form.memberrole(class="form-control")}}
+                   </div>
+                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                     <label  class="col-form-label">Password:</label>
                     {{form.password(class="form-control") }}
-                <div class="form-group pt-2">
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                   {{ form.submit(class="btn btn-success") }}
                 </div>
-             </div>     
+             </div>   
+            </div>  
         </form>
               </div>
           </div>
