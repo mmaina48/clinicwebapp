@@ -234,6 +234,7 @@
     var rowCnt = empTab.rows.length;   // table row count.
     var tr = empTab.insertRow(rowCnt); // the table row.
     tr = empTab.insertRow(rowCnt);
+    tr.setAttribute("id","addedrow")
     
     for (var c = 0; c < 8; c++) {
         var td = document.createElement('td'); // table definition.
@@ -697,8 +698,8 @@ function checkqty()
 function send() {
     
     var checkdate= document.getElementById('dtpDate').value
-    
     var myTab =  document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
+    console.log(myTab)
     var arrValues = new Array();
     // loop through each row of the table.
     for (row = 0; row < myTab.rows.length; row++) {
@@ -748,11 +749,10 @@ function send() {
                     alert("Successfully Added")
                     $('#successAlert').text(data.name).show();
                     $('#errorAlert').hide();
+                    $("#insert_sale")[0].reset();
+                    $('#addedrow').remove();
                     
-                    location.reload();
-                    return false;
-                
-                    // document.getElementById("insert_sale").reset();
+                    
                 },
                 error: function(error){
                     alert("Please Make sure the Date fied or Qty are not empty!")

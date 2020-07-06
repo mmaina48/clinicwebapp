@@ -9,6 +9,7 @@ function addRow() {
     for (var c = 0; c < 6; c++) {
         var td = document.createElement('td'); // table definition.
         td = tr.insertCell(c);
+        tr.setAttribute("id","addedrow")
 
         if (c == 5) {     
             var button = document.createElement('input');

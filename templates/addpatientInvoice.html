@@ -234,12 +234,11 @@
     var rowCnt = empTab.rows.length;   // table row count.
     var tr = empTab.insertRow(rowCnt); // the table row.
     tr = empTab.insertRow(rowCnt);
+    tr.setAttribute("id","addedrow")
     
     for (var c = 0; c < 8; c++) {
         var td = document.createElement('td'); // table definition.
         td = tr.insertCell(c);
-
-
 
         if (c == 7) {     
             var button = document.createElement('input');
@@ -748,11 +747,8 @@ function send() {
                     alert("Successfully Added")
                     $('#successAlert').text(data.name).show();
                     $('#errorAlert').hide();
-                    
-                    location.reload();
-                    return false;
-                
-                    // document.getElementById("insert_sale").reset();
+                    $("#insert_sale")[0].reset();
+                    $('#addedrow').remove();
                 },
                 error: function(error){
                     alert("Please Make sure the Date fied or Qty are not empty!")

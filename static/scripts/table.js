@@ -49,8 +49,9 @@ $.ajax({
         alert("Purchase Successfully Added")
         $('#successAlert').text(data.name).show();
         $('#errorAlert').hide();
-        location.reload();
-        return false;
+        $("#insert_purchase")[0].reset();
+        $('#addedrow').remove();
+        
        
     },
     error: function(error){

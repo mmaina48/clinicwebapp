@@ -25,6 +25,25 @@
 </head>
 
 <body>
+    <style type="text/css">
+
+        BODY, TD
+        {
+            /* background-color: #e9e5e5; */
+            color: #000000;
+            font-family: "Times New Roman", Times, serif;
+            font-weight: 900;
+            
+            /* font-size: 10pt; */
+        }
+        th, td {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .nav-left-sidebar{
+            background-color:#070420;
+        }
+    </style>
     <!-- ============================================================== -->
     <!-- main wrapper -->
     <!-- ============================================================== -->
@@ -91,7 +110,7 @@
                                 </div>
                                
                                 <a class="dropdown-item" href="{{url_for('signup')}}"><i class="fas fa-cog mr-2"></i>Add Users</a>
-                                <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>All Users</a>
+                                <a class="dropdown-item" href="{{url_for('AllUsers')}}"><i class="fas fa-user mr-2"></i>All Users</a>
                                 <a class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
                             </div>
                         </li>
@@ -114,9 +133,9 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav flex-column">
-                            <li class="nav-divider">
+                            <!-- <li class="nav-divider">
                                 Menu
-                            </li>
+                            </li> -->
                             <li class="nav-item ">
                                 <a class="nav-link active " href="{{url_for('dashbord')}}" >Dashboard<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
@@ -203,6 +222,7 @@
     <script src="{{ url_for('static', filename='scripts/d3-5.4.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/dashboard-ecommerce.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/jquery.multi-select.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/data-table.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -243,8 +263,8 @@ $(document).ready( function() {
 
     var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
 
-   $('.dtpDate').val(today);
-   $('.todtpDate').val(today)
+   $('#dtpDate').val(today);
+   $('#todtpDate').val(today)
 
 });
         </script>
