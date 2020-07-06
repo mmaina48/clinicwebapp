@@ -24,6 +24,9 @@
         align-items: center;
         padding-top: 40px;
         padding-bottom: 40px;
+        color: rgb(7, 8, 7);
+        /* background-color: rgb(93, 180, 129); */
+        background-color: #009688;;
     }
     </style>
 </head>
@@ -35,7 +38,7 @@
     
     <div class="splash-container">
         <div class="card ">
-            <div class="card-header text-center"><span class="splash-description">Please enter your user information.</span></div>
+            <div class="card-header text-center"><span class="splash-description">Enter the credentials to Log in.</span></div>
             <div class="container">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                   {%if messages %}
@@ -62,7 +65,7 @@
                         {{ form.password(class="form-control",placeholder="password", type="password") }}
                     </div>
                     
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+                    <button type="submit" class="btn btn-success btn-lg btn-block">Log In</button>
                 </form>
             </div>
             <div class="card-footer bg-white p-0  ">

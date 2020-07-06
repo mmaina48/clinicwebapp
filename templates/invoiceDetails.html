@@ -36,6 +36,21 @@
             document.body.innerHTML = originalContents;
         }
         </script>
+    <style type="text/css">
+
+        BODY, TD
+        {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: "Times New Roman", Times, serif;
+            /* font-size: 10pt; */
+        }
+        th, td {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    
+    </style>
     <!-- ============================================================== -->
     <!-- end pageheader  -->
     <!-- ============================================================== -->
@@ -86,6 +101,7 @@
                                                         <th class="text-center">Amount</th>
                                                     </tr>
                                                 </thead>
+
                                                 <tbody>
                                                     {% for product in product_purchase %}
                                                     <tr>
@@ -132,7 +148,7 @@
                                                     </tr>				 
                                                                                                 <tr>
                                                             <th class="text-left grand_total">Due : </th>
-                                                            <td  class="text-right grand_total">Ksh{{order.total_due}}</td>
+                                                            <td  class="text-right grand_total">Ksh{{order.due_balance}}</td>
                                                         </tr>
                                                                                             </table>
                                             </div>

@@ -25,7 +25,7 @@
               <div class="page-breadcrumb">
                   <nav aria-label="breadcrumb">
                       <ol class="breadcrumb">
-                          <li class="breadcrumb-item active" aria-current="page"><a href="{{url_for('AllUsers')}}" ><button type="button" class="btn btn-primary">All Users</button></a></li>
+                          <li class="breadcrumb-item active" aria-current="page"><a href="" ><button type="button" class="btn btn-outline-primary">All Users</button></a></li>
                       </ol>
                   </nav>
               </div>
@@ -49,18 +49,19 @@
                       {{ form.csrf_token() }}
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                       <label  class="col-form-label">username:</label>
-                    {{form.username(class="form-control")}}
+                    {{form.editusername(class="form-control" , value=editeduser.username)}}
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                     <label  class="col-form-label">Role:</label>
-                    {{form.memberrole(class="form-control")}}
+                    {{form.editmemberrole(class="form-control",value=editeduser.role)}}
                    </div>
                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                     <label  class="col-form-label">Password:</label>
-                    {{form.password(class="form-control") }}
+                    {{form.editpassword(class="form-control" , value=editeduser.password) }}
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                   {{ form.submit(class="btn btn-success") }}
+                  <a href = "{{ url_for('AllUsers')}}"><button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>  </a>
                 </div>
              </div>   
             </div>  

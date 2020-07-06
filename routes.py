@@ -1,7 +1,7 @@
 from flask import  render_template,url_for,redirect,flash,request,jsonify,make_response,session,g
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from main import app,db
-from forms import LoginForm,RegisterForm,allroles
+from forms import LoginForm,RegisterForm,allroles,changepassForm
 from models import User,Product,Supplier,product_orders,product_purchases,Purchase,Order,Expense,TrackExpense,\
     PurchaseItems,Customer,OrderItems
 import time,datetime
@@ -62,6 +62,8 @@ def login():
     return render_template('login.html',form=form)
 
 @app.route('/signup/',methods=['GET','POST'])
+@login_required
+@required_roles('Admin')
 def signup():
     form=RegisterForm()
     if form.validate_on_submit():
@@ -71,7 +73,7 @@ def signup():
         try:
             db.session.commit()
             flash(f' {newuser.username} Successfully Added!', 'success')
-            return redirect(url_for('dashbord'))
+            return redirect(url_for('AllUsers'))
         except IntegrityError:
             db.session.rollback()
             flash(f'This User already exists','danger')
@@ -85,7 +87,40 @@ def signup():
 @required_roles('Admin')
 def AllUsers():
     users=User.query.all()
-    return render_template('allusers.html')
+    return render_template('allusers.html',users=users)
+
+#Edit User
+@app.route('/users/<int:user_id>/edit/', methods = ['GET', 'POST'])
+@login_required
+@required_roles('Admin')
+def editUser(user_id):
+    form = changepassForm()
+    editeduser =User.query.filter_by(id = user_id).one()
+    hashed_password= generate_password_hash(form.editpassword.data, method='sha256')
+    if request.method == 'POST':
+        if form.editusername.data:
+          editeduser.username = form.editusername.data
+        if form.editpassword.data:
+          editeduser.password = hashed_password
+        if form.editmemberrole.data:
+          editeduser.password = form.editmemberrole.data
+        db.session.add(editeduser)
+        db.session.commit() 
+        flash(f'{form.editusername.data}  has been updated!', 'success')
+        return redirect(url_for('AllUsers'))
+    else:
+        return render_template('edituser.html',user_id=user_id,editeduser = editeduser,form=form)
+
+#Delete Patient
+@app.route('/user/<int:user_id>/delete/', methods = ['POST'])
+@login_required
+def deleteUser(user_id):
+        userToDelete =User.query.filter_by(id = user_id).one()
+        db.session.delete(userToDelete)
+        db.session.commit()
+        flash(f'User successfully Deleted!','danger')
+        return redirect(url_for('AllUsers'))
+
 
 @app.route('/Dashboard/',methods=['GET','POST'])
 @login_required
@@ -130,7 +165,6 @@ def AddCustomer():
             return redirect(url_for('AddCustomer'))
     else:
         return render_template('addCustomer.html',opd=opd)
-
 
 
 #Edit Patient
@@ -540,6 +574,7 @@ def deleteSupplier(supplier_id):
         db.session.commit()
         flash(f'Supplier successfully Deleted!','danger')
         return redirect(url_for('AllSuppliers', supplier_id = supplier_id))
+
 # Supplier API
 @app.route('/supplierdata/<supplier>')
 def supplierdata(supplier):

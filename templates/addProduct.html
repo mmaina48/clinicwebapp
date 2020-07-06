@@ -58,7 +58,7 @@
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                                 <label for="validationCustom04">Type</label>
                                 <div class="col-sm-6">
-                                    <select name="product_type" id="product_type" class="form-control" required="" >
+                                    <select name="product_type" id="product_type" onchange="myFunction()" class="form-control" required="" >
                                         <option value="Medication">Medication</option>
                                         <option value="Service">Service</option> 
                                     </select>
@@ -77,7 +77,7 @@
                             </div>
                                 <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                                     <label>Reorder Level</label>
-                                    <input required="" type="text" name="reoder_level"min="0" max="1000000000000" placeholder="Enter Reorder-Level" class="form-control">
+                                    <input required="" type="text" id="reoder_level" name="reoder_level"min="0" max="1000000000000" placeholder="Enter Reorder-Level" class="form-control">
                                     <div class="invalid-feedback">
                                         Please provide a valid Reorder-Level.
                                     </div>
@@ -102,4 +102,15 @@
         <!-- ============================================================== -->
     </div>
       </div>
+      {% endblock %}
+      {% block script%}
+      <script>
+          function myFunction() {
+          var x = document.getElementById("product_type").value;
+          if (x ==='Service'){
+            document.getElementById("reoder_level").value= "0"
+          }
+       
+           }
+      </script>
       {% endblock %}

@@ -15,12 +15,11 @@ class RegisterForm(FlaskForm):
     memberrole = SelectField('Select Role',choices=allroles)
     submit = SubmitField('Add User')
 
-class addproduct(FlaskForm):
-    prodname = StringField('Product Name', validators=[DataRequired()])
-    prodtype = StringField('Product Type', validators=[DataRequired()])
-    sellprice=IntegerField('Sell Price', validators=[NumberRange(min=0, max=1000000),DataRequired()])
-    reoderlevel=IntegerField('Reoder Level', validators=[NumberRange(min=0, max=1000000),DataRequired()])
-    prodsubmit = SubmitField('Save Changes')
+class changepassForm(FlaskForm):
+    editusername = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    editpassword = PasswordField('password', validators=[InputRequired(), Length(min=4, max=80)])
+    editmemberrole = SelectField('Select Role',choices=allroles)
+    submit = SubmitField('save')
 
 
 
