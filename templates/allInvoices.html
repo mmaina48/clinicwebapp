@@ -70,7 +70,7 @@
                                   <th>Total</th>
                                   <th>NetTotal</th>
                                   <th>Paid Amount</th>
-                                  <th>Current debt</th>
+                                 
                                   <th>Action</th>
                                  
                               </tr>
@@ -84,7 +84,7 @@
                                  <td >{{invoice.total_amount}}</td>
                                  <td>{{invoice.net_total}}</td>
                                  <td >{{invoice.payment_amount}}</td>
-                                 <td >{{invoice.due_balance}}</td>
+                                 
                                   <td>
                                     <div class="btn-group">
                                       <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -92,6 +92,7 @@
                                       </button>
                                       <div class="dropdown-menu">
                                         <a class="dropdown-item" href="{{url_for('InvoiceDetail', invoice_id =invoice.id)}}">View</a>
+                                        <a class="dropdown-item" href="{{url_for('InvoiceUpdate', invoice_id =invoice.id)}}">update</a>
                                         <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{invoice.id}}"href="#">Delete</a>
                                        
                                     </div>
@@ -122,7 +123,7 @@
                               <th id="val2" ></th>
                               <th id="val3"></th>
                               <th id="val4" ></th>
-                              <th id="val5" ></th>
+                             
                               <td></td>
                           </tr>
                           </tfoot>
@@ -148,21 +149,21 @@
         billtotal=0;
         netamount=0;
         paidamount=0;
-        totaldebt=0;
+      
         for(var i = 0; i < table.rows.length; i++)
         {
           predebt =  parseInt(predebt) + parseInt(table.rows[i].cells[2].innerHTML);
           billtotal =  parseInt(billtotal) + parseInt(table.rows[i].cells[3].innerHTML);
           netamount =  parseInt(netamount) + parseInt(table.rows[i].cells[4].innerHTML);
           paidamount =  parseInt(paidamount) + parseInt(table.rows[i].cells[5].innerHTML);
-          totaldebt =  parseInt(totaldebt) + parseInt(table.rows[i].cells[6].innerHTML);
+          
          
         }
         document.getElementById("val").innerHTML =predebt;
         document.getElementById("val2").innerHTML =billtotal;
         document.getElementById("val3").innerHTML =netamount;
         document.getElementById("val4").innerHTML =paidamount;
-        document.getElementById("val5").innerHTML =totaldebt;
+        
   
         $('#filter').click(function(){
         $.fn.dataTable.ext.search.push(

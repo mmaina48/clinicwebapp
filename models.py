@@ -106,6 +106,7 @@ class Order(db.Model):
     orderitems_line = db.relationship('OrderItems', backref='order')
 
 
+
 class OrderItems(db.Model):  
     """ orderitems model """  
     __tablename__ = "orderitems"
@@ -118,7 +119,6 @@ class OrderItems(db.Model):
     total_amount=db.Column(db.Integer, nullable=True)
     order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign key
     product_id = db.Column(db.Integer(), db.ForeignKey('product.id'))
-
 
 class Expense(db.Model):  
     """ Expense model """  

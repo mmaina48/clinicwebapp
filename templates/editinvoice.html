@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
-                <h2 class="pageheader-title">New Invoice</h2>
+                <h2 class="pageheader-title">Update Invoice</h2>
                
                <hr>
             </div>
@@ -37,7 +37,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h3 class="card-header">Add New Invoice</h3>
+                <h3 class="card-header">{{order.customer_name}} Invoice</h3>
             
                 <div class="card-body">
                     <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
@@ -47,7 +47,7 @@
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' id="patient_name" tabindex="1"  list="id_data" required  />
+                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{order.customer_name}}" id="patient_name" tabindex="1"  list="id_data" required  />
                                             <datalist id="id_data">
                                                 {% for entry in patients %}
                                                 <option value="{{entry}}">{{ entry }}</option>
@@ -63,12 +63,15 @@
                                         <label for="customer_name" class="col-sm-4 col-form-label">Payment Type</label>
                                         <div class="col-sm-6">
                                             <select name="paytype" id="paytype" class="form-control" required="" >
+                                                <option selected value="{{order.payment_type}}">{{order.payment_type}}</option>
                                                 <option value="Cash">Cash Payment</option>
                                                 <option value="Mpesa">Mpesa Payment</option> 
+                                                <option value="NHIF">NHIF Payment</option> 
                                             </select>
                                         </div>
                                     </div>
                                 </div>
+                                
                                 
                                 <!-- date -->
                             </div>
@@ -79,7 +82,7 @@
                                     <div class="form-group row">
                                         <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1"  list="id_data2" required placeholder="Enter OPD No"  />
+                                            <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" value="{{order.patient_id}}" tabindex="1"  list="id_data2" required placeholder="Enter OPD No"  />
                                             <datalist id="id_data2">
                                                 {% for entry in patientids %}
                                                 <option value="{{entry}}">{{ entry }}</option>
@@ -94,9 +97,14 @@
                                     <div class="form-group row">
                                         <label for="date" class="col-sm-4 col-form-label">Date</label>
                                         <div class="col-sm-6">
-                                    <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
+                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" required value="{{order.created_on}}" tabindex="6" />
+                                    <!-- <input type="date" class="form-control" value="{{orderdate}}"> -->
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-sm-6" id="payment_from_1">
+                                   
+                                            <input type="hidden"   name="order_id" class=" form-control"  value="{{order.id}}" id="orderid" tabindex="1" readonly />
                                 </div>
                             </div>
                             
@@ -117,9 +125,10 @@
                                         </tr>
                                     </thead>
                                     <tbody id="addinvoiceItem">
+                                        {% for prod in product_purchase %}
                                         <tr>
                                             <td style="width: 200px">
-                                                <input type="text" name="product_name" class="form-control productSelection  text-left" placeholder='Product Name' required="" id="product_name" list="id_datalist" tabindex="7">
+                                                <input type="text" name="product_name" class="form-control productSelection  text-left" value="{{prod.product_name}}" readonly placeholder='Product Name' required="" id="product_name" list="id_datalist" tabindex="7">
                                                 <datalist id="id_datalist">
                                                     {% for entry in products %}
                                                     <option value="{{entry}}">{{ entry }}</option>
@@ -127,51 +136,53 @@
                                                         </datalist>
                                             </td>
                                             <td>
-                                                <input type="text" name="productType"  class="form-control text-center " readonly value=""  id="productType"/>
+                                                <input type="text" name="productType"  class="form-control text-center " value="{{prod.product_type}}" readonly value=""  id="productType"/>
                                             </td>
                                             <td style="width: 120px">
-                                                <select name="Expiry_date" id="ExpDate" class="form-control  text-left" tabindex="7" style="border-color: green;">
-                                                
+                                                <select name="Expiry_date" id="ExpDate"  class="form-control  text-left" tabindex="7" style="border-color: green;">
+                                                    <option selected value="None">{{prod.expiry_date}}</option>
                                                 </select>
                                             </td>
                                             <td>
                                                 <input type="text" name="Aval_quantity" class="form-control text-center available_quantity_1" readonly value=""  id="avlquantity_1"/>
                                             </td>
                                             <td style="width: 120px" >
-                                                <input type="text" name="quantity"  class="form-control text-left" value="" tabindex="9" onkeyup="checkqty()"  id="quantity"/>
+                                                <input type="text" name="quantity"  class="form-control text-left" value="{{prod.quantity}}" tabindex="9" onkeyup="checkqty()"  id="quantity"/>
                                             </td>
                                             <td>
-                                                <input type="text" name="selling_price"  class="selling_price form-control text-left" id="selling_price" placeholder="0.00" min="0" tabindex="9" readonly="readonly"/>
+                                                <input type="text" name="selling_price" value="{{prod.buying_price}}"  class="selling_price form-control text-left" id="selling_price" placeholder="0.00" min="0" tabindex="9" readonly="readonly"/>
                                             </td>
                                             <td style="width: 100px">
-                                                <input class="total_price form-control text-right txtcal" type="text" name="total_price" id="total" value="" placeholder="0.00" readonly="readonly" />
+                                                <input class="total_price form-control text-right txtcal" type="text" name="total_price" id="total" value="{{prod.total_amount}}" placeholder="0.00" readonly="readonly" />
                                             </td>
     
                                             <td>
                                               <button style="text-align: right;" onclick="addRow()" class="btn btn-info btn-sm" type="button" tabindex="12" id="plus">Add-Row</button>
                                             </td>
                                         </tr>
+                                        {% endfor %}   
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td colspan="6"  style="text-align:right;"><b>Grand Total:</b></td>
                                             <td class="text-right">
-                                                 <input type="text" id="grand_total_price" class="form-control text-right txtnet" name="grand_total_price" placeholder="0.00" readonly="readonly" />
-                                                  <input type="hidden" id="txfieldnum" value="2">
+                                                 <input type="text" id="grand_total_price" class="form-control text-right txtnet" name="grand_total_price" placeholder="0.00" value="{{order.total_amount}}" readonly="readonly" />
+                                                  
                                             </td>
                                             <td></td>
                                         </tr>
                                              <tr>
                                         <td colspan="6"  style="text-align:right;"><b>Current Debt:</b></td>
                                         <td class="text-right">
-                                            <input type="text" id="previous" class="form-control text-right txtnet" name="previous" placeholder="0.00"  value="0" readonly="readonly" />
+                                            <input type="text" id="previous" class="form-control text-right txtnet" name="previous" value="{{current_debt}}" placeholder="0.00"  value="0" readonly="readonly" />
                                         </td>
                                         <td></td>
                                     </tr>
+
                                     <tr>
                                         <td colspan="6"  style="text-align:right;"><b>Net Total:</b></td>
                                         <td class="text-right">
-                                            <input type="text" id="nettotal" class="form-control text-right " name="nettotal" placeholder="0.00"  readonly="readonly" />
+                                            <input type="text" id="nettotal" class="form-control text-right " name="nettotal" value="{{order.net_total}}" placeholder="0.00"  readonly="readonly" />
                                         </td>
                                         <td></td>
                                     </tr>
@@ -179,7 +190,7 @@
                                    <td colspan="6" style="text-align:right;" colspan="5"><b>Paid Amount:</b></td>
                                             <td  class="text-right">
                                                 <input type="text" id="paidAmount"
-                                             class="form-control text-right" name="paid_amount" onkeyup="checkqty()" placeholder="0.00" tabindex="13"/>
+                                             class="form-control text-right" name="paid_amount" value="{{order.payment_amount}}" onkeyup="checkqty()" placeholder="0.00" tabindex="13"/>
                                             </td>
                                             <td></td>
                                         </tr>
@@ -197,12 +208,12 @@
                                         </tr>
                                         <tr id="balance_M"><td style="text-align:right;" colspan="6" id="ch_l"><b>Balance:</b></td>
                                             <td class="text-right">
-                                                <input type="text" id="balance" class="form-control text-right" name="balance" value="" placeholder="0.00" readonly="readonly"/>
+                                                <input type="text" id="balance" class="form-control text-right" value="0" name="balance" value="" placeholder="0.00" readonly="readonly"/>
                                             </td>
                                             <td></td></tr>
                                         <tr id="debt_payTR"><td style="text-align:right;" colspan="6" id="ch_u"><b>Debt Payment:</b></td>
                                             <td class="text-right">
-                                                <input type="text" id="debt_pay" class="form-control text-right" name="debt_pay" placeholder="0.00"  readonly="readonly"/>
+                                                <input type="text" id="debt_pay" class="form-control text-right" value="0" name="debt_pay" placeholder="0.00"  readonly="readonly"/>
                                             </td>
                                             <td></td></tr>
                                         
@@ -309,7 +320,7 @@
             ele.setAttribute('readonly','')
             ele.setAttribute('id', "selling_price")
             ele.setAttribute('placeholder', '0.00')
-            ele.setAttribute('class','form-control text-center')
+            ele.setAttribute('class','form-control text-left')
             td.appendChild(ele)
         }
         else {
@@ -363,13 +374,13 @@ $('#insert_sale').on('change',"input" ,function(e) {
             if(target.matches("input#patient_Id")){
             var target=target.value
             prod=target
-            console.log(prod)
+           
             originalString = prod; 
             newString = originalString.replace('/', '');
-            console.log(newString)
+            
             fetch('/patientdatabyId/' + newString).then(function(response){
                 response.json().then(function(data){
-                    console.log(data)
+                   
                     var lentha=data.Patient.length
                     if (lentha==0){
                     alert("That Patient is not registered!");
@@ -409,7 +420,7 @@ $('#insert_sale').on('change',"input" ,function(e) {
 
             fetch('/productdata/' + prod).then(function(response){
                 response.json().then(function(data){
-                    console.log(data)
+                    
                     var lentha=data.Product.length
 
                     let optionHTML = '';
@@ -575,9 +586,8 @@ $('#insert_sale').on('change',"input" ,function(e) {
                 const netTotal=document.getElementById('nettotal').value
                 var paid_net=parseInt(values)-parseInt(netTotal)
                 var paid_grand=parseInt(values)-parseInt(grandtotal)
-
                 if(paid_grand==0 && paid_net<0){
-
+                    
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= 0
@@ -698,9 +708,9 @@ function checkqty()
 
 function send() {
     
-    var checkdate= document.getElementById('dtpDate').value
+    var checkdate= document.getElementById('dtpDate1').value
     var myTab =  document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
-    console.log(myTab)
+   
     var arrValues = new Array();
     // loop through each row of the table.
     for (row = 0; row < myTab.rows.length; row++) {
@@ -741,8 +751,9 @@ function send() {
 
             var tabledata=uniqueNames
             tabledata.push(data)
+            console.log(tabledata)
             $.ajax({
-                url: '/processinvoicedata',
+                url: '/processUpdatedInvoice',
                 data: JSON.stringify(tabledata, null, '\t'),
                 contentType: 'application/json;charset=UTF-8',
                 type: 'POST',
@@ -752,7 +763,8 @@ function send() {
                     $('#errorAlert').hide();
                     $("#insert_sale")[0].reset();
                     $('#addedrow').remove();
-                   
+                    location.reload();
+                    
                     
                 },
                 error: function(error){

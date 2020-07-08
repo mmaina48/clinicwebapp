@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
 import itertools
 from operator import itemgetter 
-from datetime import date,datetime
+from datetime import date,datetime,timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
@@ -43,7 +43,10 @@ def required_roles(*roles):
 def get_current_user_role():
     return g.user.role
 
-   
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=10)
 
 @app.route('/')
 @app.route('/login', methods=['GET','POST'])
@@ -224,7 +227,7 @@ def AddInvoice():
     patientids=[s.patient_id for s in Customer.query.all()]
     return render_template('addInvoice.html',products=products,patients=patients,patientids=patientids)
 
-# patient data API ENDPOINT
+# Get patient data API ENDPOINT
 @app.route('/patientdata/<patient>')
 def Patientdata(patient):
     data= Customer.query.filter_by(name=patient).all()
@@ -239,7 +242,7 @@ def Patientdata(patient):
         dataArray.append(patientobj)
     return jsonify({'Patient': dataArray})
 
-# patient data API ENDPOINT by patient_id
+# Get patient data API ENDPOINT by patient_id
 @app.route('/patientdatabyId/<patientid>')
 def PatientIddata(patientid):
     def insert_str(string, str_to_insert, index):
@@ -286,19 +289,14 @@ def Productqty(product_id):
 @app.route('/processinvoicedata', methods=['POST'])
 def processinvoicedata():
     table= request.json
-   
-    key_list = [] 
-    filter_key=[]
+    print(table)
     product_list=[]
     product_type=[]
     quantityarray=[]
     expiry_array=[]
     price=[]
     total_price=[]
-    for dic in table:
-        for key in dic:
-            key_list.append(key)
-    [filter_key.append(x) for x in key_list if x not in filter_key]     
+        
     
     for data in table:
             for i in data:
@@ -337,7 +335,7 @@ def processinvoicedata():
                     balance=data[i]
                 elif i=="debt_pay":
                     debt_pay=data[i]
-                
+    print(expiry_array)          
     patientToAdd=Customer.query.filter_by(name=patient_name).one()
     patientToAdd.debt +=int(balance)
     patientToAdd.debt -=int(debt_pay)
@@ -357,7 +355,6 @@ def processinvoicedata():
             expry_date_object=purchaseitem.expiry_date
             expry_date= expry_date_object
         
-    
         productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
 
         if (productToreduce is not None) and (expry_date is not None):
@@ -395,6 +392,152 @@ def processinvoicedata():
 def AllInvoices():
     allinvoices=Order.query.all()
     return render_template('allInvoices.html',allinvoices=allinvoices)
+
+
+# edit invoice
+@app.route('/updateinvoice/<int:invoice_id>/edit',methods=['GET','POST'])
+@login_required
+def InvoiceUpdate(invoice_id):
+    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient=order.customer_id
+    patient_name=order.customer_name
+    patient_data=Customer.query.filter_by(name=patient_name).first()
+    current_debt=patient_data.debt
+    patients=[s.name for s in Customer.query.all()]
+    products=[p.product_name for p in Product.query.all()]
+    patientdetails=Customer.query.filter_by(id=patient).one()
+    return render_template('editinvoice.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
+        products=products,current_debt=current_debt)
+
+@app.route('/processUpdatedInvoice',methods=['POST'])
+@login_required
+def UpdateInvoice():
+    table= request.json
+    print(table)
+    product_list=[]
+    product_type=[]
+    quantityarray=[]
+    expiry_array=[]
+    price=[]
+    total_price=[]
+
+    for data in table:
+            for i in data:
+                if i=="patient_name":
+                    patient_name=data[i]
+                elif i=="invoice_date":
+                    invoice_date=data[i]
+                elif i=="patient_Id":
+                    patient_Id=data[i]
+                elif i=="paytype":
+                    paytype=data[i]
+                elif i=="order_id":
+                    order_id=data[i]
+                elif i=="productname":
+                    product_list.append(data[i])
+                elif i=="producttype":
+                    product_type.append(data[i])
+                elif i=="expirydata":
+                    if i:
+                        expiry_array.append(data[i])
+                    else:
+                        expiry_array.append(0)
+                elif i=="quantity":
+                    quantityarray.append(data[i])
+                elif i=="selling_price":
+                    price.append(data[i])
+                elif i=="total_amount":
+                    total_price.append(data[i])
+                elif i=="grand_total_price":
+                    grand_total_price=data[i]
+                elif i=="previous":
+                    previous=data[i]
+                elif i=="nettotal":
+                    nettotal=data[i]
+                elif i=="paid_amount":
+                    paid_amount=data[i]
+                elif i=="balance":
+                    balance=data[i]
+                elif i=="debt_pay":
+                    debt_pay=data[i]
+    
+    print(expiry_array)
+    # update patient debt
+    patientToAdd=Customer.query.filter_by(name=patient_name).one()
+    print(patientToAdd)
+    patientToAdd.debt +=int(balance)
+    patientToAdd.debt -=int(debt_pay)
+
+    order_to_update=Order.query.filter_by(id=order_id).first()
+    orderitems_to_update=OrderItems.query.filter_by(order_id=order_id).all()
+    
+    invoiceDate = invoice_date
+    invoiceDate_object = datetime.strptime(invoiceDate, "%Y-%m-%d").date()
+
+    if patient_name:
+        order_to_update.customer_name=patient_name
+    if paytype:
+        order_to_update.payment_type=paytype
+    if patient_Id:
+        order_to_update.patient_id=patient_Id
+    if invoice_date:
+        order_to_update.created_on=invoiceDate_object
+    if grand_total_price:
+        order_to_update.total_amount=grand_total_price
+    if nettotal:
+        order_to_update.net_total=nettotal
+    if previous:
+        order_to_update.previous=previous
+    if paid_amount:
+        order_to_update.payment_amount=paid_amount
+    if balance:
+        order_to_update.due_balance=balance
+    if debt_pay:
+        order_to_update.paydue_amount=debt_pay
+    
+    for (prod,prodtyp,expry,qty,price,total) in zip(product_list,product_type,expiry_array,quantityarray,price,total_price):
+        
+        product_name=Product.query.filter_by(product_name=prod).one()
+        
+        print(product_name)
+        if (expry !='None') and (expry is not None):
+            purchaseitem=PurchaseItems.query.filter_by(id=expry).one()
+            expry_date_object=purchaseitem.expiry_date
+            expry_date= expry_date_object
+        
+        productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
+        
+        print(productToreduce)
+        if (productToreduce is not None) and (expry_date is not None):
+           
+            productToreduce.quantity -=int(qty)
+            
+            itemlines=OrderItems(product_name=prod,expiry_date=expry_date,product_type=prodtyp,quantity=qty,buying_price=price,\
+            total_amount=total,order=order_to_update,product=product_name)
+            
+            print(itemlines)
+            db.session.add(itemlines)
+            db.session.add(patientToAdd)
+            db.session.add(productToreduce)
+
+            db.session.commit()
+            db.session.commit()
+            db.session.commit()
+            db.session.commit()
+        elif expry is None :
+            
+            itemlines=OrderItems(product_name=prod,product_type=prodtyp,quantity=qty,buying_price=price,\
+            total_amount=total,order=order_to_update,product=product_name)
+            
+            db.session.add(itemlines)
+            db.session.add(patientToAdd)
+
+            
+            db.session.commit()
+            db.session.commit()
+
+    return jsonify({'result':'sucesss'})
 
 # Delete invoice
 @app.route('/delete/<int:invoice_id>/delete/', methods = ['POST'])
@@ -439,7 +582,7 @@ def deleteInvoice(invoice_id):
         flash(f'Invoice  successfully Deleted!','danger')
         return redirect(url_for('AllInvoices'))
 
-# show all items in an order
+# show invoice details
 @app.route('/InvoiceDetails/<int:invoice_id>/',methods=['GET','POST'])
 @login_required
 def InvoiceDetail(invoice_id):
@@ -448,7 +591,8 @@ def InvoiceDetail(invoice_id):
     patient=order.customer_id
     patientdetails=Customer.query.filter_by(id=patient).one()
     return render_template('invoiceDetails.html',product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails)
-    
+
+
 # Products
 @app.route('/products/',methods=['GET','POST'])
 @login_required
@@ -608,17 +752,11 @@ def AddPurchase():
 @app.route('/processpurchasedata', methods=['POST'])
 def processdata():
     table= request.json
-    key_list = [] 
-    filter_key=[]
     product_list=[]
     date=[]
     quantityarray=[]
     price=[]
-    total_amount=[]
-    for dic in table:
-        for key in dic:
-            key_list.append(key)
-    [filter_key.append(x) for x in key_list if x not in filter_key]     
+    total_amount=[]   
     
     for data in table:
             for i in data:

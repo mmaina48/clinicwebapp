@@ -144,7 +144,9 @@ $('#normalpurchase').on("click","input" ,function(e) {
             })
             document.getElementById("nettotal").value=calculated_net_sum
         //   end
-
+        //    start calculating balance
+        
+        // end calculating 
         })
         }
         if(target.matches("input#total_qntt_1")){
