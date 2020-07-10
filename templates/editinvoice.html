@@ -26,13 +26,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="column">
-            <a href="{{url_for('InvoiceDetail', invoice_id =invoice_id)}}" style="float: right;" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Print</a>
-            </div>
-        </div>
-    </div>
+   
     <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong>Success!</strong>Invoice succesfully Added!</div>
     <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -206,8 +200,8 @@
                                             <td align="center">
                                                 <input type="button" id="add_invoice" class="btn btn-success" name="add-invoice" onclick="send()" value="Submit" tabindex="15"/>
                                             </td>
-    
-                                            <td style="text-align:right;" colspan="5"><b>Change:</b></td>
+                                          <td> <a href="{{url_for('InvoiceDetail', invoice_id =invoice_id)}}" style="display: none;" id="print_inv"  class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Print Receipt</a></td>
+                                            <td style="text-align:right;" colspan="4"><b>Change:</b></td>
                                             <td class="text-right">
                                                 <input type="text" id="change" class="form-control text-right" name="change" value="0"  placeholder="0.00" readonly="readonly"/>
                                             </td>
@@ -595,12 +589,15 @@ $('#insert_sale').on('change',"input" ,function(e) {
                 const netTotal=document.getElementById('nettotal').value
                 var paid_net=parseInt(values)-parseInt(netTotal)
                 var paid_grand=parseInt(values)-parseInt(grandtotal)
+
                 if(paid_grand==0 && paid_net<0){
                     
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= 0
                     document.getElementById('dueAmmount').value= netprevious
+                    document.getElementById("full_paid_tab").style.display="block";
+                    document.getElementById("print_inv").style.display="block";
                 }
                 else if(paid_grand<0 && paid_net<0){
                     var total_balance=paid_grand*-1
@@ -608,34 +605,45 @@ $('#insert_sale').on('change',"input" ,function(e) {
                     document.getElementById('balance').value= total_balance
                     document.getElementById('debt_pay').value= 0
                     document.getElementById('dueAmmount').value=parseInt(total_balance)+parseInt(netprevious) 
+                    document.getElementById("full_paid_tab").style.display="none";
+                    document.getElementById("print_inv").style.display="none";
                 }
                 else if(paid_grand>0 && paid_net<0){
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= paid_grand
                     document.getElementById('dueAmmount').value=parseInt(netprevious)- parseInt(paid_grand)
+                    document.getElementById("full_paid_tab").style.display="block";
+                    document.getElementById("print_inv").style.display="block";
                 }
                 else if(paid_grand>0 && paid_net==0){
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= paid_grand
                     document.getElementById('dueAmmount').value=0
+                    document.getElementById("full_paid_tab").style.display="block";
+                    document.getElementById("print_inv").style.display="block";
                 }
                 else if(paid_grand>0 && paid_net>0){
                     document.getElementById('change').value= paid_net
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= netprevious
                     document.getElementById('dueAmmount').value=0
+                    document.getElementById("full_paid_tab").style.display="block";
+                    document.getElementById("print_inv").style.display="block";
                 }
                 else if(paid_grand==0 && paid_net==0){
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= 0
                     document.getElementById('dueAmmount').value=0
+                    document.getElementById("full_paid_tab").style.display="block";
+                    document.getElementById("print_inv").style.display="block";
                 }
-                else if(paid_grand ==grandtotal || paid_grand > grandtotal){
+                else if(paid_grand ==0){
                    
                 document.getElementById("full_paid_tab").style.display="block";
+                document.getElementById("print_inv").style.display="block";
            
                 }
             })
@@ -649,6 +657,7 @@ $('#insert_sale').on('change',"input" ,function(e) {
             if (paid_amount === grandtotal || paid_amount > grandtotal){
                 
                 document.getElementById("full_paid_tab").style.display="block";
+                document.getElementById("print_inv").style.display="block";
             }
              
          });
@@ -786,7 +795,8 @@ function send() {
                 type: 'POST',
                 success: function(response){
                     alert("Successfully Added")
-                    $('#insert_sale').fadeOut(1000).fadeIn(1000);
+                    $('#normalinvoice').fadeOut(2000).fadeIn(2000);
+                    $('#insert_sale').fadeOut(2000).fadeIn(2000);
                     $('#successAlert').text(data.name).show();
                     $('#errorAlert').hide();
                     $("#insert_sale")[0].reset();

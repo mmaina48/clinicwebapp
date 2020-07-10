@@ -50,7 +50,7 @@
                         <h3 class="card-header">Add New Vitals</h3>
                     
                         <div class="card-body">
-                            <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                            <form class="needs-validation" action="{{url_for('PatientVital',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-6" id="payment_from_1">
@@ -68,7 +68,13 @@
                                             <div class="form-group row">
                                                 <label for="customer_name" class="col-sm-4 col-form-label">Visit Type</label>
                                                 <div class="col-sm-6">
-                                                    <input type="text"   name="Visit_Type" class=" form-control"  id="Visit_Type"  tabindex="1" readonly  required  />
+                                                    <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
+                                                        <option value="{{vistType}}" selected="">{{vistType}}
+                                                        </option>
+                                                        <option value="OPD">Out-Patient</option>
+                                                        <option value="IP">In-Patient</option> 
+                                                        <option value="FP">Family Planing</option> 
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,7 +86,7 @@
                                         <!-- patient id -->
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
-                                                <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
+                                                <label for="patient_id" class="col-sm-4 col-form-label">Clinic No</label>
                                                 <div class="col-sm-6">
                                                     <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1" value="{{patient.patient_id}}" required readonly  />
                                                     
@@ -102,7 +108,7 @@
                                  </div>
                                  </div>
                                     <div class="table-responsive" style="margin-top: 10px">
-                                        <table class="table table-bordered table-hover" id="normalinvoice">
+                                        <table class="table table-bordered table-hover" id="vitals">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center" >Height</th>
@@ -124,10 +130,10 @@
                                              
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_weight"  class="form-control text-center " placeholder="weight"  id="productType"/>
+                                                        <input type="text" name="patient_weight"  class="form-control text-center " placeholder="weight"  id="patient_weight"/>
                                                     </td>
                                                     <td >
-                                                        <input type="text" name="patient_BMI" class="form-control text-left" placeholder='BMI' readonly id="patient_height"  tabindex="7">
+                                                        <input type="text" name="patient_BMI" class="form-control text-left" placeholder='BMI' readonly id="patient_BMI"  tabindex="7">
                                                     </td>
                                                     <td>
                                                         <input type="text" name="patient_Temp" class="form-control text-center " placeholder="Temparature"  id="patient_Temp"/>
@@ -154,7 +160,7 @@
                                            
                                                 <tr>
                                                     <td align="center">
-                                                        <input type="button" id="add_vitals" class="btn btn-success" name="add_vitals" onclick="send()" value="Submit" tabindex="15"/>
+                                                        <input type="submit" id="add_vitals" class="btn btn-success" name="add_vitals" onclick="send()" value="Submit" tabindex="15"/>
                                                     
                                                 </tr>
                                                 
@@ -180,9 +186,71 @@
       {% block script %}
       <script>
            
-      $(function () {
-       $('#myTab a:last').tab('show')
-      })
+    //   $(function () {
+    //    $('#myTab a:last').tab('show')
+    //   })
+
+    //   calculate BMI
+    $('#vitals').on("click","input" ,function(e) {
+        var target=e.target
+        if(target.matches("input#patient_height")){
+           var events=['keyup','change','keydown'];
+           for (i = 0; i < events.length; i++){
+
+            target.addEventListener(events[i] ,function(){
+            const height =target.value;
+            
+            var weight= target.parentNode.parentNode.children[1].children[0].value
+            console.log(weight)
+            var BMI= target.parentNode.parentNode.children[2].children[0]
+            var Height_val=parseFloat(height)
+            var Weight_val=parseInt(weight)
+            console.log(Height_val,Weight_val)
+            
+            const height_meters= parseFloat(height/3.2808398950131)
+            const sqr_height= parseFloat(height_meters * height_meters)
+            console.log(height_meters,sqr_height)
+            const BMI_value=((Weight_val/sqr_height).toFixed(2))
+
+            document.getElementById('patient_BMI').value=BMI_value
+
+
+            })
+           }
+        }
+        if(target.matches("input#patient_weight")){
+           var events=['keyup','change','keydown'];
+           for (i = 0; i < events.length; i++){
+
+            target.addEventListener(events[i] ,function(){
+            const weight =target.value;
+            
+            var height= target.parentNode.parentNode.children[0].children[0].value
+            console.log(weight)
+            console.log(height)
+            var BMI= target.parentNode.parentNode.children[2].children[0]
+            var Height_val=parseFloat(height)
+            var Weight_val=parseInt(weight)
+            console.log(Height_val,Weight_val)
+            
+            const height_meters= parseFloat(height/3.2808398950131)
+            const sqr_height= parseFloat(height_meters * height_meters)
+            console.log(height_meters,sqr_height)
+            const BMI_value=((Weight_val/sqr_height).toFixed(2))
+            
+            if (isNaN(BMI_value)){
+                document.getElementById('patient_BMI').value='0'
+            }
+            else{
+                document.getElementById('patient_BMI').value=BMI_value
+            }
+        })
+           }
+        }
+    })
+
+
+    // End calculate BMI
           </script>
     
       {% endblock %}

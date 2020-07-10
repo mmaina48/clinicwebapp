@@ -17,15 +17,7 @@
     {%endwith%}
   </div>
   <div>
-    <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="page-header">
-                <h2 class="pageheader-title">New Patient</h2>
-                
-               <hr>
-            </div>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="column">
@@ -49,12 +41,12 @@
                       <form action="{{url_for('AddCustomer')}}" class="form-vertical" id="insert_customer" method="post" accept-charset="utf-8">
                         <div class="panel-body">
                             <div class="form-group row">
-                                <label for="customer_name" class="col-sm-3 col-form-label">OPD Number:<i class="text-danger">*</i></label>
+                                <label for="customer_name" class="col-sm-3 col-form-label">Clinic Number:<i class="text-danger">*</i></label>
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" name="patient_opd" id="patient_opd" readonly  value="{{opd}}">
                                 </div>
                             </div>
-    
+                          
                             <div class="form-group row">
                                 <label for="customer_name" class="col-sm-3 col-form-label">Name:<i class="text-danger">*</i></label>
                                 <div class="col-sm-6">
@@ -79,6 +71,7 @@
                                     </select>
                                 </div>
                             </div>
+                           
                             <div class="form-group row">
                                 <label for="mobile" class="col-sm-3 col-form-label">Mobile No:<i class="text-danger">*</i></label>
                                 <div class="col-sm-6">

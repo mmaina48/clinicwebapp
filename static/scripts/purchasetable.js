@@ -191,28 +191,34 @@ $('#normalpurchase').on("click","input" ,function(e) {
                     document.getElementById('balance').value= total_balance
                     document.getElementById('dueAmmount').value=parseInt(total_previous) + parseInt(total_balance)
                     document.getElementById('OpenBalance').value= 0
+                    document.getElementById("full_paid_tab").style.display="none";
                 }
                 else if(paid_grand==0 && paid_net<0){
                     document.getElementById('balance').value= 0
                     document.getElementById('dueAmmount').value= parseInt(total_previous)
                     document.getElementById('OpenBalance').value= 0
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand>0 && paid_net<0){
                     document.getElementById('balance').value= 0
                     document.getElementById('dueAmmount').value=parseInt(total_previous)- parseInt(paid_grand)
                     document.getElementById('OpenBalance').value= paid_grand
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand>0 && paid_net==0){
                     document.getElementById('balance').value= 0
                     document.getElementById('dueAmmount').value= 0
                     document.getElementById('OpenBalance').value= total_previous
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand==0 && paid_net==0){
                     document.getElementById('balance').value= 0
                     document.getElementById('dueAmmount').value= 0
                     document.getElementById('OpenBalance').value= 0
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_net>0 && paid_grand>0){
+                   
                     alert("Your Paying More than Net-Total");
                     $("#paidAmount").value = '';
                     return false;

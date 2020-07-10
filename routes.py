@@ -156,10 +156,13 @@ def AddCustomer():
     opd=patientid(pid)
 
     if request.method == 'POST':
-        newcustomer = Customer(patient_id=request.form['patient_opd'],name=request.form['patient_name'],age=request.form['age'],gender=request.form['gendertype'],patient_phone=request.form['patient_phone'],\
-            nhif_no=request.form['patient_nhif_no'],National_id=request.form['patient_National_id'])
-        db.session.add(newcustomer)
+       
         try:
+            newcustomer = Customer(patient_id=request.form['patient_opd'],name=request.form['patient_name'],\
+            age=request.form['age'],gender=request.form['gendertype'],\
+            patient_phone=request.form['patient_phone'],nhif_no=request.form['patient_nhif_no'],\
+            National_id=request.form['patient_National_id'])
+            db.session.add(newcustomer)
             db.session.commit()
             flash(f' {newcustomer.name} Successfully Added!', 'success')
             return redirect(url_for('AddCustomer'))
@@ -169,7 +172,6 @@ def AddCustomer():
             return redirect(url_for('AddCustomer'))
     else:
         return render_template('addCustomer.html',opd=opd)
-
 
 #Edit Patient
 @app.route('/patients/<int:customer_id>/edit/', methods = ['GET', 'POST'])
@@ -209,12 +211,48 @@ def deletePatient(patient_id):
 # ----------------------------------------------------------------
 # Vitals
 
+
 @app.route('/patientvisit/<int:patient_id>/', methods=['GET','POST'])
 @login_required
-def PatientVisit(patient_id):
+def PatientVital(patient_id):
     patient=Customer.query.filter_by(id=patient_id).one()
-    return render_template('consultation.html',patient_id=patient_id,patient=patient)
+    clinicid=patient.patient_id
+    today = date.today()
+    todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
+    if todaysinvoice:
+        vistType=todaysinvoice.visit_type
+    else:
+        vistType='OPD'
 
+    if request.method == 'POST':
+        # convert stringto date object because SQLite Date type only accepts Python date objects as input
+
+        vitalDate = request.form['invoice_date']
+        vitalDate_object = datetime.strptime(vitalDate, "%Y-%m-%d").date()
+        newVital=Visits(patient_name=request.form['patient_name'],\
+            patient_id=request.form['patient_Id'],visit_type=request.form['visittype'],visit_date=vitalDate_object,\
+            height=request.form['patient_height'],weight=request.form['patient_weight'],\
+            BMi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
+            bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
+            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'])
+        db.session.add(newVital)
+        try:
+            db.session.commit()
+            
+            flash(f' {newVital.patient_name} Vitals Successfully Added!', 'success')
+            return redirect(url_for('PatientVital',patient_id=patient_id))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Try Again ','danger')
+            return redirect(url_for('PatientVital',patient_id=patient_id))
+    else:
+        return render_template('vitals.html',patient_id=patient_id,patient=patient,\
+            vistType=vistType)
+
+
+    
+
+#new patient vital
 @app.route('/patients/<int:patient_id>/')
 @app.route('/patients/<int:patient_id>/visits/')
 @login_required
@@ -330,6 +368,8 @@ def processinvoicedata():
                     patient_Id=data[i]
                 elif i=="paytype":
                     paytype=data[i]
+                elif i=="visittype":
+                    visittype=data[i]
                 elif i=="productname":
                     product_list.append(data[i])
                 elif i=="producttype":
@@ -371,7 +411,7 @@ def processinvoicedata():
     receive_amount=int(paid_amount)- int(change)
  
     newinvoice=Order(customer_name=patient_name,patient_id=patient_Id,created_on=invoiceDate_object,payment_type=paytype,\
-        payment_amount=receive_amount,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
+        payment_amount=receive_amount,visit_type=visittype,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
     
     for (prod,prodtyp,expry,qty,price,total) in zip(product_list,product_type,expiry_array,quantityarray,price,total_price):
         

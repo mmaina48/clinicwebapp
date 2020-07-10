@@ -40,18 +40,19 @@ class Customer(db.Model):
 class Visits(db.Model):
     __tablename__ = 'visit'
     id = db.Column(db.Integer(), primary_key=True)
-    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
     patient_name = db.Column(db.String(255), nullable=False)
     patient_id=db.Column(db.String(), nullable=False)
     visit_type=db.Column(db.String(255), nullable=False)
     visit_date=db.Column(db.Date(), nullable=False)
     height=db.Column(db.String(), nullable=True)
+    weight=db.Column(db.String(), nullable=True)
     BMi=db.Column(db.Integer,nullable=True)
     temparature=db.Column(db.String(), nullable=True)
     bloodpressure=db.Column(db.String(), nullable=True)
     pulse=db.Column(db.String(), nullable=True)
     respiratory_rate=db.Column(db.String(), nullable=True)
-    bloodpressure=db.Column(db.String(), nullable=True)
+    oxygesaturation=db.Column(db.String(), nullable=True)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
 
@@ -95,7 +96,6 @@ class PurchaseItems(db.Model):
     product_id = db.Column(db.Integer(), db.ForeignKey('product.id'))
    
 
-
 class Product(db.Model):  
     """ Product model """  
     __tablename__ = "product"
@@ -108,6 +108,7 @@ class Product(db.Model):
     orderitems_line = db.relationship('OrderItems', backref='product')
    
 
+
 class Order(db.Model):  
     """ Orders model """  
     __tablename__ = "orders"
@@ -115,6 +116,7 @@ class Order(db.Model):
     created_on = db.Column(db.Date(), nullable=False)
     inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
     customer_name = db.Column(db.String(), nullable=False)
+    visit_type=db.Column(db.String(255), nullable=False)
     patient_id=db.Column(db.String(), nullable=True)
     previous=db.Column(db.Integer, nullable=False)
     total_amount= db.Column(db.Integer, nullable=False)
@@ -125,7 +127,6 @@ class Order(db.Model):
     paydue_amount=db.Column(db.Integer, nullable=False)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
     orderitems_line = db.relationship('OrderItems', backref='order')
-
 
 
 class OrderItems(db.Model):  

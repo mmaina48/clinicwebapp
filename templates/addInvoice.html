@@ -56,7 +56,7 @@
                                     </div>
                                 </div>
 
-                                <!-- date -->
+                                
                                 <div class="col-sm-6" id="payment_from_1">
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Payment Type</label>
@@ -94,6 +94,21 @@
                                         <label for="date" class="col-sm-4 col-form-label">Date</label>
                                         <div class="col-sm-6">
                                     <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
+                                        <div class="col-sm-6">
+                                            <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
+                                                <option value="OPD" selected="">Out-Patient
+                                                </option>
+                                                <option value="IP">In-Patient</option> 
+                                                <option value="FP">Family Planing</option> 
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -582,6 +597,7 @@ $('#insert_sale').on('change',"input" ,function(e) {
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= 0
                     document.getElementById('dueAmmount').value= netprevious
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand<0 && paid_net<0){
                     var total_balance=paid_grand*-1
@@ -589,24 +605,28 @@ $('#insert_sale').on('change',"input" ,function(e) {
                     document.getElementById('balance').value= total_balance
                     document.getElementById('debt_pay').value= 0
                     document.getElementById('dueAmmount').value=parseInt(total_balance)+parseInt(netprevious) 
+                    document.getElementById("full_paid_tab").style.display="none";
                 }
                 else if(paid_grand>0 && paid_net<0){
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= paid_grand
                     document.getElementById('dueAmmount').value=parseInt(netprevious)- parseInt(paid_grand)
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand>0 && paid_net==0){
                     document.getElementById('change').value= 0
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= paid_grand
                     document.getElementById('dueAmmount').value=0
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand>0 && paid_net>0){
                     document.getElementById('change').value= paid_net
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= netprevious
                     document.getElementById('dueAmmount').value=0
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
                 else if(paid_grand==0 && paid_net==0){
                     document.getElementById('change').value= 0
@@ -754,7 +774,8 @@ function send() {
                 type: 'POST',
                 success: function(response){
                     alert("Successfully Added")
-                    $('#insert_sale').fadeOut(2000).fadeIn(2000);
+                    $('#normalinvoice').fadeOut(1500).fadeIn(1500);
+                    $('#insert_sale').fadeOut(1500).fadeIn(1500);
                     $('#successAlert').text(data.name).show();
                     $('#errorAlert').hide();
                     $("#insert_sale")[0].reset();
