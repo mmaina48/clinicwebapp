@@ -21,7 +21,6 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="page-header">
                 <h2 class="pageheader-title">New Invoice</h2>
-               
                <hr>
             </div>
         </div>
@@ -176,12 +175,12 @@
                                         <td></td>
                                     </tr>
                                     <tr>
-                                   <td colspan="6" style="text-align:right;" colspan="5"><b>Paid Amount:</b></td>
+                                   <td colspan="6" style="text-align:right;" colspan="4"><b>Paid Amount:</b></td>
                                             <td  class="text-right">
                                                 <input type="text" id="paidAmount"
                                              class="form-control text-right" name="paid_amount" onkeyup="checkqty()" placeholder="0.00" tabindex="13"/>
                                             </td>
-                                            <td></td>
+                                            <td><input type="button" id="full_paid_tab" class="btn btn-warning" style="display: none;"  value="Fully Paid" tabindex="14"/></td>
                                         </tr>
                                         <tr>
                                             <td align="center">
@@ -331,6 +330,7 @@ function removeRow(oButton) {
     empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
     var total=oButton.parentNode.parentNode.children[6].children[0].value
     document.getElementById("grand_total_price").value -=total
+    document.getElementById("nettotal").value -=total
 }
 
 $('#insert_sale').on('change',"input" ,function(e) {
@@ -575,7 +575,7 @@ $('#insert_sale').on('change',"input" ,function(e) {
                 const netTotal=document.getElementById('nettotal').value
                 var paid_net=parseInt(values)-parseInt(netTotal)
                 var paid_grand=parseInt(values)-parseInt(grandtotal)
-
+                
                 if(paid_grand==0 && paid_net<0){
 
                     document.getElementById('change').value= 0
@@ -613,7 +613,13 @@ $('#insert_sale').on('change',"input" ,function(e) {
                     document.getElementById('balance').value= 0
                     document.getElementById('debt_pay').value= 0
                     document.getElementById('dueAmmount').value=0
+                    document.getElementById("full_paid_tab").style.display="block";
                 }
+                else if(paid_grand ==0){
+                   
+                   document.getElementById("full_paid_tab").style.display="block";
+              
+                   }
             })
          }
           });
@@ -748,11 +754,11 @@ function send() {
                 type: 'POST',
                 success: function(response){
                     alert("Successfully Added")
+                    $('#insert_sale').fadeOut(2000).fadeIn(2000);
                     $('#successAlert').text(data.name).show();
                     $('#errorAlert').hide();
                     $("#insert_sale")[0].reset();
                     $('#addedrow').remove();
-                   
                     
                 },
                 error: function(error){

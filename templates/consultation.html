@@ -1,0 +1,189 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+   
+ 
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <!-- consultation -->
+ <!-- Single pro tab review Start-->
+ <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add Vitals</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Vitals List</a>
+      </li>
+  </ul>
+  
+  <div class="tab-content">
+    <div class="tab-pane active" id="home" role="tabpanel">
+        <div>
+            <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Success!</strong>Invoice succesfully Added!</div>
+            <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong></strong> Item not Found! Check if all item type is either service or medication</div>
+            
+            <!-- ============================================================== -->
+            <!-- end pageheader -->
+            <!-- ============================================================== -->
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card">
+                        <h3 class="card-header">Add New Vitals</h3>
+                    
+                        <div class="card-body">
+                            <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-6" id="payment_from_1">
+                                            <div class="form-group row">
+                                                <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
+                                                    
+                                                </div>  
+                                            </div>
+                                        </div>
+        
+                                        <!-- date -->
+                                        <div class="col-sm-6" id="payment_from_1">
+                                            <div class="form-group row">
+                                                <label for="customer_name" class="col-sm-4 col-form-label">Visit Type</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text"   name="Visit_Type" class=" form-control"  id="Visit_Type"  tabindex="1" readonly  required  />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- date -->
+                                    </div>
+            
+                                    <div class="row">
+                                        <!-- patient id -->
+                                        <div class="col-sm-6" id="payment_from_1">
+                                            <div class="form-group row">
+                                                <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1" value="{{patient.patient_id}}" required readonly  />
+                                                    
+                                                </div>  
+                                            </div>
+                                        </div>
+                                       
+                                        <!-- patient -->
+                                        <div class="col-sm-6">
+                                            <div class="form-group row">
+                                                <label for="date" class="col-sm-4 col-form-label">Date</label>
+                                                <div class="col-sm-6">
+                                            <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                 </div>
+                                 </div>
+                                    <div class="table-responsive" style="margin-top: 10px">
+                                        <table class="table table-bordered table-hover" id="normalinvoice">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" >Height</th>
+                                                    <th class="text-center" >Weight</th>
+                                                    <th class="text-center" >BMI</th>
+                                                    <th class="text-center" >Temparature</th>
+                                                    <th class="text-center" >BP</th>
+                                                    <th class="text-center" >Pulse</th>
+                                                    <th class="text-center" >Respiratory rate</th>
+                                                    <th class="text-center" >Blood oxygen saturation</th>
+                                                  
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tbody id="addinvoiceItem">
+                                                <tr>
+                                                    <td >
+                                                        <input type="text" name="patient_height" class="form-control   text-left" placeholder='Height' required="" id="patient_height"  tabindex="7">
+                                             
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="patient_weight"  class="form-control text-center " placeholder="weight"  id="productType"/>
+                                                    </td>
+                                                    <td >
+                                                        <input type="text" name="patient_BMI" class="form-control text-left" placeholder='BMI' readonly id="patient_height"  tabindex="7">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="patient_Temp" class="form-control text-center " placeholder="Temparature"  id="patient_Temp"/>
+                                                    </td>
+                                                    <td >
+                                                        <input type="text" name="patient_BP"  class="form-control text-left" placeholder="BP" tabindex="9"   id="patient_BP"/>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="patient_Pulse"  class="form-control text-left" id="patient_Pulse" placeholder="Pulse" tabindex="9" />
+                                                    </td>
+                                                    <td style="width: 100px">
+                                                        <input class=" form-control text-right " type="text" name="patient_Rrate" id="patient_Rrate" value="" placeholder="Rep.rate" tabindex="9"/>
+                                                    </td>
+            
+                                                    <td>
+                                                        <input type="text" name="patient_BOS" class="form-control   text-left" placeholder='BOS' required="" id="patient_BOS"  tabindex="7">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                
+                                                   
+                                            
+                                           
+                                                <tr>
+                                                    <td align="center">
+                                                        <input type="button" id="add_vitals" class="btn btn-success" name="add_vitals" onclick="send()" value="Submit" tabindex="15"/>
+                                                    
+                                                </tr>
+                                                
+                                            </tfoot>
+                                        </table>
+                                      
+                                    </div>
+                                    
+                                </div>
+        
+                            </form>                
+        
+                        </div>
+                    </div>
+        
+    </div>
+    
+  </div>
+    <!-- end of consultation -->
+         
+      </div>
+      {% endblock %}
+      {% block script %}
+      <script>
+           
+      $(function () {
+       $('#myTab a:last').tab('show')
+      })
+          </script>
+    
+      {% endblock %}
+

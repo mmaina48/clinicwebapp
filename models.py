@@ -34,7 +34,27 @@ class Customer(db.Model):
     National_id=db.Column(db.Integer, unique=True,nullable=False)
     debt=db.Column(db.Integer,default=0)
     orders = db.relationship('Order', backref='customer')
+    visits = db.relationship('Visits', backref='customer')
     
+
+class Visits(db.Model):
+    __tablename__ = 'visit'
+    id = db.Column(db.Integer(), primary_key=True)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    patient_name = db.Column(db.String(255), nullable=False)
+    patient_id=db.Column(db.String(), nullable=False)
+    visit_type=db.Column(db.String(255), nullable=False)
+    visit_date=db.Column(db.Date(), nullable=False)
+    height=db.Column(db.String(), nullable=True)
+    BMi=db.Column(db.Integer,nullable=True)
+    temparature=db.Column(db.String(), nullable=True)
+    bloodpressure=db.Column(db.String(), nullable=True)
+    pulse=db.Column(db.String(), nullable=True)
+    respiratory_rate=db.Column(db.String(), nullable=True)
+    bloodpressure=db.Column(db.String(), nullable=True)
+    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
+
+
 class Supplier(db.Model):  
     """ Suppliers model """  
     __tablename__ = "supplier"
@@ -93,6 +113,7 @@ class Order(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.Date(), nullable=False)
+    inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
     customer_name = db.Column(db.String(), nullable=False)
     patient_id=db.Column(db.String(), nullable=True)
     previous=db.Column(db.Integer, nullable=False)

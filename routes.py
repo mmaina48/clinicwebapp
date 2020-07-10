@@ -3,13 +3,14 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from main import app,db
 from forms import LoginForm,RegisterForm,allroles,changepassForm
 from models import User,Product,Supplier,product_orders,product_purchases,Purchase,Order,Expense,TrackExpense,\
-    PurchaseItems,Customer,OrderItems
+    PurchaseItems,Customer,OrderItems,Visits
 import time,datetime
 from sqlalchemy import desc,asc
 from sqlalchemy import and_,or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
 import itertools
+import re
 from operator import itemgetter 
 from datetime import date,datetime,timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -205,6 +206,27 @@ def deletePatient(patient_id):
         flash(f'Patient successfully Deleted!','danger')
         return redirect(url_for('AllCustomers', patient_id = patient_id))
 
+# ----------------------------------------------------------------
+# Vitals
+
+@app.route('/patientvisit/<int:patient_id>/', methods=['GET','POST'])
+@login_required
+def PatientVisit(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    return render_template('consultation.html',patient_id=patient_id,patient=patient)
+
+@app.route('/patients/<int:patient_id>/')
+@app.route('/patients/<int:patient_id>/visits/')
+@login_required
+def showallvitals(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    patvisits=Visits.query.filter_by(patient_id=patient_id).all()
+    exists= bool(Visits.query.filter_by(patient_id=patient_id).all())
+    if exists == False:
+        flash(f'No Vitals  for {patient.name},Click Add Vitals','info')
+    return render_template('AllpatientVitals.html',patient=patient,patvisits=patvisits,patient_id=patient_id)
+
+# ---------------------------------------------------------------
 
 # Invoices
 @app.route('/patientBill/<int:patient_id>/new/', methods=['GET'])
@@ -331,20 +353,25 @@ def processinvoicedata():
                     nettotal=data[i]
                 elif i=="paid_amount":
                     paid_amount=data[i]
+                elif i=="change":
+                    change=data[i]
                 elif i=="balance":
                     balance=data[i]
                 elif i=="debt_pay":
                     debt_pay=data[i]
-    print(expiry_array)          
+         
     patientToAdd=Customer.query.filter_by(name=patient_name).one()
     patientToAdd.debt +=int(balance)
     patientToAdd.debt -=int(debt_pay)
 
     invoiceDate = invoice_date
     invoiceDate_object = datetime.strptime(invoiceDate, "%Y-%m-%d").date()
-
+    
+     # calculate the amount paid for 
+    receive_amount=int(paid_amount)- int(change)
+ 
     newinvoice=Order(customer_name=patient_name,patient_id=patient_Id,created_on=invoiceDate_object,payment_type=paytype,\
-        payment_amount=paid_amount,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
+        payment_amount=receive_amount,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
     
     for (prod,prodtyp,expry,qty,price,total) in zip(product_list,product_type,expiry_array,quantityarray,price,total_price):
         
@@ -390,7 +417,7 @@ def processinvoicedata():
 @app.route('/allinvoices/',methods=['GET','POST'])
 @login_required
 def AllInvoices():
-    allinvoices=Order.query.all()
+    allinvoices=Order.query.order_by(Order.inserted_on.desc()).all()
     return render_template('allInvoices.html',allinvoices=allinvoices)
 
 
@@ -413,6 +440,7 @@ def InvoiceUpdate(invoice_id):
 @app.route('/processUpdatedInvoice',methods=['POST'])
 @login_required
 def UpdateInvoice():
+
     table= request.json
     print(table)
     product_list=[]
@@ -439,10 +467,11 @@ def UpdateInvoice():
                 elif i=="producttype":
                     product_type.append(data[i])
                 elif i=="expirydata":
+
                     if i:
                         expiry_array.append(data[i])
                     else:
-                        expiry_array.append(0)
+                        expiry_array.append(None)
                 elif i=="quantity":
                     quantityarray.append(data[i])
                 elif i=="selling_price":
@@ -457,24 +486,40 @@ def UpdateInvoice():
                     nettotal=data[i]
                 elif i=="paid_amount":
                     paid_amount=data[i]
+                elif i=="change":
+                    change=data[i]
                 elif i=="balance":
                     balance=data[i]
                 elif i=="debt_pay":
                     debt_pay=data[i]
-    
-    print(expiry_array)
+   
+
+    substring = "2020"
+    for n, i in enumerate(expiry_array):
+        if i.find(substring) != -1:
+            expiry_array[n]='None'
+        elif expiry_array[n] =='':
+            expiry_array[n]='sev'
+      
+           
     # update patient debt
     patientToAdd=Customer.query.filter_by(name=patient_name).one()
-    print(patientToAdd)
+   
     patientToAdd.debt +=int(balance)
     patientToAdd.debt -=int(debt_pay)
 
+    db.session.add(patientToAdd)
+    db.session.commit()
+
     order_to_update=Order.query.filter_by(id=order_id).first()
-    orderitems_to_update=OrderItems.query.filter_by(order_id=order_id).all()
+    # orderitems_to_update=OrderItems.query.filter_by(order_id=order_id).all()
     
     invoiceDate = invoice_date
     invoiceDate_object = datetime.strptime(invoiceDate, "%Y-%m-%d").date()
-
+    
+    # calculate the amount paid for 
+    receive_amount=int(paid_amount)- int(change)
+ 
     if patient_name:
         order_to_update.customer_name=patient_name
     if paytype:
@@ -490,7 +535,7 @@ def UpdateInvoice():
     if previous:
         order_to_update.previous=previous
     if paid_amount:
-        order_to_update.payment_amount=paid_amount
+        order_to_update.payment_amount=receive_amount
     if balance:
         order_to_update.due_balance=balance
     if debt_pay:
@@ -500,15 +545,17 @@ def UpdateInvoice():
         
         product_name=Product.query.filter_by(product_name=prod).one()
         
-        print(product_name)
-        if (expry !='None') and (expry is not None):
+        if (expry !='None') and (expry !='sev'):
+
             purchaseitem=PurchaseItems.query.filter_by(id=expry).one()
-            expry_date_object=purchaseitem.expiry_date
-            expry_date= expry_date_object
-        
+            if purchaseitem:
+                expry_date_object=purchaseitem.expiry_date
+                expry_date= expry_date_object
+
+    
         productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
         
-        print(productToreduce)
+       
         if (productToreduce is not None) and (expry_date is not None):
            
             productToreduce.quantity -=int(qty)
@@ -516,17 +563,16 @@ def UpdateInvoice():
             itemlines=OrderItems(product_name=prod,expiry_date=expry_date,product_type=prodtyp,quantity=qty,buying_price=price,\
             total_amount=total,order=order_to_update,product=product_name)
             
-            print(itemlines)
+            
             db.session.add(itemlines)
-            db.session.add(patientToAdd)
             db.session.add(productToreduce)
 
             db.session.commit()
             db.session.commit()
-            db.session.commit()
-            db.session.commit()
-        elif expry is None :
+           
             
+        elif expry=='sev':
+
             itemlines=OrderItems(product_name=prod,product_type=prodtyp,quantity=qty,buying_price=price,\
             total_amount=total,order=order_to_update,product=product_name)
             
@@ -537,7 +583,11 @@ def UpdateInvoice():
             db.session.commit()
             db.session.commit()
 
+    db.session.add(order_to_update)
+    db.session.commit()
+
     return jsonify({'result':'sucesss'})
+    
 
 # Delete invoice
 @app.route('/delete/<int:invoice_id>/delete/', methods = ['POST'])
@@ -554,10 +604,13 @@ def deleteInvoice(invoice_id):
        
         
         orderitems=OrderItems.query.filter_by(order_id=invoice_id,product_type='Medication').all()
+        print(orderitems)
         for item in orderitems:
             prodname=item.product_name
             prodexpiry=item.expiry_date
             prodquanty=item.quantity
+
+            print(item.expiry_date)
 
             stock_item=PurchaseItems.query.filter_by(product_name=prodname,expiry_date=prodexpiry).first()
             stock_item.quantity += prodquanty
@@ -592,6 +645,7 @@ def InvoiceDetail(invoice_id):
     patientdetails=Customer.query.filter_by(id=patient).one()
     return render_template('invoiceDetails.html',product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails)
 
+# --------------------------------------------------------------------------
 
 # Products
 @app.route('/products/',methods=['GET','POST'])
@@ -666,7 +720,7 @@ def Productprice(product):
         dataArray.append(productobj)
     return jsonify({'Productprice': dataArray})
 
-
+# -----------------------------------------------------------------------------------
 # Supplier
 @app.route('/suppliers/')
 @login_required
