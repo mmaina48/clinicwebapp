@@ -216,6 +216,7 @@ def deletePatient(patient_id):
 @login_required
 def PatientVital(patient_id):
     patient=Customer.query.filter_by(id=patient_id).one()
+    
     clinicid=patient.patient_id
     today = date.today()
     todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
@@ -234,7 +235,8 @@ def PatientVital(patient_id):
             height=request.form['patient_height'],weight=request.form['patient_weight'],\
             BMi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
             bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
-            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'])
+            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
+            customer_id=patient.id)
         db.session.add(newVital)
         try:
             db.session.commit()
@@ -249,17 +251,15 @@ def PatientVital(patient_id):
         return render_template('vitals.html',patient_id=patient_id,patient=patient,\
             vistType=vistType)
 
-
-    
-
 #new patient vital
 @app.route('/patients/<int:patient_id>/')
 @app.route('/patients/<int:patient_id>/visits/')
 @login_required
 def showallvitals(patient_id):
+    print(patient_id)
     patient=Customer.query.filter_by(id=patient_id).one()
-    patvisits=Visits.query.filter_by(patient_id=patient_id).all()
-    exists= bool(Visits.query.filter_by(patient_id=patient_id).all())
+    patvisits=Visits.query.filter_by(customer_id=patient_id).all()
+    exists= bool(Visits.query.filter_by(customer_id=patient_id).all())
     if exists == False:
         flash(f'No Vitals  for {patient.name},Click Add Vitals','info')
     return render_template('AllpatientVitals.html',patient=patient,patvisits=patvisits,patient_id=patient_id)

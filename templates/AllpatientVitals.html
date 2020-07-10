@@ -29,7 +29,7 @@
       <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All Vitals</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('PatientVisit',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify">Add Vitals </i></a>
+        <a href="{{url_for('PatientVital',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify">Add Vitals </i></a>
       </li>
   </ul>
   
@@ -51,7 +51,7 @@
                                     <th>OPD No</th>
                                     <th>Visit Type</th>
                                     <th>Date</th>
-                                   
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,7 +61,116 @@
                                     <td>{{vital.patient_id}}</td>
                                     <td>{{vital.visit_type}}</td>
                                     <td>{{vital.visit_date}}</td>
-                                   
+                                    <td><a href="#" data-toggle="modal" data-target="#deleteModal{{vital.id}}"><span class="badge badge-info">View</span></a>
+                                      
+                                      <div class="modal" id="deleteModal{{vital.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                          <form class="modal-content"  action="" method="POST" >
+                                            <div class="container">
+                                              <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                    <div class="page-header">
+                                              <h6 class="pageheader-title">Vitals</h6>
+                                              <hr>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                              <div class="row">
+                                               
+                                                <div class="col-sm-6" id="payment_from_1">
+                                                    <div class="form-group row">
+                                                        <label for="patient_id" class="col-sm-4 col-form-label">Height</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text"   name="patient_height" class="form-control"  tabindex="1" value="{{vital.height}}"  />
+                                                           
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                               
+                                                <!-- patient -->
+                                                <div class="col-sm-6">
+                                                    <div class="form-group row">
+                                                        <label for="date" class="col-sm-4 col-form-label">Weight</label>
+                                                        <div class="col-sm-6">
+                                                          <input type="text"   name="patient_weight" class=" form-control"   tabindex="2"  value="{{vital.weight}}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                              <div class="col-sm-6">
+                                                <div class="form-group row">
+                                                    <label for="date" class="col-sm-4 col-form-label">BMI</label>
+                                                    <div class="col-sm-6">
+                                                      <input type="text"   name="patient_BMI" class=" form-control"   tabindex="2"  value="{{vital.BMi}}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6" id="payment_from_1">
+                                              <div class="form-group row">
+                                                  <label for="patient_id" class="col-sm-4 col-form-label">Temp</label>
+                                                  <div class="col-sm-6">
+                                                      <input type="text"   name="patient_temp" class=" form-control"  tabindex="4" value="{{vital.temparature}}" />
+                                                  </div>  
+                                              </div>
+                                          </div>
+                                        </div>
+                                              
+                                              
+                                          <div class="row">
+                                            <!-- patient -->
+                                            <div class="col-sm-6">
+                                              <div class="form-group row">
+                                                  <label for="date" class="col-sm-4 col-form-label">BP</label>
+                                                  <div class="col-sm-6">
+                                                    <input type="text"   name="patient_bp" class=" form-control"  tabindex="1" value="{{vital.bloodpressure}}"  />
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="col-sm-6" id="payment_from_1">
+                                            <div class="form-group row">
+                                                <label for="patient_id" class="col-sm-4 col-form-label">Pulse</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text"   name="patient_pulse" class="form-control"  tabindex="1" value="{{vital.pulse}}" />
+                                                    
+                                                </div>  
+                                            </div>
+                                        </div>
+                                      </div>
+                                            <!-- patient id -->
+                                       
+                                        <div class="row">
+                                          <!-- patient id -->
+                                          <div class="col-sm-6" id="payment_from_1">
+                                              <div class="form-group row">
+                                                  <label for="patient_id" class="col-sm-4 col-form-label">BOS</label>
+                                                  <div class="col-sm-6">
+                                                      <input type="text"   name="patient_BOS" class=" form-control"   tabindex="1" value="{{vital.oxygesaturation}}"  />
+                                                     
+                                                  </div>  
+                                              </div>
+                                          </div>
+                                          <div class="col-sm-6">
+                                            <div class="form-group row">
+                                                <label for="date" class="col-sm-4 col-form-label">Resp Rate</label>
+                                                <div class="col-sm-6">
+                                                  <input type="text"   name="patient_RR" class="form-control"  tabindex="1" value="{{vital.respiratory_rate}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                          
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-success" data-dismiss="modal">BACK</button>
+                                               
+                                              </div>
+                                            </div>
+                                          </form>
+                                          </div>
+                                        </div>
+                                  </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
