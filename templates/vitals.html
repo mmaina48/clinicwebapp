@@ -113,7 +113,7 @@
                                                 <tr>
                                                     <th class="text-center" >Height</th>
                                                     <th class="text-center" >Weight</th>
-                                                    <th class="text-center" >BMI</th>
+                                                    <th class="text-center" id="bmi_label" >BMI</th>
                                                     <th class="text-center" >Temparature</th>
                                                     <th class="text-center" >BP</th>
                                                     <th class="text-center" >Pulse</th>
@@ -243,7 +243,26 @@
             }
             else{
                 document.getElementById('patient_BMI').value=BMI_value
+
             }
+
+            if (BMI_value > 30){
+                document.getElementById('bmi_label').innerHTML='Obese'
+            }
+            else if(BMI_value >18.4 && BMI_value < 25 ){
+                
+                document.getElementById('bmi_label').innerHTML='Overweight'
+
+            }
+            else if (BMI_value > 24.9 && BMI_value < 30){
+                document.getElementById('bmi_label').innerHTML='Normal'
+            }
+            else if (BMI_value < 18.5){
+                document.getElementById('bmi_label').innerHTML='Underweight'
+            }
+            
+
+            
         })
            }
         }
