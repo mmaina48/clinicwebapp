@@ -26,13 +26,15 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add Vitals</a>
+      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Update visit</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Vitals List</a>
+        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Visit</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add New Visit</a>
       </li>
   </ul>
-  
   <div class="tab-content">
     <div class="tab-pane active" id="home" role="tabpanel">
         <div>
@@ -47,10 +49,10 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header">Add New Vitals</h3>
-                    
+                        <h3 class="card-header">Update {{patient.name}} Visit </h3>
+                        
                         <div class="card-body">
-                            <form class="needs-validation" action="{{url_for('PatientVital',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                            <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-6" id="payment_from_1">
@@ -126,29 +128,29 @@
                                             <tbody id="addinvoiceItem">
                                                 <tr>
                                                     <td >
-                                                        <input type="text" name="patient_height" class="form-control   text-left" placeholder='Height' required="" id="patient_height"  tabindex="7">
+                                                        <input type="text" name="patient_height" class="form-control   text-left" value="{{visit.height}}"  id="patient_height" readonly tabindex="7">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_weight"  class="form-control text-left" placeholder="weight"  id="patient_weight"/>
+                                                        <input type="text" name="patient_weight"  class="form-control text-left" value="{{visit.weight}}" readonly id="patient_weight"/>
                                                     </td>
                                                     <td >
-                                                        <input type="text" name="patient_BMI" class="form-control text-left" placeholder='BMI' readonly id="patient_BMI"  tabindex="7">
+                                                        <input type="text" name="patient_BMI" class="form-control text-left" value="{{visit.bmi}}" readonly id="patient_BMI"  tabindex="7">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_Temp" class="form-control text-left " placeholder="Temparature"  id="patient_Temp"/>
+                                                        <input type="text" name="patient_Temp" class="form-control text-left " value="{{visit.temparature}}" readonly id="patient_Temp"/>
                                                     </td>
                                                     <td >
-                                                        <input type="text" name="patient_BP"  class="form-control text-left" placeholder="BP" tabindex="9"   id="patient_BP"/>
+                                                        <input type="text" name="patient_BP"  class="form-control text-left" value="{{visit.bloodpressure}}" readonly tabindex="9"   id="patient_BP"/>
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_Pulse"  class="form-control text-left" id="patient_Pulse" placeholder="Pulse" tabindex="9" />
+                                                        <input type="text" name="patient_Pulse"  class="form-control text-left" id="patient_Pulse" value="{{visit.pulse}}" readonly tabindex="9" />
                                                     </td>
                                                     <td style="width: 100px">
-                                                        <input class=" form-control text-left" type="text" name="patient_Rrate" id="patient_Rrate" value="" placeholder="Rep.rate" tabindex="9"/>
+                                                        <input class=" form-control text-left" type="text" name="patient_Rrate" id="patient_Rrate" value="{{visit.respiratory_rate}}" readonly tabindex="9"/>
                                                     </td>
             
                                                     <td>
-                                                        <input type="text" name="patient_BOS" class="form-control   text-left" placeholder='BOS' required="" id="patient_BOS"  tabindex="7">
+                                                        <input type="text" name="patient_BOS" class="form-control   text-left" id="patient_BOS" readonly value="{{visit.oxygesaturation}}"  tabindex="7">
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -157,15 +159,48 @@
                                                    
                                             
                                            
-                                                <tr>
-                                                    <td align="center">
-                                                        <input type="submit" id="add_vitals" class="btn btn-success" name="add_vitals" onclick="send()" value="Submit" tabindex="15"/>
-                                                    
-                                                </tr>
+                                                
                                                 
                                             </tfoot>
                                         </table>
-                                      
+                                           <hr>
+                                           
+                                        </div>
+                                        <div class="card">
+                                            <div class="form-group row">
+                                                <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Chief Complain</label>
+    
+                                                <textarea rows="4" name="chief_complain" id="chief_complain" cols="50">{{visit.chiefcomplain}}</textarea>
+                                            </div>
+                                            <br>
+                                            <div class="form-group row">
+                                                <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Patient_history</label>
+                                                <textarea rows="4" name="patient_history" cols="50">{{visit.patienthistory}}</textarea>
+                                            </div>
+                                            <br>
+                                            <div class="form-group row">
+                                                <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Clinical Note</label>
+                                                <textarea rows="4" name="clinical_note" cols="50">{{visit.clinicalnote}}</textarea>
+                                            </div> 
+                                            <br>
+
+                                            <div class="form-group row">
+                                                <label for="customer_name" class="col-sm-2 col-form-label">Diagnosis</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text"   name="patient_diagnosis" class=" form-control" placeholder='Enter Diagnosis' value="{{visit.diagnosis}}"  id="patient_name" tabindex="1"  />
+                                                </div>
+                                            </div>  
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="example-text-input" class="col-sm-4 col-form-label"></label>
+                                            <div class="col-sm-6">
+                                                
+                                                <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Update and Save" tabindex="7"/>
+                                                <a href = ""><button class="btn btn-warning"  type="button">Back</button></a>
+                                            </div>
+                                           
+                                        </div>
+                                           
                                     </div>
                                     
                                 </div>
@@ -185,11 +220,6 @@
       {% block script %}
       <script>
            
-    //   $(function () {
-    //    $('#myTab a:last').tab('show')
-    //   })
-
-    //   calculate BMI
     $('#vitals').on("click","input" ,function(e) {
         var target=e.target
         if(target.matches("input#patient_height")){
@@ -269,6 +299,8 @@
 
 
     // End calculate BMI
+
+    
           </script>
     
       {% endblock %}

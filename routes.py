@@ -3,7 +3,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from main import app,db
 from forms import LoginForm,RegisterForm,allroles,changepassForm
 from models import User,Product,Supplier,product_orders,product_purchases,Purchase,Order,Expense,TrackExpense,\
-    PurchaseItems,Customer,OrderItems,Visits
+    PurchaseItems,Customer,OrderItems,Visits,Consultation
 import time,datetime
 from sqlalchemy import desc,asc
 from sqlalchemy import and_,or_
@@ -211,7 +211,6 @@ def deletePatient(patient_id):
 # ----------------------------------------------------------------
 # Vitals
 
-
 @app.route('/patientvisit/<int:patient_id>/', methods=['GET','POST'])
 @login_required
 def PatientVital(patient_id):
@@ -230,18 +229,17 @@ def PatientVital(patient_id):
 
         vitalDate = request.form['invoice_date']
         vitalDate_object = datetime.strptime(vitalDate, "%Y-%m-%d").date()
-        newVital=Visits(patient_name=request.form['patient_name'],\
+        newvital=Visits(patient_name=request.form['patient_name'],\
             patient_id=request.form['patient_Id'],visit_type=request.form['visittype'],visit_date=vitalDate_object,\
             height=request.form['patient_height'],weight=request.form['patient_weight'],\
-            BMi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
+            bmi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
             bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
-            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
-            customer_id=patient.id)
-        db.session.add(newVital)
+            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],customer_id=patient.id)
+        print(newvital)
+        db.session.add(newvital)
         try:
             db.session.commit()
-            
-            flash(f' {newVital.patient_name} Vitals Successfully Added!', 'success')
+            flash(f' {newvital.patient_name} record Successfully Added!', 'success')
             return redirect(url_for('PatientVital',patient_id=patient_id))
         except IntegrityError:
             db.session.rollback()
@@ -253,19 +251,158 @@ def PatientVital(patient_id):
 
 #new patient vital
 @app.route('/patients/<int:patient_id>/')
-@app.route('/patients/<int:patient_id>/visits/')
+@app.route('/patients/<int:patient_id>/vitals/')
 @login_required
 def showallvitals(patient_id):
     print(patient_id)
     patient=Customer.query.filter_by(id=patient_id).one()
-    patvisits=Visits.query.filter_by(customer_id=patient_id).all()
+    patvisits=Visits.query.filter_by(customer_id=patient_id).order_by(desc(Visits.inserted_on)).all()
     exists= bool(Visits.query.filter_by(customer_id=patient_id).all())
     if exists == False:
         flash(f'No Vitals  for {patient.name},Click Add Vitals','info')
     return render_template('AllpatientVitals.html',patient=patient,patvisits=patvisits,patient_id=patient_id)
 
 # ---------------------------------------------------------------
+# Add Consultation
 
+@app.route('/patientconsultation/<int:patient_id>/', methods=['GET','POST'])
+@login_required
+def PatientConsultation(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    patientID=patient.id
+    today = date.today()
+    invoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.customer_id== patientID)).order_by(desc(Order.inserted_on)).first()
+    invoice_id=invoice.id
+    clinicid=patient.patient_id
+    vital=db.session.query(Visits).filter(or_( Visits.inserted_on ==today,Visits.patient_id== clinicid)).order_by(desc(Visits.inserted_on)).first()
+    todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
+    if todaysinvoice:
+        vistType=todaysinvoice.visit_type
+    else:
+        vistType='OPD'
+
+    if request.method == 'POST':
+
+        # convert stringto date object because SQLite Date type only accepts Python date objects as input
+
+        visitDate = request.form['invoice_date']
+        visitDate_object = datetime.strptime(visitDate, "%Y-%m-%d").date()
+        newvisit=Consultation(patient_name=request.form['patient_name'],\
+            patient_id=request.form['patient_Id'],visit_type=request.form['visittype'],visit_date=visitDate_object,\
+            height=request.form['patient_height'],weight=request.form['patient_weight'],\
+            bmi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
+            bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
+            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
+            chiefcomplain=request.form['chief_complain'],patienthistory=request.form['patient_history'],\
+            clinicalnote=request.form['clinical_note'],diagnosis=request.form['patient_diagnosis'],\
+            customer_id=patient.id)
+        db.session.add(newvisit)
+        print(newvisit.clinicalnote)
+        try:
+
+            db.session.commit()
+            flash(f' {newvisit.patient_name} Vitals Successfully Added!', 'success')
+            return redirect(url_for('PatientVital',patient_id=patient_id))
+
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Try Again ','danger')
+            return redirect(url_for('PatientVital',patient_id=patient_id))
+    else:
+        return render_template('consultation.html',patient_id=patient_id,patient=patient,\
+            vistType=vistType,vital=vital,invoice_id=invoice_id)
+
+# all Consultations
+@app.route('/patients/<int:patient_id>/')
+@app.route('/patients/<int:patient_id>/visits/')
+@login_required
+def showallvisits(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    today = date.today()
+    invoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.customer_id== patient_id)).order_by(desc(Order.inserted_on)).first()
+    invoice_id=invoice.id
+    patvisits=Consultation.query.filter_by(customer_id=patient_id).order_by(desc(Consultation.inserted_on)).all()
+    exists= bool(Consultation.query.filter_by(customer_id=patient_id).all())
+    if exists == False:
+        flash(f'No Visits  for {patient.name},Click Add Vitals','info')
+    return render_template('Allpatientvisit.html',patient=patient,patvisits=patvisits,patient_id=patient_id,invoice_id=invoice_id)
+
+# Update Visit
+@app.route('/patients/<int:patient_id>/visits/<int:visit_id>/edit',methods=['GET', 'POST'])
+@login_required
+def editPatientVisit(patient_id,visit_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    
+    clinicid=patient.patient_id
+    today = date.today()
+    visit=db.session.query(Consultation).filter(or_(Consultation.inserted_on ==today,Consultation.patient_id== clinicid)).first()
+    todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
+
+    if todaysinvoice:
+        vistType=todaysinvoice.visit_type
+    else:
+        vistType='OPD'
+    
+    editedVisit = Consultation.query.filter_by(id=visit_id).one()
+    if request.method == 'POST':
+
+        # convert stringto date object because SQLite Date type only accepts Python date objects as input
+
+        visitDate = request.form['invoice_date']
+        visitDate_object = datetime.strptime(visitDate, "%Y-%m-%d").date()
+
+        if request.form['visittype']:
+            editedVisit.visit_type = request.form['visittype']
+
+        if visitDate_object:
+            editedVisit.visit_date = visitDate_object
+
+        if request.form['chief_complain']:
+            editedVisit.chiefcomplain = request.form['chief_complain']
+
+        if request.form['patient_history']:
+            editedVisit.patienthistory = request.form['patient_history']
+
+        if request.form['clinical_note']:
+            editedVisit.clinicalnote = request.form['clinical_note']
+
+        if request.form['patient_diagnosis']:
+            editedVisit.diagnosis = request.form['patient_diagnosis']
+    
+        try:
+            
+            db.session.add(editedVisit)
+            db.session.commit() 
+            flash(f'visit has been updated!', 'success')
+            return redirect(url_for('editPatientVisit',patient_id=patient_id,visit_id=visit_id))
+
+        except IntegrityError:
+
+            db.session.rollback()
+            flash(f'Try Again ','danger')
+            return redirect(url_for('PatientVital',patient_id=patient_id))
+    else:
+        return render_template('viewconsultation.html',patient_id=patient_id,patient=patient,\
+            vistType=vistType,visit=visit)
+
+# add prescription
+@app.route('/updateinvoice/<int:invoice_id>/edit',methods=['GET','POST'])
+@login_required
+def AddPrescription(invoice_id):
+    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient_id=order.customer_id
+    
+    patient_name=order.customer_name
+    patient_data=Customer.query.filter_by(name=patient_name).first()
+    current_debt=patient_data.debt
+    patients=[s.name for s in Customer.query.all()]
+    products=[p.product_name for p in Product.query.all()]
+    patientdetails=Customer.query.filter_by(id=patient_id).one()
+    return render_template('prescription.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
+        products=products,current_debt=current_debt,patient_id=patient_id)
+
+# -----------------------------------------------------------------
 # Invoices
 @app.route('/patientBill/<int:patient_id>/new/', methods=['GET'])
 @login_required
@@ -833,7 +970,7 @@ def supplierdata(supplier):
 def ProductSale(product):
     productsale=OrderItems.query.filter_by(product_name=product).all()
     return render_template('productsales.html',productsale=productsale,product=product)
-
+# ----------------------------------------------------------------
 # Purchases
 @app.route('/addPurchase/',methods=['GET'])
 @login_required
@@ -968,6 +1105,7 @@ def DeletePurchase(purchase_id):
 
     flash(f'Puchase  successfully Deleted!','danger')
     return redirect(url_for('AllPurchase'))
+# -----------------------------------------------------------------------
 
 # Add Expences
 @app.route('/addexpensecategory/',methods=['GET','POST'])

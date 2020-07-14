@@ -47,7 +47,7 @@ class Visits(db.Model):
     visit_date=db.Column(db.Date(), nullable=False)
     height=db.Column(db.String(), nullable=True)
     weight=db.Column(db.String(), nullable=True)
-    BMi=db.Column(db.Integer,nullable=True)
+    bmi=db.Column(db.Integer,nullable=True)
     temparature=db.Column(db.String(), nullable=True)
     bloodpressure=db.Column(db.String(), nullable=True)
     pulse=db.Column(db.String(), nullable=True)
@@ -55,6 +55,27 @@ class Visits(db.Model):
     oxygesaturation=db.Column(db.String(), nullable=True)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
+class Consultation(db.Model):
+    __tablename__ = 'consultation'
+    id = db.Column(db.Integer(), primary_key=True)
+    inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
+    patient_name = db.Column(db.String(255), nullable=False)
+    patient_id=db.Column(db.String(), nullable=False)
+    visit_type=db.Column(db.String(255), nullable=False)
+    visit_date=db.Column(db.Date(), nullable=False)
+    height=db.Column(db.String(), nullable=False)
+    weight=db.Column(db.String(), nullable=False)
+    bmi=db.Column(db.Integer,nullable=False)
+    temparature=db.Column(db.String(), nullable=False)
+    bloodpressure=db.Column(db.String(), nullable=False)
+    pulse=db.Column(db.String(), nullable=False)
+    respiratory_rate=db.Column(db.String(), nullable=False)
+    oxygesaturation=db.Column(db.String(), nullable=False)
+    chiefcomplain=db.Column(db.String(), nullable=False)
+    patienthistory=db.Column(db.String(), nullable=False)
+    clinicalnote=db.Column(db.String(), nullable=False)
+    diagnosis=db.Column(db.String(), nullable=False)
+    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
 class Supplier(db.Model):  
     """ Suppliers model """  
@@ -107,7 +128,6 @@ class Product(db.Model):
     purchaseitems_line = db.relationship('PurchaseItems', backref='product')
     orderitems_line = db.relationship('OrderItems', backref='product')
    
-
 
 class Order(db.Model):  
     """ Orders model """  

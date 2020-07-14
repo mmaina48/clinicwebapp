@@ -80,9 +80,10 @@
                                           Select
                                         </button>
                                         <div class="dropdown-menu">
-                                          <a class="dropdown-item" href="{{url_for('PatientVital', patient_id =patient.id) }}">Visit</a>
-                                          <a class="dropdown-item" href="{{url_for('newpatientBill', patient_id =patient.id) }}">Bill</a>
-                                          <a class="dropdown-item" href="{{url_for('editPatient', customer_id =patient.id) }}">Upadate</a>
+                                          <a class="dropdown-item" href="{{url_for('PatientVital',patient_id =patient.id) }}">Visit</a>
+                                          <a class="dropdown-item" href="{{url_for('PatientConsultation',patient_id =patient.id)}}">Consultation</a>
+                                          <a class="dropdown-item" href="{{url_for('newpatientBill',patient_id =patient.id) }}">Bill</a>
+                                          <a class="dropdown-item" href="{{url_for('editPatient',customer_id =patient.id) }}">Upadate</a>
                                           <a class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{patient.id}}" href="#">Delete</a>
                       
                                         </div>
