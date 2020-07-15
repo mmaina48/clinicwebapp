@@ -28,16 +28,20 @@
       <a class="nav-item nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">View visit Notes</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+        <a href="{{url_for('ViewPreviousTreatment',invoice_id=invoice_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW TRETEMENT AND LAB REQUEST</a>
 
       </li>
       <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>RESENT VISITS NOTES</a>
-
+        <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}"  class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
       </li>
     
       <li class="nav-item">
-        <a href="" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Reports</a>
+        <a href="{{url_for('showallvisits',patient_id=patient_id)}}"  class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS</a>
+       
+      </li>
+      <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+      <li class="nav-item">
+       
       </li>
   </ul>
   <div class="tab-content">

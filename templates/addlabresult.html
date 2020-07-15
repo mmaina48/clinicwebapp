@@ -82,17 +82,24 @@
                                     </div>
                                 </div>
                                
-                                <!-- patient -->
+                               
                                 <div class="col-sm-6">
                                     <div class="form-group row">
                                         <label for="date" class="col-sm-4 col-form-label">Date</label>
                                         <div class="col-sm-6">
                                     <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" readonly required value="{{order.created_on}}" tabindex="6" />
-                                    <!-- <input type="date" class="form-control" value="{{orderdate}}"> -->
+                                  
                                         </div>
                                     </div>
                                 </div>
                                 
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6" id="payment_from_1">
+                                   
+                                    <input type="hidden"   name="order_id" class=" form-control"  value="{{invoice_id}}" id="orderid" tabindex="1" readonly />
+                        </div>
+
                             </div>
                             
                          </div>

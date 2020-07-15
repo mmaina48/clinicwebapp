@@ -18,22 +18,17 @@
   </div>
   <div>
    
- 
-    <!-- ============================================================== -->
-    <!-- end pageheader -->
-    <!-- ============================================================== -->
-    <!-- consultation -->
+
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All Visits Notes</a>
+      <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL {{patient.name}} RECENT VISITS</a>
+      <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
     </li>
-    <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify">Add Visit Notes</i></a>
-      </li>
-  <li class="nav-item">
-    <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Report</a>
-  </li>
+   
+  <!-- <li class="nav-item">
+    <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECENT LAB REPORT</a>
+  </li> -->
 </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="home" role="tabpanel">

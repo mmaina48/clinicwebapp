@@ -64,19 +64,19 @@ class Consultation(db.Model):
     patient_id=db.Column(db.String(), nullable=False)
     visit_type=db.Column(db.String(255), nullable=False)
     visit_date=db.Column(db.Date(), nullable=False)
-    height=db.Column(db.String(), nullable=False)
-    weight=db.Column(db.String(), nullable=False)
-    bmi=db.Column(db.Integer,nullable=False)
-    temparature=db.Column(db.String(), nullable=False)
-    bloodpressure=db.Column(db.String(), nullable=False)
-    pulse=db.Column(db.String(), nullable=False)
-    respiratory_rate=db.Column(db.String(), nullable=False)
-    oxygesaturation=db.Column(db.String(), nullable=False)
-    chiefcomplain=db.Column(db.String(), nullable=False)
-    patienthistory=db.Column(db.String(), nullable=False)
-    clinicalnote=db.Column(db.String(), nullable=False)
-    diagnosis=db.Column(db.String(), nullable=False)
-    secondarydiagnosis=db.Column(db.String(), nullable=False)
+    height=db.Column(db.String(), nullable=True)
+    weight=db.Column(db.String(), nullable=True)
+    bmi=db.Column(db.Integer,nullable=True)
+    temparature=db.Column(db.String(), nullable=True)
+    bloodpressure=db.Column(db.String(), nullable=True)
+    pulse=db.Column(db.String(), nullable=True)
+    respiratory_rate=db.Column(db.String(), nullable=True)
+    oxygesaturation=db.Column(db.String(), nullable=True)
+    chiefcomplain=db.Column(db.String(), nullable=True)
+    patienthistory=db.Column(db.String(), nullable=True)
+    clinicalnote=db.Column(db.String(), nullable=True)
+    diagnosis=db.Column(db.String(), nullable=True)
+    secondarydiagnosis=db.Column(db.String(), nullable=True)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
 class LabResult(db.Model):
@@ -90,7 +90,8 @@ class LabResult(db.Model):
     testname=db.Column(db.String(), nullable=False)
     testresults=db.Column(db.String(), nullable=False)
     testedby=db.Column(db.String(), nullable=False)
-    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
+    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
+    order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign keyp
 
 class Supplier(db.Model):  
     """ Suppliers model """  
@@ -162,6 +163,7 @@ class Order(db.Model):
     paydue_amount=db.Column(db.Integer, nullable=False)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
     orderitems_line = db.relationship('OrderItems', backref='order')
+    lab_test = db.relationship('LabResult', backref='order')
 
 
 class OrderItems(db.Model):  

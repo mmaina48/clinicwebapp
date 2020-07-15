@@ -268,6 +268,7 @@ def showallvitals(patient_id):
 def PatientConsultation(patient_id):
     print(patient_id)
     patient=Customer.query.filter_by(id=patient_id).one()
+    capital_name=patient.name.upper()
     patientID=patient.id
     today = date.today()
     invoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.customer_id== patientID)).order_by(desc(Order.inserted_on)).first()
@@ -313,7 +314,7 @@ def PatientConsultation(patient_id):
                 return redirect(url_for('PatientConsultation',patient_id=patient_id))
         else:
             return render_template('consultation.html',patient_id=patient_id,patient=patient,\
-                vistType=vistType,vital=vital,invoice_id=invoice_id)
+                vistType=vistType,vital=vital,invoice_id=invoice_id,capital_name=capital_name)
 
 # all Consultations
 @app.route('/patients/<int:patient_id>/')
@@ -327,7 +328,7 @@ def showallvisits(patient_id):
     patvisits=Consultation.query.filter_by(customer_id=patient_id).order_by(desc(Consultation.inserted_on)).all()
     exists= bool(Consultation.query.filter_by(customer_id=patient_id).all())
     if exists == False:
-        flash(f'No Visits  for {patient.name},Click Add Vitals','info')
+        flash(f'No Visits  for {patient.name},Click START NEW VISIT','danger')
     return render_template('Allpatientvisit.html',patient=patient,patvisits=patvisits,patient_id=patient_id,invoice_id=invoice_id)
 
 # Update Visit
@@ -335,7 +336,6 @@ def showallvisits(patient_id):
 @login_required
 def editPatientVisit(patient_id,visit_id):
     patient=Customer.query.filter_by(id=patient_id).one()
-    
     clinicid=patient.patient_id
     today = date.today()
     visit=db.session.query(Consultation).filter(or_(Consultation.inserted_on ==today,Consultation.patient_id== clinicid)).first()
@@ -345,7 +345,7 @@ def editPatientVisit(patient_id,visit_id):
         vistType=todaysinvoice.visit_type
     else:
         vistType='OPD'
-    
+    invoice_id=todaysinvoice.id
     editedVisit = Consultation.query.filter_by(id=visit_id).one()
     if request.method == 'POST':
 
@@ -369,8 +369,9 @@ def editPatientVisit(patient_id,visit_id):
         if request.form['clinical_note']:
             editedVisit.clinicalnote = request.form['clinical_note']
 
-        if request.form['patient_diagnosis']:
-            editedVisit.diagnosis = request.form['patient_diagnosis']
+        if request.form['primary_diagnosis']:
+            editedVisit.diagnosis = request.form['primary_diagnosis']
+
         if request.form['Secondary_diagnosis']:
             editedVisit.secondarydiagnosis = request.form['Secondary_diagnosis']
     
@@ -386,13 +387,17 @@ def editPatientVisit(patient_id,visit_id):
             return redirect(url_for('editPatientVisit',patient_id=patient_id,visit_id=visit_id))
     else:
         return render_template('viewconsultation.html',patient_id=patient_id,patient=patient,\
-            vistType=vistType,visit=visit)
+            vistType=vistType,visit=visit,invoice_id=invoice_id)
 
 # add prescription
-@app.route('/addtreatmentandlabrequest/<int:invoice_id>/edit',methods=['GET','POST'])
+@app.route('/addprescription/<int:invoice_id>/edit',methods=['GET','POST'])
 @login_required
 def AddPrescription(invoice_id):
-    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    # product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    product_purchase=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.order_id==invoice_id)).order_by(asc(OrderItems.inserted_on)).all()
     order=Order.query.filter_by(id=invoice_id).one()
     patient_id=order.customer_id
     patient_name=order.customer_name
@@ -401,8 +406,41 @@ def AddPrescription(invoice_id):
     patients=[s.name for s in Customer.query.all()]
     products=[p.product_name for p in Product.query.all()]
     patientdetails=Customer.query.filter_by(id=patient_id).one()
-    return render_template('prescription.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
+    return render_template('addprescription.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
         products=products,current_debt=current_debt,patient_id=patient_id)
+
+@app.route('/viewpatienttreatment/<int:invoice_id>/edit',methods=['GET','POST'])
+@login_required
+def ViewPreviousTreatment(invoice_id):
+    consultation_list=db.session.query(OrderItems).filter(and_( OrderItems.order_id==invoice_id,\
+        OrderItems.product_name.like('Consulta%'))).all()
+    consultation_list_id=[]
+    for consult in consultation_list:
+        consultation_list_id.append(consult.id)
+    
+    product_purchase=db.session.query(OrderItems).filter(and_( OrderItems.order_id==invoice_id,\
+        ~OrderItems.id.in_(consultation_list_id))).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient_id=order.customer_id
+    patient_name=order.customer_name
+    patvisits=Consultation.query.filter_by(customer_id=patient_id).order_by(desc(Consultation.inserted_on)).first()
+    return render_template('viewtreatment.html',product_purchase=product_purchase,\
+        invoice_id=invoice_id,order=order,patient_name=patient_name,patient_id=patient_id,\
+            patvisits=patvisits)
+
+@app.route('/viewpatientlabresult/<int:invoice_id>/view/<int:patient_id>/',methods=['GET','POST'])
+@login_required
+def ViewPatientLabResult(invoice_id,patient_id):
+    
+    patient_lab_results=LabResult.query.filter_by(order_id=invoice_id).order_by(desc(LabResult.inserted_on)).all()
+    exists= bool(patient_lab_results)
+    if exists == False:
+        flash(f'No Results Yet','danger')
+    order=Order.query.filter_by(id=invoice_id).first()
+    
+    visit=db.session.query(Consultation).filter(or_(Consultation.visit_date ==order.created_on,Consultation.customer_id== patient_id)).first()
+    return render_template('viewlabresult.html',patient_lab_results=patient_lab_results,invoice_id=invoice_id,\
+        patient_id=patient_id,visit=visit,order=order)
 
 # -----------------------------------------------------------------
 
@@ -430,7 +468,6 @@ def AllLabRequest():
 @app.route('/viewlabrequest/<int:invoice_id>/view',methods=['GET','POST'])
 @login_required
 def ViewLabrequest(invoice_id):
-    # product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
     product_purchase=db.session.query(OrderItems).filter(and_( OrderItems.order_id==invoice_id,\
         OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
     for item in product_purchase:
@@ -473,6 +510,8 @@ def processlabresult():
                     invoice_date=data[i]
                 elif i=="patient_Id":
                     patient_Id=data[i]
+                elif i=="order_id":
+                    order_id=data[i]
                 elif i=="visit-type":
                     visittype=data[i]
                 elif i=="testname":
@@ -491,7 +530,7 @@ def processlabresult():
     for (test,result,labtech) in zip(test_name,test_results,lab_tech):
         print(test,result,labtech)
         newlabresult=LabResult(patient_name=patient_name,patient_id=patient_Id,visit_date=invoiceDate_object,visit_type=visittype,\
-            testname=test,testresults=result,testedby=labtech,customer=patienttested)
+            testname=test,testresults=result,testedby=labtech,customer=patienttested,order_id=order_id)
         print(newlabresult)
         db.session.add(newlabresult)
         db.session.commit()
@@ -529,8 +568,6 @@ def showallpatientLabResults(patient_id):
     return render_template('allpatientlabresults.html',patient_name=patient_name,\
         patient_lab_results=patient_lab_results,patient_id=patient_id,\
             invoice_id=invoice_id)
-
-
 
 # ----------------------------------------------------------------------------
 # Invoices
