@@ -8,10 +8,13 @@ from datetime import date
 
 hashed_password= generate_password_hash("2020", method='sha256')
 today = date.today()
-admin1=User(username='admin',password=hashed_password,startdate=today,role='1')
+admin1=User(username='admin',password=hashed_password,startdate=today,role='Admin')
 db.session.add(admin1)
 db.session.commit()
 
+admin2=User(username='Michael',password=hashed_password,startdate=today,role='LabTech')
+db.session.add(admin2)
+db.session.commit()
 
 # add patient
 pid=db.session.query(db.func.max(Customer.id)).one()

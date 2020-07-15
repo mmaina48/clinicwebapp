@@ -1,0 +1,318 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="column">
+                <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-plus">Enter Lab Results for {{patient_name}}</i></a>
+                <a href="{{url_for('ViewLabrequest',invoice_id=invoice_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{patient_name}} lab requests</a>
+                <a href="" class="btn btn-info m-b-5 m-r-2"><i class="ti-align-justify"> </i>All {{patient_name}} lab Results</a>
+                <a href="{{url_for('AllLabRequest')}}" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
+            </div>
+        </div>
+    </div>
+   
+    <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong>Lab Results succesfully Added!</div>
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong></strong> Failed ! Please Make sure all Mandatory Fields hava Data</div>
+    
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h3 class="card-header">Lab Results</h3>
+            
+                <div class="card-body">
+                    <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data"  accept-charset="utf-8">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6" id="payment_from_1">
+                                    <div class="form-group row">
+                                        <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{order.customer_name}}" readonly id="patient_name" tabindex="1"  list="id_data" required  />
+                                           
+                                        </div>  
+                                    </div>
+                                </div>
+
+                                <!-- date -->
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
+                                        <div class="col-sm-6">
+                                    <input class="form-control" type="text" size="50" name="visit-type"  readonly required value="{{order.visit_type}}" tabindex="6" />
+                                    <!-- <input type="date" class="form-control" value="{{orderdate}}"> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- date -->
+                            </div>
+    
+                            <div class="row">
+                                <!-- patient id -->
+                                <div class="col-sm-6" id="payment_from_1">
+                                    <div class="form-group row">
+                                        <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"   name="patient_Id" class=" form-control" readonly  id="patient_Id" value="{{order.patient_id}}" tabindex="1"  list="id_data2" required placeholder="Enter OPD No"  />
+                                        
+                                        </div>  
+                                    </div>
+                                </div>
+                               
+                                <!-- patient -->
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Date</label>
+                                        <div class="col-sm-6">
+                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" readonly required value="{{order.created_on}}" tabindex="6" />
+                                    <!-- <input type="date" class="form-control" value="{{orderdate}}"> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                         </div>
+                         </div>
+                         <div class="container">
+                            <div class="row clearfix">
+                                <div class="col-md-12 table-responsive">
+                                    <table class="table table-bordered table-hover table-sortable" id="tab_logic">
+                                        <thead>
+                                            <tr >
+                                                <th class="text-center">
+                                                    Test Name
+                                                </th>
+                                            
+                                                <th class="text-center">
+                                                    Result Notes
+                                                </th>
+                                                <th class="text-center">
+                                                    Tested by
+                                                </th>
+                                                <th class="text-center" >
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for entry in orderliine_with_lab %}
+                                            <tr >
+                                                <td >
+                                                    <input type="text" name='test_name[]' value="{{entry.product_name}}" list="id_datalist1" placeholder='Enter Test Name' class="form-control"/>
+                                                    <datalist id="id_datalist1">
+                                                        {% for entry in labservices %}
+                                                        <option value="{{entry.product_name}}">{{ entry.product_name }}</option>
+                                                       {% endfor %}
+                                                            </datalist>
+                                                </td>
+                                               
+                                                <td >
+                                                    <textarea name="test_result[]" id="test_result" placeholder="Enter Results" class="form-control"></textarea>
+                                                </td>
+                                                <td style="width: 200px">
+                                                    <input type="text" name="lab_tech[]" class="form-control text-left" placeholder='Tested By' required="" id="lab_tech" list="id_datalist" tabindex="7">
+                                                    <datalist id="id_datalist">
+                                                        {% for entry in labtech %}
+                                                        <option value="{{entry.username}}">{{ entry.username }}</option>
+                                                       {% endfor %}
+                                                            </datalist>
+                                                </td>
+                                                <td data-name="del">
+                                                    <button name="del0" class='btn btn-danger btn-sm row-remove'><span aria-hidden="true">Remove</span></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                
+                                                    <td style="border-right: 1px solid #ffffff;">
+                                                        <input type="button" id="add_invoice" class="btn btn-success" name="add-invoice" onclick="send()" value="Submit" tabindex="15"/>
+                                                    </td>
+                                                    <td style="text-align:right;" colspan="3"><a id="add_row" onclick="addRow()" class="btn btn-primary float-right">Add Row</a></td>
+                                                
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        </div>
+
+                    </form>                
+
+                </div>
+            </div>
+
+      {% endblock %}
+
+      {% block script %}
+      <script>
+          function addRow() {
+    
+    var empTab = document.getElementById('tab_logic').getElementsByTagName('tbody')[0];
+    var rowCnt = empTab.rows.length;   // table row count.
+    var tr = empTab.insertRow(rowCnt); // the table row.
+    tr = empTab.insertRow(rowCnt);
+    tr.setAttribute("id","addedrow")
+    
+    for (var c = 0; c < 4; c++) {
+        var td = document.createElement('td'); // table definition.
+        td = tr.insertCell(c);
+
+
+
+        if (c == 3) {     
+            var button = document.createElement('input');
+            button.setAttribute('type', 'button');
+            button.setAttribute('value', 'Remove');
+            button.setAttribute('tabindex','16');
+            button.setAttribute('onclick', 'removeRow(this)');
+            button.setAttribute('class','btn btn-danger btn-sm row-remove')
+            td.appendChild(button);
+        }
+
+        else if(c==0){
+            var ele = document.createElement('input');
+            ele.setAttribute('type', 'text');
+            ele.setAttribute('value', '');
+            ele.setAttribute('name', 'test_name[]');
+            ele.setAttribute('placeholder', 'Enter Test Name');
+            ele.setAttribute('tabindex','7');
+            ele.setAttribute('class','form-control text-left')
+            ele.setAttribute("id", "test_name");
+            ele.setAttribute("list","id_datalist1")
+            td.appendChild(ele);
+            
+        }
+        else if(c==1){
+            var element = document.createElement('textarea');
+            element.setAttribute('text', 'text');
+            element.setAttribute('name', 'test_result[]');
+            element.setAttribute('id', 'test_result');
+            element.setAttribute('placeholder', 'Enter Results');
+            element.setAttribute('class','form-control')
+           
+            td.appendChild(element)
+        }
+        else {
+            var ele = document.createElement('input');
+            ele.setAttribute('type', 'text');
+            ele.setAttribute('value', '');
+            ele.setAttribute('name', 'lab_tech[]');
+            ele.setAttribute('placeholder', 'Tested by');
+            ele.setAttribute('tabindex','7');
+            ele.setAttribute('class','form-control text-left')
+            ele.setAttribute("id", "lab_tech");
+            ele.setAttribute("list","id_datalist")
+            td.appendChild(ele);
+            
+        }
+        
+
+    }
+}
+
+function removeRow(oButton) {
+    var empTab = document.getElementById('tab_logic');
+    empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
+    
+}
+
+
+function send() {
+    
+    var myTab =  document.getElementById('tab_logic').getElementsByTagName('tbody')[0];
+   
+    var arrValues = new Array();
+    // loop through each row of the table.
+    for (row = 0; row < myTab.rows.length; row++) {
+        // loop through each cell in a row.
+        for (c = 0; c < myTab.rows[row].cells.length; c++) {  
+            var element = myTab.rows.item(row).cells[c];
+            var element_type=element.firstElementChild.type
+          
+            if (element_type  == 'text' || element_type == 'number' || element_type == 'date')
+             {
+                arrValues.push({testname:myTab.rows[row].cells[0].children[0].value,
+                testresult:myTab.rows[row].cells[1].children[0].value,
+                labtech:myTab.rows[row].cells[2].children[0].value,
+
+             }); 
+            }
+        }
+    }
+    // function to remove duplicates
+    function uniqBy(a, key) {
+            var seen = {};
+            return a.filter(function(item) {
+            var k = key(item);
+            return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+            })
+        }
+            var listz = arrValues 
+            var uniqueNames = uniqBy(listz, JSON.stringify)
+            var data = {};
+            $("#insert_sale").serializeArray().map(function(x){data[x.name] = x.value;}); 
+            var keys=["test_name[]","test_result[]","lab_tech[]"]
+            var i;
+            for (i = 0; i < keys.length; i++) {
+                delete data[keys[i]]
+            }
+
+            var tabledata=uniqueNames
+            tabledata.push(data)
+            console.log(tabledata)
+            $.ajax({
+                url: '/processlabresult',
+                data: JSON.stringify(tabledata, null, '\t'),
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                success: function(response){
+                    alert("Successfully Added")
+                    $('#tab_logic').fadeOut(2000).fadeIn(2000);
+                    $('#insert_sale').fadeOut(2000).fadeIn(2000);
+                    $('#successAlert').text(data.name).show();
+                    $('#errorAlert').hide();
+                    $("#insert_sale")[0].reset();
+                    $('#addedrow').remove();
+                    location.reload();
+                    
+                    
+                },
+                error: function(error){
+                    alert("Please Make sure the Date fied or Qty are not empty!")
+                    $('#errorAlert').text(data.error).show();
+                    $('#successAlert').hide();
+                
+                }
+            });
+
+            }
+      </script>
+{% endblock %}

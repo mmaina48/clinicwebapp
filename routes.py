@@ -3,7 +3,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from main import app,db
 from forms import LoginForm,RegisterForm,allroles,changepassForm
 from models import User,Product,Supplier,product_orders,product_purchases,Purchase,Order,Expense,TrackExpense,\
-    PurchaseItems,Customer,OrderItems,Visits,Consultation
+    PurchaseItems,Customer,OrderItems,Visits,Consultation,LabResult
 import time,datetime
 from sqlalchemy import desc,asc
 from sqlalchemy import and_,or_
@@ -88,7 +88,6 @@ def signup():
 #all system Users
 @app.route('/allusers/',methods=['GET','POST'])
 @login_required
-@required_roles('Admin')
 def AllUsers():
     users=User.query.all()
     return render_template('allusers.html',users=users)
@@ -129,7 +128,7 @@ def deleteUser(user_id):
 @app.route('/Dashboard/',methods=['GET','POST'])
 @login_required
 def dashbord():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html',username=current_user.username)
 
 
 # Patients
@@ -268,49 +267,54 @@ def showallvitals(patient_id):
 @app.route('/patientconsultation/<int:patient_id>/', methods=['GET','POST'])
 @login_required
 def PatientConsultation(patient_id):
+    print(patient_id)
     patient=Customer.query.filter_by(id=patient_id).one()
     patientID=patient.id
     today = date.today()
     invoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.customer_id== patientID)).order_by(desc(Order.inserted_on)).first()
-    invoice_id=invoice.id
-    clinicid=patient.patient_id
-    vital=db.session.query(Visits).filter(or_( Visits.inserted_on ==today,Visits.patient_id== clinicid)).order_by(desc(Visits.inserted_on)).first()
-    todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
-    if todaysinvoice:
-        vistType=todaysinvoice.visit_type
+    if invoice is None:
+        flash(f'{patient.name} has not paid for consultation', 'danger')
+        return redirect(url_for('AllCustomers'))
     else:
-        vistType='OPD'
+        invoice_id=invoice.id
+        clinicid=patient.patient_id
+        vital=db.session.query(Visits).filter(or_( Visits.inserted_on ==today,Visits.patient_id== clinicid)).order_by(desc(Visits.inserted_on)).first()
+        todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
+        if todaysinvoice:
+            vistType=todaysinvoice.visit_type
+        else:
+            vistType='OPD'
 
-    if request.method == 'POST':
+        if request.method == 'POST':
 
-        # convert stringto date object because SQLite Date type only accepts Python date objects as input
+            # convert stringto date object because SQLite Date type only accepts Python date objects as input
 
-        visitDate = request.form['invoice_date']
-        visitDate_object = datetime.strptime(visitDate, "%Y-%m-%d").date()
-        newvisit=Consultation(patient_name=request.form['patient_name'],\
-            patient_id=request.form['patient_Id'],visit_type=request.form['visittype'],visit_date=visitDate_object,\
-            height=request.form['patient_height'],weight=request.form['patient_weight'],\
-            bmi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
-            bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
-            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
-            chiefcomplain=request.form['chief_complain'],patienthistory=request.form['patient_history'],\
-            clinicalnote=request.form['clinical_note'],diagnosis=request.form['patient_diagnosis'],\
-            customer_id=patient.id)
-        db.session.add(newvisit)
-        print(newvisit.clinicalnote)
-        try:
+            visitDate = request.form['invoice_date']
+            visitDate_object = datetime.strptime(visitDate, "%Y-%m-%d").date()
+            newvisit=Consultation(patient_name=request.form['patient_name'],\
+                patient_id=request.form['patient_Id'],visit_type=request.form['visittype'],visit_date=visitDate_object,\
+                height=request.form['patient_height'],weight=request.form['patient_weight'],\
+                bmi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
+                bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
+                respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
+                chiefcomplain=request.form['chief_complain'],patienthistory=request.form['patient_history'],\
+                clinicalnote=request.form['clinical_note'],diagnosis=request.form['patient_diagnosis'],\
+                customer_id=patient.id)
+            db.session.add(newvisit)
+            print(newvisit.clinicalnote)
+            try:
 
-            db.session.commit()
-            flash(f' {newvisit.patient_name} Vitals Successfully Added!', 'success')
-            return redirect(url_for('PatientVital',patient_id=patient_id))
+                db.session.commit()
+                flash(f' {newvisit.patient_name} Visit Note Successfully Added!', 'success')
+                return redirect(url_for('PatientConsultation',patient_id=patient_id))
 
-        except IntegrityError:
-            db.session.rollback()
-            flash(f'Try Again ','danger')
-            return redirect(url_for('PatientVital',patient_id=patient_id))
-    else:
-        return render_template('consultation.html',patient_id=patient_id,patient=patient,\
-            vistType=vistType,vital=vital,invoice_id=invoice_id)
+            except IntegrityError:
+                db.session.rollback()
+                flash(f'Try Again ','danger')
+                return redirect(url_for('PatientConsultation',patient_id=patient_id))
+        else:
+            return render_template('consultation.html',patient_id=patient_id,patient=patient,\
+                vistType=vistType,vital=vital,invoice_id=invoice_id)
 
 # all Consultations
 @app.route('/patients/<int:patient_id>/')
@@ -370,29 +374,26 @@ def editPatientVisit(patient_id,visit_id):
             editedVisit.diagnosis = request.form['patient_diagnosis']
     
         try:
-            
             db.session.add(editedVisit)
             db.session.commit() 
             flash(f'visit has been updated!', 'success')
             return redirect(url_for('editPatientVisit',patient_id=patient_id,visit_id=visit_id))
 
         except IntegrityError:
-
             db.session.rollback()
             flash(f'Try Again ','danger')
-            return redirect(url_for('PatientVital',patient_id=patient_id))
+            return redirect(url_for('editPatientVisit',patient_id=patient_id,visit_id=visit_id))
     else:
         return render_template('viewconsultation.html',patient_id=patient_id,patient=patient,\
             vistType=vistType,visit=visit)
 
 # add prescription
-@app.route('/updateinvoice/<int:invoice_id>/edit',methods=['GET','POST'])
+@app.route('/addtreatmentandlabrequest/<int:invoice_id>/edit',methods=['GET','POST'])
 @login_required
 def AddPrescription(invoice_id):
     product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
     order=Order.query.filter_by(id=invoice_id).one()
     patient_id=order.customer_id
-    
     patient_name=order.customer_name
     patient_data=Customer.query.filter_by(name=patient_name).first()
     current_debt=patient_data.debt
@@ -403,6 +404,98 @@ def AddPrescription(invoice_id):
         products=products,current_debt=current_debt,patient_id=patient_id)
 
 # -----------------------------------------------------------------
+
+#Lab services
+@app.route('/TodaysLabRequest/',methods=['GET','POST'])
+@login_required
+def AllLabRequest():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
+    list_id=[]
+    exists= bool(orderliine_with_lab)
+    if exists == False:
+        flash(f'No Lab Requests','warning')
+    else:
+        for item in orderliine_with_lab:
+            invoice_id=item.order_id
+            list_id.append(invoice_id)
+            Labrequest=db.session.query(Order).filter(Order.id.in_(list_id)).order_by(Order.inserted_on.desc()).all()
+        return render_template('labrequest.html',Labrequest=Labrequest ,invoice_id=invoice_id)
+
+@app.route('/viewlabrequest/<int:invoice_id>/view',methods=['GET','POST'])
+@login_required
+def ViewLabrequest(invoice_id):
+    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    for item in product_purchase:
+        if item.product_type=='Medication':
+            product_purchase.remove(item)
+
+    order=Order.query.filter_by(id=invoice_id).one()
+    invoice_id=order.id
+    patient_name=order.customer_name
+    return render_template('viewlabrequest.html',product_purchase=product_purchase,\
+        invoice_id=invoice_id,order=order,patient_name=patient_name)
+
+@app.route('/addlabresult/<int:invoice_id>/add',methods=['GET'])
+@login_required
+def AddLabresult(invoice_id):
+    order=Order.query.filter_by(id=invoice_id).one()
+    labtech=User.query.filter_by(role='Labtech').all()
+    labservices = db.session.query(Product).filter(Product.product_name.like('lab%')).all()
+    patient_name=order.customer_name
+    orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.order_id==invoice_id,\
+        OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
+    return render_template('addlabresult.html',labtech=labtech,order=order,orderliine_with_lab=orderliine_with_lab,\
+    invoice_id=invoice_id,patient_name=patient_name,labservices=labservices)
+
+@app.route('/processlabresult', methods=['POST'])
+def processlabresult():
+    table= request.json
+    print(table)
+    test_name=[]
+    test_results=[]
+    lab_tech=[]
+    
+    for data in table:
+            for i in data:
+                if i=="patient_name":
+                    patient_name=data[i]
+                elif i=="invoice_date":
+                    invoice_date=data[i]
+                elif i=="patient_Id":
+                    patient_Id=data[i]
+                elif i=="visit-type":
+                    visittype=data[i]
+                elif i=="testname":
+                    test_name.append(data[i])
+                elif i=="testresult":
+                    test_results.append(data[i])
+                elif i=="labtech":
+                    lab_tech.append(data[i])
+
+    invoiceDate = invoice_date
+    invoiceDate_object = datetime.strptime(invoiceDate, "%Y-%m-%d").date() 
+
+    patienttested=Customer.query.filter_by(patient_id=patient_Id).first()
+    print(patienttested)
+    print(test_name,test_results,lab_tech)
+    for (test,result,labtech) in zip(test_name,test_results,lab_tech):
+        print(test,result,labtech)
+        newlabresult=LabResult(patient_name=patient_name,patient_id=patient_Id,visit_date=invoiceDate_object,visit_type=visittype,\
+            testname=test,testresults=result,testedby=labtech,customer=patienttested)
+        print(newlabresult)
+        db.session.add(newlabresult)
+        db.session.commit()
+        
+    
+    return jsonify({'result':'sucesss'}) 
+
+
+
+
+# ----------------------------------------------------------------------------
 # Invoices
 @app.route('/patientBill/<int:patient_id>/new/', methods=['GET'])
 @login_required
@@ -537,7 +630,7 @@ def processinvoicedata():
                 elif i=="debt_pay":
                     debt_pay=data[i]
          
-    patientToAdd=Customer.query.filter_by(name=patient_name).one()
+    patientToAdd=Customer.query.filter_by(patient_id=patient_Id).one()
     patientToAdd.debt +=int(balance)
     patientToAdd.debt -=int(debt_pay)
 
@@ -680,7 +773,7 @@ def UpdateInvoice():
       
            
     # update patient debt
-    patientToAdd=Customer.query.filter_by(name=patient_name).one()
+    patientToAdd=Customer.query.filter_by(patient_id=patient_Id).one()
    
     patientToAdd.debt +=int(balance)
     patientToAdd.debt -=int(debt_pay)

@@ -18,11 +18,11 @@
   </div>
   <div>
     <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="page-header">
-                <h2 class="pageheader-title">Update Invoice</h2>
-               
-               <hr>
+        <div class="col-sm-12">
+            <div class="column">
+                <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-plus">{{patient_name}} lab requests </i></a>
+                <a href="{{url_for('AddLabresult',invoice_id=invoice_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>Enter Lab Results for {{patient_name}}</a>
+                <a href="{{url_for('AllLabRequest')}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h3 class="card-header">{{order.customer_name}} Invoice</h3>
+                <h3 class="card-header">{{order.customer_name}} Lab Request</h3>
             
                 <div class="card-body">
                     <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
@@ -48,12 +48,8 @@
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{order.customer_name}}" id="patient_name" tabindex="1"  list="id_data" required  />
-                                            <datalist id="id_data">
-                                                {% for entry in patients %}
-                                                <option value="{{entry}}">{{ entry }}</option>
-                                               {% endfor %}
-                                                    </datalist>
+                                            <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{order.customer_name}}" readonly id="patient_name" tabindex="1"  list="id_data" required  />
+                                            
                                         </div>  
                                     </div>
                                 </div>
@@ -63,7 +59,7 @@
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Payment Type</label>
                                         <div class="col-sm-6">
-                                            <select name="paytype" id="paytype" class="form-control" required="" >
+                                            <select name="paytype" id="paytype" class="form-control" readonly >
                                                 <option selected value="{{order.payment_type}}">{{order.payment_type}}</option>
                                                 <option value="Cash">Cash Payment</option>
                                                 <option value="Mpesa">Mpesa Payment</option> 
@@ -83,12 +79,8 @@
                                     <div class="form-group row">
                                         <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" value="{{order.patient_id}}" tabindex="1"  list="id_data2" required placeholder="Enter OPD No"  />
-                                            <datalist id="id_data2">
-                                                {% for entry in patientids %}
-                                                <option value="{{entry}}">{{ entry }}</option>
-                                               {% endfor %}
-                                                    </datalist>
+                                            <input type="text"   name="patient_Id" class=" form-control" readonly  id="patient_Id" value="{{order.patient_id}}" tabindex="1"  list="id_data2" required placeholder="Enter OPD No"  />
+                                            
                                         </div>  
                                     </div>
                                 </div>
@@ -98,7 +90,7 @@
                                     <div class="form-group row">
                                         <label for="date" class="col-sm-4 col-form-label">Date</label>
                                         <div class="col-sm-6">
-                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" required value="{{order.created_on}}" tabindex="6" />
+                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" readonly required value="{{order.created_on}}" tabindex="6" />
                                     <!-- <input type="date" class="form-control" value="{{orderdate}}"> -->
                                         </div>
                                     </div>
@@ -130,11 +122,7 @@
                                         <tr>
                                             <td style="width: 200px">
                                                 <input type="text" name="product_name" class="form-control productSelection  text-left" value="{{prod.product_name}}" readonly placeholder='Product Name' required="" id="product_name" list="id_datalist" tabindex="7">
-                                                <datalist id="id_datalist">
-                                                    {% for entry in products %}
-                                                    <option value="{{entry}}">{{ entry }}</option>
-                                                   {% endfor %}
-                                                        </datalist>
+                                               
                                             </td>
                                             <td>
                                                 <input type="text" name="productType"  class="form-control text-center " value="{{prod.product_type}}" readonly value=""  id="productType"/>
@@ -164,7 +152,7 @@
                                         {% endfor %}   
                                     </tbody>
                                     <tfoot>
-                                        <tr>
+                                        <tr style="display: none;">
                                             <td colspan="6"  style="text-align:right;"><b>Grand Total:</b></td>
                                             <td class="text-right">
                                                  <input type="text" id="grand_total_price" class="form-control text-right txtnet" name="grand_total_price" placeholder="0.00" value="{{order.total_amount}}" readonly="readonly" />
@@ -172,54 +160,54 @@
                                             </td>
                                             <td></td>
                                         </tr>
-                                             <tr>
-                                        <td colspan="6"  style="text-align:right;"><b>Current Debt:</b></td>
+                                             <tr style="display: none;">
+                                        <td colspan="6"  style="text-align:right; display: none;"><b>Current Debt:</b></td>
                                         <td class="text-right">
-                                            <input type="text" id="previous" class="form-control text-right txtnet" name="previous" value="{{current_debt}}" placeholder="0.00"  value="0" readonly="readonly" />
+                                            <input type="hidden" id="previous" class="form-control text-right txtnet" name="previous" value="{{current_debt}}" placeholder="0.00"  value="0" readonly="readonly" />
                                         </td>
                                         <td></td>
                                     </tr>
 
-                                    <tr>
-                                        <td colspan="6"  style="text-align:right;"><b>Net Total:</b></td>
+                                    <tr style="display: none;">
+                                        <td colspan="6"  style="text-align:right; display: none"><b>Net Total:</b></td>
                                         <td class="text-right">
-                                            <input type="text" id="nettotal" class="form-control text-right " name="nettotal" value="{{order.net_total}}" placeholder="0.00"  readonly="readonly" />
+                                            <input type="hidden" id="nettotal" class="form-control text-right " name="nettotal" value="{{order.net_total}}" placeholder="0.00"  readonly="readonly" />
                                         </td>
                                         <td></td>
                                     </tr>
-                                    <tr>
+                                    <tr >
                                         
-                                   <td colspan="6" style="text-align:right;" colspan="4"><b>Paid Amount:</b></td>
-                                            <td  class="text-right">
+                                   <td colspan="6" style="text-align:right;" colspan="4"><b>Payment Status:</b></td>
+                                            <td  class="text-right" style="display: none;">
                                                 <input type="text" id="paidAmount"
-                                             class="form-control text-right" name="paid_amount" value="{{order.payment_amount}}" onkeyup="checkqty()" placeholder="0.00" tabindex="13"/>
+                                             class="form-control text-right" name="paid_amount" readonly value="{{order.payment_amount}}" onkeyup="checkqty()" placeholder="0.00" tabindex="13"/>
                                             </td>
                                             <td><input type="button" id="full_paid_tab" class="btn btn-warning" style="display: none;"  value="Fully Paid" tabindex="14"/></td>
                                         </tr>
-                                        <tr>
+                                        <tr style="display: none;">
                                             <td align="center">
                                                 <input type="button" id="add_invoice" class="btn btn-success" name="add-invoice" onclick="send()" value="Submit" tabindex="15"/>
                                             </td>
                                           <td> <a href="{{url_for('InvoiceDetail', invoice_id =invoice_id)}}" style="display: none;" id="print_inv"  class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Print Receipt</a></td>
-                                            <td style="text-align:right;" colspan="4"><b>Change:</b></td>
+                                            <td style="text-align:right;display: none;" colspan="4"><b>Change:</b></td>
                                             <td class="text-right">
-                                                <input type="text" id="change" class="form-control text-right" name="change" value="0"  placeholder="0.00" readonly="readonly"/>
+                                                <input type="text" style="display: none;" id="change" class="form-control text-right" name="change" value="0"  placeholder="0.00" readonly="readonly"/>
                                             </td>
                                            
                                             <td></td>
                                         </tr>
-                                        <tr id="balance_M"><td style="text-align:right;" colspan="6" id="ch_l"><b>Balance:</b></td>
+                                        <tr id="balance_M" style="display: none;"><td style="text-align:right;" colspan="6" id="ch_l"><b>Balance:</b></td>
                                             <td class="text-right">
                                                 <input type="text" id="balance" class="form-control text-right" value="0" name="balance" value="" placeholder="0.00" readonly="readonly"/>
                                             </td>
                                             <td></td></tr>
-                                        <tr id="debt_payTR"><td style="text-align:right;" colspan="6" id="ch_u"><b>Debt Payment:</b></td>
+                                        <tr id="debt_payTR" style="display: none;"><td style="text-align:right;" colspan="6" id="ch_u"><b>Debt Payment:</b></td>
                                             <td class="text-right">
                                                 <input type="text" id="debt_pay" class="form-control text-right" value="0" name="debt_pay" placeholder="0.00"  readonly="readonly"/>
                                             </td>
                                             <td></td></tr>
                                         
-                                        <tr id="change_m"><td style="text-align:right;" colspan="6" id="ch_l"><b>Total Debt:</b></td>
+                                        <tr id="change_m" style="display: none;"><td style="text-align:right;" colspan="6" id="ch_l"><b>Total Debt:</b></td>
                                             <td class="text-right">
                                                 <input type="text" id="dueAmmount" class="form-control text-right" name="due_amount" value="" placeholder="0.00" readonly="readonly"/>
                                             </td>
@@ -241,111 +229,111 @@
 
       {% block script %}
       <script>
-          function addRow() {
+//           function addRow() {
     
-    var empTab = document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
-    var rowCnt = empTab.rows.length;   // table row count.
-    var tr = empTab.insertRow(rowCnt); // the table row.
-    tr = empTab.insertRow(rowCnt);
-    tr.setAttribute("id","addedrow")
+//     var empTab = document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
+//     var rowCnt = empTab.rows.length;   // table row count.
+//     var tr = empTab.insertRow(rowCnt); // the table row.
+//     tr = empTab.insertRow(rowCnt);
+//     tr.setAttribute("id","addedrow")
     
-    for (var c = 0; c < 8; c++) {
-        var td = document.createElement('td'); // table definition.
-        td = tr.insertCell(c);
+//     for (var c = 0; c < 8; c++) {
+//         var td = document.createElement('td'); // table definition.
+//         td = tr.insertCell(c);
 
 
 
-        if (c == 7) {     
-            var button = document.createElement('input');
-            button.setAttribute('type', 'button');
-            button.setAttribute('value', 'Remove');
-            button.setAttribute('tabindex','16');
-            button.setAttribute('onclick', 'removeRow(this)');
-            button.setAttribute('class','btn btn-danger btn-sm row-remove')
-            td.appendChild(button);
-        }
+//         if (c == 7) {     
+//             var button = document.createElement('input');
+//             button.setAttribute('type', 'button');
+//             button.setAttribute('value', 'Remove');
+//             button.setAttribute('tabindex','16');
+//             button.setAttribute('onclick', 'removeRow(this)');
+//             button.setAttribute('class','btn btn-danger btn-sm row-remove')
+//             td.appendChild(button);
+//         }
 
-        else if(c==0){
-            var ele = document.createElement('input');
-            ele.setAttribute('type', 'text');
-            ele.setAttribute('value', '');
-            ele.setAttribute('name', 'product_name[]');
-            ele.setAttribute('placeholder', 'Product Name');
-            ele.setAttribute('tabindex','7');
-            ele.setAttribute('class','form-control')
-            ele.setAttribute("id", "product_name");
-            ele.setAttribute("list","id_datalist")
-            td.appendChild(ele);
+//         else if(c==0){
+//             var ele = document.createElement('input');
+//             ele.setAttribute('type', 'text');
+//             ele.setAttribute('value', '');
+//             ele.setAttribute('name', 'product_name[]');
+//             ele.setAttribute('placeholder', 'Product Name');
+//             ele.setAttribute('tabindex','7');
+//             ele.setAttribute('class','form-control')
+//             ele.setAttribute("id", "product_name");
+//             ele.setAttribute("list","id_datalist")
+//             td.appendChild(ele);
             
-        }
-        else if(c==1){
-            var element = document.createElement('input');
-            element.setAttribute('text', 'text');
-            element.setAttribute('name', 'productType');
-            element.setAttribute('readonly','');
-            element.setAttribute('id', 'productType');
-            element.setAttribute('class','form-control text-center')
+//         }
+//         else if(c==1){
+//             var element = document.createElement('input');
+//             element.setAttribute('text', 'text');
+//             element.setAttribute('name', 'productType');
+//             element.setAttribute('readonly','');
+//             element.setAttribute('id', 'productType');
+//             element.setAttribute('class','form-control text-center')
            
-            td.appendChild(element)
-        }
-        else if(c==2){
-            var le = document.createElement('select')
-            le.setAttribute('id', "ExpDate")
-            le.setAttribute('style','border-color:green')
-            le.setAttribute('class','form-control  text-left')
-            td.appendChild(le);
-        }
-        else if(c==3){
-            var element = document.createElement('input');
-            element.setAttribute('text', 'number');
-            element.setAttribute('name', 'avl_quantity[]');
-            element.setAttribute('readonly','')
-            element.setAttribute('id', 'avlquantity_1');
-            element.setAttribute('class','form-control text-left')
+//             td.appendChild(element)
+//         }
+//         else if(c==2){
+//             var le = document.createElement('select')
+//             le.setAttribute('id', "ExpDate")
+//             le.setAttribute('style','border-color:green')
+//             le.setAttribute('class','form-control  text-left')
+//             td.appendChild(le);
+//         }
+//         else if(c==3){
+//             var element = document.createElement('input');
+//             element.setAttribute('text', 'number');
+//             element.setAttribute('name', 'avl_quantity[]');
+//             element.setAttribute('readonly','')
+//             element.setAttribute('id', 'avlquantity_1');
+//             element.setAttribute('class','form-control text-left')
            
-            td.appendChild(element)
-        }
-        else if(c==4){
-            var ele = document.createElement('input')
-            ele.setAttribute('type', 'text')
-            ele.setAttribute('name', "quantity[]")
-            element.setAttribute('onkeyup','checkqty()')
-            ele.setAttribute('id', "quantity")
-            ele.setAttribute('class','form-control text-left')
+//             td.appendChild(element)
+//         }
+//         else if(c==4){
+//             var ele = document.createElement('input')
+//             ele.setAttribute('type', 'text')
+//             ele.setAttribute('name', "quantity[]")
+//             element.setAttribute('onkeyup','checkqty()')
+//             ele.setAttribute('id', "quantity")
+//             ele.setAttribute('class','form-control text-left')
             
-            td.appendChild(ele)
-        }
-        else if(c==5){
-            var ele = document.createElement('input')
-            ele.setAttribute('type', 'text')
-            ele.setAttribute('name', "selling_price[]")
-            ele.setAttribute('readonly','')
-            ele.setAttribute('id', "selling_price")
-            ele.setAttribute('placeholder', '0.00')
-            ele.setAttribute('class','form-control text-left')
-            td.appendChild(ele)
-        }
-        else {
-            var ele = document.createElement('input');
-            ele.setAttribute('type', 'text')
-            ele.setAttribute('name', 'total_price')
-            ele.setAttribute('readonly','')
-            ele.setAttribute('class','form-control text-right txtcal')
-            ele.setAttribute('id', 'total_price')
-            ele.setAttribute('placeholder', '0.00')
-            td.appendChild(ele)
-        }
+//             td.appendChild(ele)
+//         }
+//         else if(c==5){
+//             var ele = document.createElement('input')
+//             ele.setAttribute('type', 'text')
+//             ele.setAttribute('name', "selling_price[]")
+//             ele.setAttribute('readonly','')
+//             ele.setAttribute('id', "selling_price")
+//             ele.setAttribute('placeholder', '0.00')
+//             ele.setAttribute('class','form-control text-left')
+//             td.appendChild(ele)
+//         }
+//         else {
+//             var ele = document.createElement('input');
+//             ele.setAttribute('type', 'text')
+//             ele.setAttribute('name', 'total_price')
+//             ele.setAttribute('readonly','')
+//             ele.setAttribute('class','form-control text-right txtcal')
+//             ele.setAttribute('id', 'total_price')
+//             ele.setAttribute('placeholder', '0.00')
+//             td.appendChild(ele)
+//         }
 
-    }
-}
+//     }
+// }
 
-function removeRow(oButton) {
-    var empTab = document.getElementById('normalinvoice');
-    empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
-    var total=oButton.parentNode.parentNode.children[6].children[0].value
-    document.getElementById("grand_total_price").value -=total
-    document.getElementById("nettotal").value -=total
-}
+// function removeRow(oButton) {
+//     var empTab = document.getElementById('normalinvoice');
+//     empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
+//     var total=oButton.parentNode.parentNode.children[6].children[0].value
+//     document.getElementById("grand_total_price").value -=total
+//     document.getElementById("nettotal").value -=total
+// }
 
 $('#insert_sale').on('change',"input" ,function(e) {
         var target=e.target

@@ -35,6 +35,7 @@ class Customer(db.Model):
     debt=db.Column(db.Integer,default=0)
     orders = db.relationship('Order', backref='customer')
     visits = db.relationship('Visits', backref='customer')
+    labresults=db.relationship('LabResult', backref='customer')
     
 
 class Visits(db.Model):
@@ -75,6 +76,19 @@ class Consultation(db.Model):
     patienthistory=db.Column(db.String(), nullable=False)
     clinicalnote=db.Column(db.String(), nullable=False)
     diagnosis=db.Column(db.String(), nullable=False)
+    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
+
+class LabResult(db.Model):
+    __tablename__ = 'labresults'
+    id = db.Column(db.Integer(), primary_key=True)
+    inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
+    patient_name = db.Column(db.String(255), nullable=False)
+    patient_id=db.Column(db.String(), nullable=False)
+    visit_type=db.Column(db.String(255), nullable=False)
+    visit_date=db.Column(db.Date(), nullable=False)
+    testname=db.Column(db.String(), nullable=False)
+    testresults=db.Column(db.String(), nullable=False)
+    testedby=db.Column(db.String(), nullable=False)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
 class Supplier(db.Model):  
@@ -153,6 +167,7 @@ class OrderItems(db.Model):
     """ orderitems model """  
     __tablename__ = "orderitems"
     id = db.Column(db.Integer, primary_key=True)
+    inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
     product_name = db.Column(db.String(25), nullable=True)
     product_type = db.Column(db.String(25), nullable=False)
     expiry_date = db.Column(db.Date(), nullable=True)
@@ -173,6 +188,7 @@ class TrackExpense(db.Model):
     """ TrackExpense model """  
     __tablename__ = "trackexpense"
     id = db.Column(db.Integer, primary_key=True)
+    inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
     created_on = db.Column(db.Date(), nullable=False)
     amount= db.Column(db.Integer, nullable=False)
     payment_type=db.Column(db.String(25),nullable=False)

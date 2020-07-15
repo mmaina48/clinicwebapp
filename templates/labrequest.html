@@ -26,19 +26,11 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All Visits Notes</a>
+      <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All lab Requests</a>
     </li>
-    <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify">Add Visit Notes</i></a>
-      </li>
- 
-  <li class="nav-item">
-    <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add Prescription/Lab request</a>
-  </li>
-  <li class="nav-item">
-    <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Report</a>
-  </li>
-</ul>
+
+  </ul>
+  
   <div class="tab-content">
     <div class="tab-pane active" id="home" role="tabpanel">
         <div class="row">
@@ -47,7 +39,7 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Basic Table</h5>
+                <h5 class="card-header">Lab Requests</h5>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered first">
@@ -57,19 +49,17 @@
                                     <th>OPD No</th>
                                     <th>Visit Type</th>
                                     <th>Date</th>
-                                    <th>Seen By</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for vital in patvisits %}
+                                {% for request in Labrequest %}
                                 <tr>
-                                    <td>{{vital.patient_name}}</td>
-                                    <td>{{vital.patient_id}}</td>
-                                    <td>{{vital.visit_type}}</td>
-                                    <td>{{vital.visit_date}}</td>
-                                    <td>Dr.Ngugi</td>
-                                    <td><a href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=vital.id)}}"><span class="badge badge-info">View</span></a></td>
+                                    <td>{{request.customer_name}}</td>
+                                    <td>{{request.patient_id}}</td>
+                                    <td>{{request.visit_type}}</td>
+                                    <td>{{request.created_on}}</td>
+                                   <td><a href="{{url_for('ViewLabrequest',invoice_id=request.id)}}" ><span class="badge badge-info">Lab Request</span></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -91,10 +81,6 @@
       {% block script %}
       <script>
            
-      $(function () {
-       $('#myTab a:last').tab('show')
-       
-      })
 
       $( document ).ready(function() {
         $('.table-striped').DataTable()

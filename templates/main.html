@@ -116,8 +116,8 @@
                             <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{url_for('static',filename='images/avatar-1.jpg')}}" alt="" class="user-avatar-md rounded-circle"></a>
                             <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                 <div class="nav-user-info">
-                                    <h5 class="mb-0 text-white nav-user-name">Michael Maina</h5>
-                                    <span class="status"></span><span class="ml-2">Available</span>
+                                    <span class="status">Online</span><span class="ml-2"></span>
+                                    <h5 class="mb-0 text-white nav-user-name">{{username}}</h5> 
                                 </div>
                                
                                 <a class="dropdown-item" href="{{url_for('signup')}}"><i class="fas fa-cog mr-2"></i>Add Users</a>
@@ -159,6 +159,8 @@
                                 <a class="nav-link active" href="{{url_for('AllSuppliers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Suppliers<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('AllPurchase')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>Purchase Report<span class="badge badge-success">6</span></a>
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('AllLabRequest')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Lab Request<span class="badge badge-success">6</span></a>
                             </li>
                           
                         </ul>

@@ -18,7 +18,6 @@
   </div>
   <div>
    
- 
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
@@ -26,13 +25,19 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Update visit</a>
+      <a class="nav-item nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Update visit Notes</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Visit</a>
+        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Visit Notes</a>
       </li>
       <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add New Visit</a>
+        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add New Visit Notes</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add Prescription/Lab request</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Reports</a>
       </li>
   </ul>
   <div class="tab-content">
