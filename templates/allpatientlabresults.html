@@ -15,7 +15,6 @@
             {%endfor%}
       {%endif %}
     {%endwith%}
-    
   </div>
   <div>
    
@@ -27,7 +26,10 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All lab Requests</a>
+      <!-- <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All {{patient_name}}lab Results</a> -->
+      <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All {{patient_name}} lab Results</a>
+      <a href="{{url_for('AddLabresult',invoice_id=invoice_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add new lab Results for {{patient_name}} </a>
+      <a href="{{url_for('AllLabRequest')}}" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
     </li>
 
   </ul>
@@ -40,7 +42,7 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Lab Requests</h5>
+                <h5 class="card-header">All Lab Results for {{patient_name}} </h5>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered first">
@@ -54,13 +56,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for request in labrequest %}
+                                {% for result in patient_lab_results %}
                                 <tr>
-                                    <td>{{request.customer_name}}</td>
-                                    <td>{{request.patient_id}}</td>
-                                    <td>{{request.visit_type}}</td>
-                                    <td>{{request.created_on}}</td>
-                                   <td><a href="{{url_for('ViewLabrequest',invoice_id=request.id)}}" ><span class="badge badge-info">Lab Request</span></a></td>
+                                    <td>{{result.patient_name}}</td>
+                                    <td>{{result.patient_id}}</td>
+                                    <td>{{result.visit_type}}</td>
+                                    <td>{{result.visit_date}}</td>
+                                   <td><a href="" ><span class="badge badge-info">Results</span></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>

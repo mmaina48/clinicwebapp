@@ -76,6 +76,7 @@ class Consultation(db.Model):
     patienthistory=db.Column(db.String(), nullable=False)
     clinicalnote=db.Column(db.String(), nullable=False)
     diagnosis=db.Column(db.String(), nullable=False)
+    secondarydiagnosis=db.Column(db.String(), nullable=False)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
 class LabResult(db.Model):

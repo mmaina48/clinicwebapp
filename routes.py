@@ -214,7 +214,6 @@ def deletePatient(patient_id):
 @login_required
 def PatientVital(patient_id):
     patient=Customer.query.filter_by(id=patient_id).one()
-    
     clinicid=patient.patient_id
     today = date.today()
     todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
@@ -298,8 +297,8 @@ def PatientConsultation(patient_id):
                 bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
                 respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
                 chiefcomplain=request.form['chief_complain'],patienthistory=request.form['patient_history'],\
-                clinicalnote=request.form['clinical_note'],diagnosis=request.form['patient_diagnosis'],\
-                customer_id=patient.id)
+                clinicalnote=request.form['clinical_note'],diagnosis=request.form['primary_diagnosis'],\
+                secondarydiagnosis=request.form['Secondary_diagnosis'],customer_id=patient.id)
             db.session.add(newvisit)
             print(newvisit.clinicalnote)
             try:
@@ -372,6 +371,8 @@ def editPatientVisit(patient_id,visit_id):
 
         if request.form['patient_diagnosis']:
             editedVisit.diagnosis = request.form['patient_diagnosis']
+        if request.form['Secondary_diagnosis']:
+            editedVisit.secondarydiagnosis = request.form['Secondary_diagnosis']
     
         try:
             db.session.add(editedVisit)
@@ -413,25 +414,28 @@ def AllLabRequest():
     yesterday = today - timedelta(days = 1) 
     orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
         OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
+    print(orderliine_with_lab)
     list_id=[]
     exists= bool(orderliine_with_lab)
     if exists == False:
-        flash(f'No Lab Requests','warning')
-    else:
-        for item in orderliine_with_lab:
-            invoice_id=item.order_id
-            list_id.append(invoice_id)
-            Labrequest=db.session.query(Order).filter(Order.id.in_(list_id)).order_by(Order.inserted_on.desc()).all()
-        return render_template('labrequest.html',Labrequest=Labrequest ,invoice_id=invoice_id)
+        flash(f'No Lab Requests Today !','success')
+    for item in orderliine_with_lab:
+        invoice_d=item.order_id
+        list_id.append(invoice_d)
+        
+    labrequest=db.session.query(Order).filter(Order.id.in_(list_id)).order_by(Order.inserted_on.desc()).all()
+    print(labrequest)
+    return render_template('labrequest.html',labrequest=labrequest)
 
 @app.route('/viewlabrequest/<int:invoice_id>/view',methods=['GET','POST'])
 @login_required
 def ViewLabrequest(invoice_id):
-    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    # product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    product_purchase=db.session.query(OrderItems).filter(and_( OrderItems.order_id==invoice_id,\
+        OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
     for item in product_purchase:
         if item.product_type=='Medication':
             product_purchase.remove(item)
-
     order=Order.query.filter_by(id=invoice_id).one()
     invoice_id=order.id
     patient_name=order.customer_name
@@ -445,10 +449,13 @@ def AddLabresult(invoice_id):
     labtech=User.query.filter_by(role='Labtech').all()
     labservices = db.session.query(Product).filter(Product.product_name.like('lab%')).all()
     patient_name=order.customer_name
+    patient_obj=Customer.query.filter_by(id=order.customer_id).first()
+    patient_id=patient_obj.id
     orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.order_id==invoice_id,\
         OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
     return render_template('addlabresult.html',labtech=labtech,order=order,orderliine_with_lab=orderliine_with_lab,\
-    invoice_id=invoice_id,patient_name=patient_name,labservices=labservices)
+    invoice_id=invoice_id,patient_name=patient_name,labservices=labservices,\
+        patient_id=patient_id,username=current_user.username)
 
 @app.route('/processlabresult', methods=['POST'])
 def processlabresult():
@@ -489,9 +496,39 @@ def processlabresult():
         db.session.add(newlabresult)
         db.session.commit()
         
-    
     return jsonify({'result':'sucesss'}) 
 
+@app.route('/patientLabResults/<int:patient_id>/')
+@app.route('/patientLabResults/<int:patient_id>/labresults/')
+@login_required
+def showallpatientLabResults(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    patient_name=patient.name
+    patient_lab_results=LabResult.query.filter_by(customer_id=patient_id).order_by(desc(LabResult.inserted_on)).all()
+    exists= bool(patient_lab_results)
+    if exists == False:
+        flash(f'No Results found for {patient.name}','danger')
+
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
+    
+    exists= bool(orderliine_with_lab)
+    if exists == False:
+        flash(f'No Lab Requests','warning')
+    list_id=[]
+    for item in orderliine_with_lab:
+        invoice_id=item.order_id
+        list_id.append(invoice_id)
+    print(list_id,patient.id)
+
+    invoice=db.session.query(Order).filter(and_(Order.id.in_(list_id),Order.customer_id==patient.id)).order_by(desc(Order.inserted_on)).first()
+    invoice_id=invoice.id
+    print(invoice_id)
+    return render_template('allpatientlabresults.html',patient_name=patient_name,\
+        patient_lab_results=patient_lab_results,patient_id=patient_id,\
+            invoice_id=invoice_id)
 
 
 

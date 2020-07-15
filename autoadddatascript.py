@@ -50,6 +50,14 @@ product3 = Product(product_name = "Consultation", product_type = "Service", sell
 db.session.add(product3)
 db.session.commit()
 
+product4 = Product(product_name = "Lab:Malaria Test", product_type = "Service", sell_price = 300, reoder_level = "0")
+db.session.add(product4)
+db.session.commit()
+
+product5 = Product(product_name = "Lab:HIV Test", product_type = "Service", sell_price = 100, reoder_level = "0")
+db.session.add(product5)
+db.session.commit()
+
 # add supplier
 
 suplier=Supplier(supplier_name="Meds",supplier_phone='0706458923',openbalance=0)

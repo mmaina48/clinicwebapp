@@ -20,13 +20,14 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="column">
-                <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-plus">Enter Lab Results for {{patient_name}}</i></a>
+                <a href="" class="btn btn-success m-b-5 m-r-2 show active"><i class="ti-plus">Enter Lab Results for {{patient_name}}</i></a>
                 <a href="{{url_for('ViewLabrequest',invoice_id=invoice_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{patient_name}} lab requests</a>
-                <a href="" class="btn btn-info m-b-5 m-r-2"><i class="ti-align-justify"> </i>All {{patient_name}} lab Results</a>
+                <a href="{{url_for('showallpatientLabResults',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All {{patient_name}} lab Results</a>
                 <a href="{{url_for('AllLabRequest')}}" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
             </div>
         </div>
     </div>
+
    
     <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong>Success!</strong>Lab Results succesfully Added!</div>
@@ -39,7 +40,7 @@
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h3 class="card-header">Lab Results</h3>
+                <h3 class="card-header">Enter Lab Results for {{order.customer_name}}</h3>
             
                 <div class="card-body">
                     <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data"  accept-charset="utf-8">
@@ -121,7 +122,7 @@
                                             {% for entry in orderliine_with_lab %}
                                             <tr >
                                                 <td >
-                                                    <input type="text" name='test_name[]' value="{{entry.product_name}}" list="id_datalist1" placeholder='Enter Test Name' class="form-control"/>
+                                                    <input type="text" name='test_name[]' readonly value="{{entry.product_name}}" list="id_datalist1" placeholder='Enter Test Name' class="form-control"/>
                                                     <datalist id="id_datalist1">
                                                         {% for entry in labservices %}
                                                         <option value="{{entry.product_name}}">{{ entry.product_name }}</option>
@@ -133,15 +134,10 @@
                                                     <textarea name="test_result[]" id="test_result" placeholder="Enter Results" class="form-control"></textarea>
                                                 </td>
                                                 <td style="width: 200px">
-                                                    <input type="text" name="lab_tech[]" class="form-control text-left" placeholder='Tested By' required="" id="lab_tech" list="id_datalist" tabindex="7">
-                                                    <datalist id="id_datalist">
-                                                        {% for entry in labtech %}
-                                                        <option value="{{entry.username}}">{{ entry.username }}</option>
-                                                       {% endfor %}
-                                                            </datalist>
-                                                </td>
+                                                    <input type="text" name="lab_tech[]" value="{{username}}" class="form-control text-left" placeholder='Tested By' required="" id="lab_tech" readonly tabindex="7">
+                                                    
                                                 <td data-name="del">
-                                                    <button name="del0" class='btn btn-danger btn-sm row-remove'><span aria-hidden="true">Remove</span></button>
+                                                    <button name="del0" disabled class='btn btn-danger btn-sm row-remoove'><span aria-hidden="true">Remove</span></button>
                                                 </td>
                                             </tr>
                                             {% endfor %}

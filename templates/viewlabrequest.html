@@ -21,8 +21,9 @@
         <div class="col-sm-12">
             <div class="column">
                 <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-plus">{{patient_name}} lab requests </i></a>
-                <a href="{{url_for('AddLabresult',invoice_id=invoice_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>Enter Lab Results for {{patient_name}}</a>
-                <a href="{{url_for('AllLabRequest')}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
+                <a href="{{url_for('AddLabresult',invoice_id=invoice_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Enter Lab Results for {{patient_name}}</a>
+                <a href="{{url_for('showallpatientLabResults',patient_id=order.customer_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>All {{patient_name}} lab Results</a>
+                <a href="{{url_for('AllLabRequest')}}" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
             </div>
         </div>
     </div>
@@ -107,12 +108,12 @@
                                 <table class="table table-bordered table-hover" id="normalinvoice">
                                     <thead>
                                         <tr>
-                                            <th class="text-center" style="width: 220px">Item Information <i class="text-danger">*</i></th>
+                                            <th class="text-center" style="width: 220px"> Test Name <i class="text-danger">*</i></th>
                                             <th class="text-center" width="120">Type</th>
                                             <th class="text-center" width="120">Expiry</th>
                                             <th class="text-center" width="120">Aval Qty</th>
-                                            <th class="text-center"  width="70">Qty <i class="text-danger">*</i></th>
-                                            <th class="text-center" width="100">Unit cost<i class="text-danger">*</i></th>
+                                            <th class="text-center"  width="70">Qty </th>
+                                            <th class="text-center" width="100">Unit cost</th>
                                             <th class="text-center" width="110">Total                                        </th>
                                             <th class="text-center" width="60">Action</th>
                                         </tr>
@@ -120,6 +121,7 @@
                                     <tbody id="addinvoiceItem">
                                         {% for prod in product_purchase %}
                                         <tr>
+
                                             <td style="width: 200px">
                                                 <input type="text" name="product_name" class="form-control productSelection  text-left" value="{{prod.product_name}}" readonly placeholder='Product Name' required="" id="product_name" list="id_datalist" tabindex="7">
                                                

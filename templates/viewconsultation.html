@@ -25,19 +25,19 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-item nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Update visit Notes</a>
+      <a class="nav-item nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">View visit Notes</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Visit Notes</a>
+        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+
       </li>
       <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add New Visit Notes</a>
+        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>RESENT VISITS NOTES</a>
+
       </li>
+    
       <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add Prescription/Lab request</a>
-      </li>
-      <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Reports</a>
+        <a href="" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Reports</a>
       </li>
   </ul>
   <div class="tab-content">
@@ -188,13 +188,25 @@
                                                 <textarea rows="4" name="clinical_note" cols="50">{{visit.clinicalnote}}</textarea>
                                             </div> 
                                             <br>
-
                                             <div class="form-group row">
-                                                <label for="customer_name" class="col-sm-2 col-form-label">Diagnosis</label>
-                                                <div class="col-sm-5">
-                                                    <input type="text"   name="patient_diagnosis" class=" form-control" placeholder='Enter Diagnosis' value="{{visit.diagnosis}}"  id="patient_name" tabindex="1"  />
-                                                </div>
-                                            </div>  
+                                                <label for="email" class="col-sm-2 col-form-label">Diagnosis:<i class="text-danger">*</i></label>
+                                                <div class="col-sm-4">
+                                                    
+                                                    <input class="form-control" required="" name ="primary_diagnosis" id="primary_diagnosis" type="text" value="{{visit.diagnosis}}" placeholder="Primary Diagnosis" tabindex="2"/>
+                                                    <button style="text-align: right; display: none;" onclick="" class="btn btn-primary btn-sm add_button" type="button" tabindex="12" id="plus">Add-Diagnosis</button>
+                                                   
+                                            </div>
+                                            </div>
+                                            <div class="form-group row" id="sec">
+                                                <label for="email" class="col-sm-2 col-form-label">Secondary Diagnosis:</label>
+                                                <div class="col-sm-4">
+                                                    
+                                                    <input class="form-control" required="" name ="Secondary_diagnosis" id="Secondary_diagnosis" type="text" value="{{visit.secondarydiagnosis}}" placeholder="Secondary Diagnosis" tabindex="3"/>
+                                                   
+                                            </div>
+                                            </div>
+                                           
+                    
                                         </div>
                                         <div class="form-group row">
                                             <label for="example-text-input" class="col-sm-4 col-form-label"></label>
@@ -307,6 +319,20 @@
 
     
           </script>
-    
+    <script>
+      $( document ).ready(function() {
+    var Secondary_diagnosis=$('#Secondary_diagnosis').val()
+    console.log(Secondary_diagnosis)
+    $('#plus').hide()
+    if (!Secondary_diagnosis){
+        $('#Secondary_diagnosis').hide()
+        $('#sec').hide()
+    }
+    else{
+        $('#Secondary_diagnosis').show()
+        $('#sec').show()
+    }
+           });
+    </script>
       {% endblock %}
 

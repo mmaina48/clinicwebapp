@@ -26,16 +26,22 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add Visit Notes</a>
+      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add VISIT NOTES</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Visit Notes</a>
+        <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>ADD PRESCRIPTION</a>
+       
       </li>
       <li class="nav-item">
-        <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add Prescription/Lab request</a>
+        <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>REQUEST LAB TEST</a>
+       
       </li>
       <li class="nav-item">
-        <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Lab Resuilts</a>
+        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECENT VISITS NOTES</a>
+       
+      </li>
+      <li class="nav-item">
+        <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECENT LAB RESULTS</a>
       </li>
   </ul>
   <div class="tab-content">
@@ -52,7 +58,7 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header">New Visit </h3>
+                        <h3 class="card-header">New Visit Notes </h3>
                     
                         <div class="card-body">
                             <form class="needs-validation" action="{{url_for('PatientConsultation',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
@@ -68,6 +74,7 @@
                                             </div>
                                         </div>
         
+
                                         <!-- date -->
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
@@ -185,17 +192,30 @@
                                                 <textarea rows="4" name="clinical_note" cols="50"></textarea>
                                             </div> 
                                             <br>
+                                        
+                                           
                                             <div class="form-group row">
-                                                <label for="customer_name" class="col-sm-2 col-form-label">Diagnosis</label>
-                                                <div class="col-sm-5">
-                                                    <input type="text"   name="patient_diagnosis" class=" form-control" placeholder='Enter Diagnosis'  id="patient_name" tabindex="1"  />
-                                                </div>
-                                            </div>  
+                                                <label for="email" class="col-sm-2 col-form-label">Diagnosis:<i class="text-danger">*</i></label>
+                                                <div class="col-sm-4">
+                                                    
+                                                    <input class="form-control" required="" name ="primary_diagnosis" id="primary_diagnosis" type="text" placeholder="Primary Diagnosis" tabindex="2"/>
+                                                    <button style="text-align: right; display: block;" onclick="" class="btn btn-primary btn-sm add_button" type="button" tabindex="12" id="plus">Add-Diagnosis</button>
+                                                   
+                                            </div>
+                                            </div>
+                                            <div class="form-group row" style="display: none;" id="sec">
+                                                <label for="email" class="col-sm-2 col-form-label">Secondary Diagnosis:</label>
+                                                <div class="col-sm-4">
+                                                    
+                                                    <input class="form-control" required="" name ="Secondary_diagnosis" id="Secondary_diagnosis" type="text" placeholder="Secondary Diagnosis" tabindex="3"/>
+                                                   
+                                            </div>
+                                            </div>
+                                           
                                         </div>
                                         <div class="form-group row">
                                             <label for="example-text-input" class="col-sm-4 col-form-label"></label>
                                             <div class="col-sm-6">
-                                                
                                                 <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Save" tabindex="7"/>
                                                 <a href = ""><button class="btn btn-warning"  type="button">Back</button></a>
                                             </div>
@@ -221,11 +241,7 @@
       {% block script %}
       <script>
            
-    //   $(function () {
-    //    $('#myTab a:last').tab('show')
-    //   })
-
-    //   calculate BMI
+    
     $('#vitals').on("click","input" ,function(e) {
         var target=e.target
         if(target.matches("input#patient_height")){
@@ -304,8 +320,11 @@
     })
 
 
-    // End calculate BMI
+    $("#plus").click(function(){
+  $("#plus").hide()
+  $('#sec').show()
+}); 
           </script>
-    
+   
       {% endblock %}
 
