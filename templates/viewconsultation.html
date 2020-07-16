@@ -25,7 +25,7 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-item nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">View visit Notes</a>
+      <a class="nav-item nav-link " style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">View visit Notes</a>
     </li>
     <li class="nav-item">
         <a href="{{url_for('ViewPreviousTreatment',invoice_id=invoice_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW TRETEMENT AND LAB REQUEST</a>
@@ -35,10 +35,6 @@
         <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}"  class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
       </li>
     
-      <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient_id)}}"  class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS</a>
-       
-      </li>
       <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
       <li class="nav-item">
        
@@ -58,7 +54,7 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header">Update {{patient.name}} Visit </h3>
+                        <h3 class="card-header">{{patient.name}} VISIT NOTES </h3>
                         
                         <div class="card-body">
                             <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
@@ -196,7 +192,7 @@
                                                 <label for="email" class="col-sm-2 col-form-label">Diagnosis:<i class="text-danger">*</i></label>
                                                 <div class="col-sm-4">
                                                     
-                                                    <input class="form-control" required="" name ="primary_diagnosis" id="primary_diagnosis" type="text" value="{{visit.diagnosis}}" placeholder="Primary Diagnosis" tabindex="2"/>
+                                                    <input class="form-control" style="color: black;" required="" name ="primary_diagnosis" id="primary_diagnosis" type="text" value="{{visit.diagnosis}}" placeholder="Primary Diagnosis" tabindex="2"/>
                                                     <button style="text-align: right; display: none;" onclick="" class="btn btn-primary btn-sm add_button" type="button" tabindex="12" id="plus">Add-Diagnosis</button>
                                                    
                                             </div>
@@ -216,8 +212,8 @@
                                             <label for="example-text-input" class="col-sm-4 col-form-label"></label>
                                             <div class="col-sm-6">
                                                 
-                                                <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Update and Save" tabindex="7"/>
-                                                <a href = ""><button class="btn btn-warning"  type="button">Back</button></a>
+                                                <input type="submit" id="add-customer" style="color: black;" class="btn btn-success btn-large" name="add-customer" value="UPDATE" tabindex="7"/>
+                                                <a href="{{url_for('showallvisits',patient_id=patient_id)}}"><button class="btn btn-warning"  type="button">Back</button></a>
                                             </div>
                                            
                                         </div>

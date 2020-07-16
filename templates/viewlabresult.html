@@ -19,18 +19,16 @@
   <div>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-          <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW LAB RESULTS</a>
-        </li>
+            <a href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=visit.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW VISIT NOTE</a>
+          </li>
+          
         <li class="nav-item">
             <a href="{{url_for('ViewPreviousTreatment',invoice_id=invoice_id)}}" style="color: black;" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW TRETMENT AND LAB REQUEST</a>
            
           </li>
+         
           <li class="nav-item">
-            <a href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=visit.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW VISIT NOTE</a>
-          </li>
-          
-          <li class="nav-item">
-            <a href="{{url_for('showallvisits',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS</a>
+            <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW LAB RESULTS</a>
           </li>
           <li class="nav-item">
             <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2" style="color: black;"><i class="ti-align-justify"> </i>START NEW VISIT</a>
@@ -142,7 +140,7 @@
                                                 </td>
                                                
                                                 <td >
-                                                    <textarea name="test_result[]" id="test_result"  class="form-control">{{entry.testresults}}</textarea>
+                                                    <textarea name="test_result[]" id="test_result" readonly  class="form-control">{{entry.testresults}}</textarea>
                                                 </td>
                                                 <td style="width: 200px">
                                                     <input type="text" name="lab_tech[]" value="{{entry.testedby}}" class="form-control text-left" placeholder='Tested By' required="" id="lab_tech" readonly tabindex="7">

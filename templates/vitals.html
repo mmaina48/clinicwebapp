@@ -29,7 +29,7 @@
       <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add Vitals</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Vitals List</a>
+        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{patient.name}} RECENT VITALS </a>
       </li>
   </ul>
   

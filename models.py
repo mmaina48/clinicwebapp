@@ -56,6 +56,8 @@ class Visits(db.Model):
     oxygesaturation=db.Column(db.String(), nullable=True)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
+
+
 class Consultation(db.Model):
     __tablename__ = 'consultation'
     id = db.Column(db.Integer(), primary_key=True)
@@ -79,6 +81,7 @@ class Consultation(db.Model):
     secondarydiagnosis=db.Column(db.String(), nullable=True)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
 
+
 class LabResult(db.Model):
     __tablename__ = 'labresults'
     id = db.Column(db.Integer(), primary_key=True)
@@ -93,6 +96,7 @@ class LabResult(db.Model):
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
     order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign keyp
 
+
 class Supplier(db.Model):  
     """ Suppliers model """  
     __tablename__ = "supplier"
@@ -102,6 +106,7 @@ class Supplier(db.Model):
     openbalance=db.Column(db.Integer,default=0)
     purchases = db.relationship('Purchase', backref='supplier')
     
+
 class Purchase(db.Model):  
     """ Purchases model """  
     __tablename__ = "purchases"
@@ -116,6 +121,7 @@ class Purchase(db.Model):
     paydue_amount=db.Column(db.Integer, nullable=False)
     supplier_id = db.Column(db.Integer(), db.ForeignKey('supplier.id'))
     purchaseitem_line = db.relationship('PurchaseItems', backref='purchase')
+
 
 class PurchaseItems(db.Model):  
     """ purchaseitems model """  
@@ -180,13 +186,15 @@ class OrderItems(db.Model):
     order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign key
     product_id = db.Column(db.Integer(), db.ForeignKey('product.id'))
 
+
 class Expense(db.Model):  
     """ Expense model """  
     __tablename__ = "expenses"
     id = db.Column(db.Integer, primary_key=True)
     ExpenseCategory_name = db.Column(db.String(100), unique=True, nullable=False)
     trackexpenses = db.relationship('TrackExpense', backref='expense')
-    
+
+
 class TrackExpense(db.Model):  
     """ TrackExpense model """  
     __tablename__ = "trackexpense"

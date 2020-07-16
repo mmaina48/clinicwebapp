@@ -214,6 +214,7 @@ def deletePatient(patient_id):
 @login_required
 def PatientVital(patient_id):
     patient=Customer.query.filter_by(id=patient_id).one()
+    patientname=patient.name.upper()
     clinicid=patient.patient_id
     today = date.today()
     todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
@@ -245,7 +246,7 @@ def PatientVital(patient_id):
             return redirect(url_for('PatientVital',patient_id=patient_id))
     else:
         return render_template('vitals.html',patient_id=patient_id,patient=patient,\
-            vistType=vistType)
+            vistType=vistType,patientname=patientname)
 
 #new patient vital
 @app.route('/patients/<int:patient_id>/')
@@ -261,7 +262,25 @@ def showallvitals(patient_id):
     return render_template('AllpatientVitals.html',patient=patient,patvisits=patvisits,patient_id=patient_id)
 
 # ---------------------------------------------------------------
+
+
 # Add Consultation
+@app.route('/consultationwaitinglist', methods=['GET','POST'])
+@login_required
+def ConsultationQue():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    todays_consultations=Consultation.query.filter(Consultation.inserted_on>yesterday).all()
+    patientids=[conslt.customer_id for conslt in todays_consultations]
+
+    patient_with_no_conslt=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        ~Order.customer_id.in_(patientids))).order_by(desc(Order.inserted_on)).all()
+    exists= bool(patient_with_no_conslt)
+    if exists == False:
+        flash(f'NO PATIENT ON THE WAITING queue','danger')
+    return render_template('consultationque.html',patient_with_no_conslt=patient_with_no_conslt)
+
+
 
 @app.route('/patientconsultation/<int:patient_id>/', methods=['GET','POST'])
 @login_required
@@ -406,8 +425,9 @@ def AddPrescription(invoice_id):
     patients=[s.name for s in Customer.query.all()]
     products=[p.product_name for p in Product.query.all()]
     patientdetails=Customer.query.filter_by(id=patient_id).one()
+    patvisits=Consultation.query.filter_by(customer_id=patient_id).order_by(desc(Consultation.inserted_on)).first()
     return render_template('addprescription.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
-        products=products,current_debt=current_debt,patient_id=patient_id)
+        products=products,current_debt=current_debt,patvisits=patvisits,patient_id=patient_id)
 
 @app.route('/viewpatienttreatment/<int:invoice_id>/edit',methods=['GET','POST'])
 @login_required
@@ -444,26 +464,55 @@ def ViewPatientLabResult(invoice_id,patient_id):
 
 # -----------------------------------------------------------------
 
-#Lab services
-@app.route('/TodaysLabRequest/',methods=['GET','POST'])
+#Lab 
+@app.route('/LabRequestWaitinglist', methods=['GET','POST'])
+@login_required
+def LabRequestWaitingList():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    todays_labresult=LabResult.query.filter(Consultation.inserted_on>yesterday).all()
+    patientids=[labreq.customer_id for labreq in todays_labresult]
+
+    patient_with_no_conslt=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        ~Order.customer_id.in_(patientids))).order_by(desc(Order.inserted_on)).all()
+    exists= bool(patient_with_no_conslt)
+    if exists == False:
+        flash(f'NO PATIENT ON THE WAITING queue','danger')
+    return render_template('consultationque.html',patient_with_no_conslt=patient_with_no_conslt)
+
+
+
+@app.route('/LabRequests/',methods=['GET','POST'])
 @login_required
 def AllLabRequest():
     today = date.today()
     yesterday = today - timedelta(days = 1) 
+    todays_labresult=LabResult.query.filter(Consultation.inserted_on>yesterday).all()
+    # order with results
+    patientids=[labreq.order_id for labreq in todays_labresult]
+
+    # OrderItems with lab service
     orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
         OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
-    print(orderliine_with_lab)
-    list_id=[]
-    exists= bool(orderliine_with_lab)
+
+    # Orders with both lab results and lab request
+    order_with_lab=[item.order_id for item in orderliine_with_lab]
+    
+    # remove all orders with lab results
+    for x in patientids:
+        if x in order_with_lab:
+            order_with_lab.remove(x)
+    
+    # Get all orders with lab request 
+    labrequest=db.session.query(Order).filter(Order.id.in_(order_with_lab))\
+        .order_by(Order.inserted_on.desc()).all()
+    
+    
+    exists= bool(labrequest)
     if exists == False:
-        flash(f'No Lab Requests Today !','success')
-    for item in orderliine_with_lab:
-        invoice_d=item.order_id
-        list_id.append(invoice_d)
+        flash(f'No Lab Requests Today !','danger')
         
-    labrequest=db.session.query(Order).filter(Order.id.in_(list_id)).order_by(Order.inserted_on.desc()).all()
-    print(labrequest)
-    return render_template('labrequest.html',labrequest=labrequest)
+    return render_template('labrequest.html',labrequest=labrequest,today=today)
 
 @app.route('/viewlabrequest/<int:invoice_id>/view',methods=['GET','POST'])
 @login_required

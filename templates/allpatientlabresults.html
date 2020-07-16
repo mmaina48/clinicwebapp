@@ -26,10 +26,9 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <!-- <a class="nav-link active" style="color: rgb(54, 131, 18);" data-toggle="tab" href="#home" role="tab" aria-controls="home">All {{patient_name}}lab Results</a> -->
-      <a href="" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All {{patient_name}} lab Results</a>
-      <a href="{{url_for('AddLabresult',invoice_id=invoice_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add new lab Results for {{patient_name}} </a>
-      <a href="{{url_for('AllLabRequest')}}" class="btn btn-danger m-b-5 m-r-2"><i class="ti-align-justify">All Todays Lab request</i></a>
+
+      <a href="{{url_for('AddLabresult',invoice_id=invoice_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add new lab Results for {{patient_name}} </a>
+     
     </li>
 
   </ul>

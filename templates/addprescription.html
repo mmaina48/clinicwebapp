@@ -26,18 +26,15 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">ADD TREATMENT / REQUEST LAB TEST</a>
+        <a href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=patvisits.id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW VISITS NOTES</a>
     </li>
-    <!-- <li class="nav-item">
-        <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add VISIT NOTES</a>
-      </li> -->
+    <li class="nav-item">
+        <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">ADD TREATMENT / REQUEST LAB TEST</a>
+      </li>
       <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECENT VISITS NOTES</a>
+        <a href="{{url_for('showallvisits',patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW ALL PREVIOUS VISITS NOTES</a>
       </li>
     
-      <li class="nav-item">
-        <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECENT LAB RESULTS</a>
-      </li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="home" role="tabpanel">

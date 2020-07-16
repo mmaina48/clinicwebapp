@@ -26,18 +26,16 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW TREATMENT/LAB TESTS</a>
+        <a href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=patvisits.id)}}" class="btn btn-primary m-b-5 m-r-2" style="color: black;"><i class="ti-align-justify"> </i>VIEW VISIT NOTES</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
-       
+      
+        <a class="nav-link" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW TREATMENT/LAB TESTS</a>
       </li>
       <li class="nav-item">
-        <a href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=patvisits.id)}}" class="btn btn-success m-b-5 m-r-2" style="color: black;"><i class="ti-align-justify"> </i>VIEW VISIT NOTES</a>
+        <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
       </li>
-      <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"  style="color: black;"><i class="ti-align-justify"> </i>ALL VISIT NOTES</a>
-      </li>
+     
     </li>
     <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
     <li class="nav-item">
@@ -50,7 +48,8 @@
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card">
                     <h3 class="card-header">Visit Treatment and Lab Test </h3>
-                
+                    
+                   
                     <div class="card-body">
                         <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                             <div class="panel-body">
@@ -118,7 +117,7 @@
                                     <table class="table table-bordered table-hover" id="normalinvoice">
                                         <thead>
                                             <tr>
-                                                <th class="text-center" style="width: 220px">Visit Information <i class="text-danger">*</i></th>
+                                                <th class="text-center" style="width: 220px">Treatment Information <i class="text-danger">*</i></th>
                                                 <th class="text-center" width="120">Type</th>
                                                 
                                                 <th class="text-center"  width="70">Qty <i class="text-danger">*</i></th>
@@ -143,9 +142,16 @@
                                             </tr>
                                             {% endfor %}   
                                         </tbody>
-                              
+                                      
                                     </table>
-                                  
+                                    <tfoot>
+                                        <tr>
+                                            <td>
+                                               
+                                         <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}"><button style="text-align: right;"  class="btn btn-success " type="button" tabindex="12" id="plus">ADD MEDICTION</button></a>
+                                              </td>
+                                        </tr>
+                                    </tfoot>
                                 </div>
                                 
                             </div>
