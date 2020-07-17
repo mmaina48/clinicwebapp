@@ -47,8 +47,8 @@ $.ajax({
     type: 'POST',
     success: function(response){
         alert("Purchase Successfully Added")
-        $("#insert_purchase").fadeOut(1500).fadeIn(1500);
-        $("#normalpurchase").fadeOut(1500).fadeIn(1500);
+        $("#insert_purchase").fadeOut(1200).fadeIn(1200);
+        $("#normalpurchase").fadeOut(1200).fadeIn(1200);
         $('#successAlert').text(data.name).show();
         $('#errorAlert').hide();
         $("#insert_purchase")[0].reset();

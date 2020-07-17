@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="{{url_for('.static', filename='bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle.css')}}">
     <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle2.css')}}">
-    <link rel="stylesheet" href="{{url_for('.static', filename='chartist.css')}}">
-    <link rel="stylesheet" href="{{url_for('.static', filename='morris.css')}}">
+    <!-- <link rel="stylesheet" href="{{url_for('.static', filename='chartist.css')}}">
+    <link rel="stylesheet" href="{{url_for('.static', filename='morris.css')}}"> -->
     <link rel="stylesheet" href="{{url_for('.static', filename='materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{url_for('.static', filename='c3.css')}}">
     <link rel="stylesheet" href="{{url_for('.static', filename='flag-icon.min.css')}}">
@@ -53,6 +53,15 @@
         .modal{
             background-color:#838282;
         }
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 40px;
+            line-height: 40px; /* Vertically center the text there */
+            background-color: #f5f5f5;
+}
 
     </style>
     <!-- ============================================================== -->
@@ -153,16 +162,19 @@
                                 <a class="nav-link active" href="{{url_for('AllCustomers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-user-circle-o" aria-hidden="true"></i>All Patients<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('AllInvoices')}}"  aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-user-circle"></i>Sales Report<span class="badge badge-success">6</span></a>     
-                                <a style="color: rgb(39, 21, 58);">.</a>         
+                                <!-- <a style="color: rgb(39, 21, 58);">.</a>         
                                 <a class="nav-link active" href="{{url_for('allProducts')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Products/Services<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllSuppliers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Suppliers<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('AllSuppliers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Suppliers<span class="badge badge-success">6</span></a> -->
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllPurchase')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>Purchase Report<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>NURSE WAITING QUEUE<span class="badge badge-success">6</span></a>
+                               
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllLabRequest')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>Today's Lab Requests<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('ConsultationQue')}}"  aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-user-circle"></i>CONSULTATION QUEUE<span class="badge badge-success">6</span></a> 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('ConsultationQue')}}"  aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-user-circle"></i>VISIT LISIT<span class="badge badge-success">6</span></a>   
+                                <a class="nav-link active" href="{{url_for('AllLabRequest')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>LAB WAITING QUEUE<span class="badge badge-success">6</span></a>
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('DispenseLIst')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>PHARMACY QUEUE<span class="badge badge-success">6</span></a>  
                             </li>
                           
                         </ul>
@@ -190,12 +202,12 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                             Copyright © 2020 BigMtech. All rights reserved. Dashboard by <a href="">0706498587</a>.
+                             Copyright © 2020 BigMtech. All rights reserved. <a href=""></a>.
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="text-md-right footer-links d-none d-sm-block">
                                 <a href="javascript: void(0);">About</a>
-                                <a href="javascript: void(0);">Support</a>
+                                <a href="javascript: void(0);">Support call 0706498587</a>
                                 <a href="javascript: void(0);">Contact Us</a>
                             </div>
                         </div>

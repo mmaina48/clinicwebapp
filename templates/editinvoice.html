@@ -99,7 +99,7 @@
                                         <label for="date" class="col-sm-4 col-form-label">Date</label>
                                         <div class="col-sm-6">
                                     <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" required value="{{order.created_on}}" tabindex="6" />
-                                    <!-- <input type="date" class="form-control" value="{{orderdate}}"> -->
+                                   
                                         </div>
                                     </div>
                                 </div>
@@ -108,7 +108,33 @@
                                             <input type="hidden"   name="order_id" class=" form-control"  value="{{order.id}}" id="orderid" tabindex="1" readonly />
                                 </div>
                             </div>
-                            
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
+                                        <div class="col-sm-6">
+                                            <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
+                                                <option value="{{order.visit_type}}" selected="">{{order.visit_type}}
+                                                </option>
+                                                <option value="OP">OUT-Patient</option> 
+                                                <option value="IP">In-Patient</option> 
+                                                <option value="FP">Family Planing</option> 
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- status -->
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Status</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control"  style="color: darkgreen;border-color: darkgreen;" type="text" size="50" readonly name="patient_status" id="patient_status"  value="{{order.status}}" tabindex="6" />
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                          </div>
                          </div>
                             <div class="table-responsive" style="margin-top: 10px">

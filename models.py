@@ -54,7 +54,8 @@ class Visits(db.Model):
     pulse=db.Column(db.String(), nullable=True)
     respiratory_rate=db.Column(db.String(), nullable=True)
     oxygesaturation=db.Column(db.String(), nullable=True)
-    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
+    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
+    order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign keyp
 
 
 
@@ -160,6 +161,7 @@ class Order(db.Model):
     customer_name = db.Column(db.String(), nullable=False)
     visit_type=db.Column(db.String(255), nullable=False)
     patient_id=db.Column(db.String(), nullable=True)
+    status=db.Column(db.String(255), nullable=True)
     previous=db.Column(db.Integer, nullable=False)
     total_amount= db.Column(db.Integer, nullable=False)
     net_total= db.Column(db.Integer, nullable=False)
@@ -170,6 +172,7 @@ class Order(db.Model):
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
     orderitems_line = db.relationship('OrderItems', backref='order')
     lab_test = db.relationship('LabResult', backref='order')
+    vitals = db.relationship('Visits', backref='order')
 
 
 class OrderItems(db.Model):  

@@ -210,6 +210,26 @@ def deletePatient(patient_id):
 # ----------------------------------------------------------------
 # Vitals
 
+@app.route('/CaptureVitalsWaitingList', methods=['GET','POST'])
+@login_required
+def CaptureVitalQueue():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
+    patientids=[vital.customer_id for vital in todays_captured_vital]
+    
+    # get all walkins
+    walkins=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+    Order.customer_name=="WALK-IN")).all()
+    walkinsids=[otc.id for otc in walkins]
+    patient_with_no_conslt=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        ~Order.customer_id.in_(patientids),~Order.customer_id.in_(walkinsids))).order_by(desc(Order.inserted_on)).all()
+    exists= bool(patient_with_no_conslt)
+    if exists == False:
+        flash(f'NO PATIENT ON THE WAITING QUEUE','danger')
+    return render_template('vitalqueue.html',patient_with_no_conslt=patient_with_no_conslt)
+
+
 @app.route('/patientvisit/<int:patient_id>/', methods=['GET','POST'])
 @login_required
 def PatientVital(patient_id):
@@ -218,6 +238,7 @@ def PatientVital(patient_id):
     clinicid=patient.patient_id
     today = date.today()
     todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
+    order_id=todaysinvoice.id
     if todaysinvoice:
         vistType=todaysinvoice.visit_type
     else:
@@ -233,8 +254,9 @@ def PatientVital(patient_id):
             height=request.form['patient_height'],weight=request.form['patient_weight'],\
             bmi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
             bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
-            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],customer_id=patient.id)
-        print(newvital)
+            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
+            customer_id=patient.id,order_id=order_id)
+        
         db.session.add(newvital)
         try:
             db.session.commit()
@@ -246,7 +268,7 @@ def PatientVital(patient_id):
             return redirect(url_for('PatientVital',patient_id=patient_id))
     else:
         return render_template('vitals.html',patient_id=patient_id,patient=patient,\
-            vistType=vistType,patientname=patientname)
+            vistType=vistType,patientname=patientname,order_id=order_id)
 
 #new patient vital
 @app.route('/patients/<int:patient_id>/')
@@ -272,13 +294,17 @@ def ConsultationQue():
     yesterday = today - timedelta(days = 1) 
     todays_consultations=Consultation.query.filter(Consultation.inserted_on>yesterday).all()
     patientids=[conslt.customer_id for conslt in todays_consultations]
+    
+    todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
+    vitalids=[vital.customer_id for vital in todays_captured_vital]
 
-    patient_with_no_conslt=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
-        ~Order.customer_id.in_(patientids))).order_by(desc(Order.inserted_on)).all()
-    exists= bool(patient_with_no_conslt)
+    patient_with_no_conslt_with_vitals=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        ~Order.customer_id.in_(patientids),Order.customer_id.in_(vitalids))).order_by(desc(Order.inserted_on)).all()
+
+    exists= bool(patient_with_no_conslt_with_vitals)
     if exists == False:
-        flash(f'NO PATIENT ON THE WAITING queue','danger')
-    return render_template('consultationque.html',patient_with_no_conslt=patient_with_no_conslt)
+        flash(f'NO PATIENT ON THE WAITING QUEUE','danger')
+    return render_template('consultationqueue.html',patient_with_no_conslt_with_vitals=patient_with_no_conslt_with_vitals)
 
 
 
@@ -290,6 +316,7 @@ def PatientConsultation(patient_id):
     capital_name=patient.name.upper()
     patientID=patient.id
     today = date.today()
+
     invoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.customer_id== patientID)).order_by(desc(Order.inserted_on)).first()
     if invoice is None:
         flash(f'{patient.name} has not paid for consultation', 'danger')
@@ -298,6 +325,11 @@ def PatientConsultation(patient_id):
         invoice_id=invoice.id
         clinicid=patient.patient_id
         vital=db.session.query(Visits).filter(or_( Visits.inserted_on ==today,Visits.patient_id== clinicid)).order_by(desc(Visits.inserted_on)).first()
+
+        exists=bool(vital)
+        if exists == False:
+            flash(f'PATIENT VITALS NOT CAPTURED','danger')
+    
         todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
         if todaysinvoice:
             vistType=todaysinvoice.visit_type
@@ -477,10 +509,8 @@ def LabRequestWaitingList():
         ~Order.customer_id.in_(patientids))).order_by(desc(Order.inserted_on)).all()
     exists= bool(patient_with_no_conslt)
     if exists == False:
-        flash(f'NO PATIENT ON THE WAITING queue','danger')
+        flash(f'NO PATIENT ON THE WAITING QUEUE','danger')
     return render_template('consultationque.html',patient_with_no_conslt=patient_with_no_conslt)
-
-
 
 @app.route('/LabRequests/',methods=['GET','POST'])
 @login_required
@@ -510,7 +540,7 @@ def AllLabRequest():
     
     exists= bool(labrequest)
     if exists == False:
-        flash(f'No Lab Requests Today !','danger')
+        flash(f'NO PATIENT ON LAB REQUEST QUEUE','danger')
         
     return render_template('labrequest.html',labrequest=labrequest,today=today)
 
@@ -618,6 +648,7 @@ def showallpatientLabResults(patient_id):
         patient_lab_results=patient_lab_results,patient_id=patient_id,\
             invoice_id=invoice_id)
 
+
 # ----------------------------------------------------------------------------
 # Invoices
 @app.route('/patientBill/<int:patient_id>/new/', methods=['GET'])
@@ -630,7 +661,6 @@ def newpatientBill(patient_id):
     patientids=[s.patient_id for s in Customer.query.all()]
    
     return render_template('addpatientInvoice.html', patient_id=patient_id,patient=patient,products=products,patients=patients,previusdebt=previusdebt,patientids=patientids)
-
 
 @app.route('/addinvoices/',methods=['GET'])
 @login_required
@@ -723,6 +753,8 @@ def processinvoicedata():
                     paytype=data[i]
                 elif i=="visittype":
                     visittype=data[i]
+                elif i=="patient_status":
+                    patient_status=data[i]
                 elif i=="productname":
                     product_list.append(data[i])
                 elif i=="producttype":
@@ -764,7 +796,7 @@ def processinvoicedata():
     receive_amount=int(paid_amount)- int(change)
  
     newinvoice=Order(customer_name=patient_name,patient_id=patient_Id,created_on=invoiceDate_object,payment_type=paytype,\
-        payment_amount=receive_amount,visit_type=visittype,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
+        status=patient_status,payment_amount=receive_amount,visit_type=visittype,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
     
     for (prod,prodtyp,expry,qty,price,total) in zip(product_list,product_type,expiry_array,quantityarray,price,total_price):
         
@@ -855,6 +887,10 @@ def UpdateInvoice():
                     paytype=data[i]
                 elif i=="order_id":
                     order_id=data[i]
+                elif i=="patient_status":
+                    patient_status=data[i]
+                elif i=="visittype":
+                    visittype=data[i]
                 elif i=="productname":
                     product_list.append(data[i])
                 elif i=="producttype":
@@ -917,6 +953,10 @@ def UpdateInvoice():
         order_to_update.customer_name=patient_name
     if paytype:
         order_to_update.payment_type=paytype
+    if visittype:
+        order_to_update.visit_type=visittype
+    if patient_status:
+        order_to_update.status=patient_status
     if patient_Id:
         order_to_update.patient_id=patient_Id
     if invoice_date:
@@ -1040,6 +1080,59 @@ def InvoiceDetail(invoice_id):
 
 # --------------------------------------------------------------------------
 
+# Pharmacy 
+# view bill that have mediction and are active
+@app.route('/dispenselist/',methods=['GET','POST'])
+@login_required
+def DispenseLIst():
+    # get todays date and yesterdays date
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+
+    # get today orderlines with product type medication
+    todays_orderlines_with_med=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.product_type.like('Medication%'))).order_by(desc(OrderItems.inserted_on)).all()
+    
+    # get all order ids with medications
+    order_ids=[item.order_id for item in todays_orderlines_with_med]
+    
+    # Get all order that have medication but are still active(not dispensed)
+    Patient_on_dispense_queue=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        Order.id.in_(order_ids),Order.status=="Active")).order_by(desc(Order.inserted_on)).all()
+    
+    # Check if their is patients on Pharmacy QUEUE
+    exists=bool(Patient_on_dispense_queue)
+    if exists == False:
+        flash(f'NO PATIENT ON DISPENSE QUEUE','danger')
+    
+    return render_template('dispenselist.html',Patient_on_dispense_queue=Patient_on_dispense_queue)
+
+# End Patient Visit 
+@app.route('/dispensedrugs',methods=['POST'])
+@login_required
+def DispenseMedication():
+    table= request.json
+     
+    # get values from json object
+    for data in table:
+            for i in data:
+                if i=="patient_status":
+                    patient_status=data[i]
+                elif i=="order_id":
+                    order_id=data[i]
+
+    # get the order to update
+    order_to_update=Order.query.filter_by(id=order_id).first()
+    
+    # change status to deactived
+    if patient_status:
+        order_to_update.status="Deactived"
+    
+    db.session.add(order_to_update)
+    db.session.commit()
+
+    return jsonify({'result':'sucesss'})
+# -----------------------------------------------------------------------------
 # Products
 @app.route('/products/',methods=['GET','POST'])
 @login_required

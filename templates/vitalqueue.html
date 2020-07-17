@@ -15,80 +15,59 @@
             {%endfor%}
       {%endif %}
     {%endwith%}
-    
   </div>
   <div>
-   
  
-    <!-- ============================================================== -->
-    <!-- end pageheader -->
-    <!-- ============================================================== -->
-    <!-- consultation -->
- <!-- Single pro tab review Start-->
-
- <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item">
-    
-     
-    </li>
-
-  </ul>
-  
-  <div class="tab-content">
-    <div class="tab-pane active" id="home" role="tabpanel">
-        <div class="row">
+    <div class="row">
+        
         <!-- ============================================================== -->
-        <!-- basic table  -->
+        <!-- data table  -->
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h3 class="card-header">(LAB) PATIENT WAITING LIST</h3>
+                <div class="card-header">
+                    <h3 class="mb-0">(VITALS) PATIENTS WAITING LIST</h3>
+                   
+
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered first">
+                        <table id="example" class="table table-striped table-bordered second" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Patient Name</th>
-                                    <th>OPD No</th>
+                                    <th>Clinic No</th>
                                     <th>Visit Type</th>
-                                    <th>Date</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for request in labrequest %}
+
+                              
+                                {% for patient in  patient_with_no_conslt%}
                                 <tr>
-                                    <td>{{request.customer_name}}</td>
-                                    <td>{{request.patient_id}}</td>
-                                    <td>{{request.visit_type}}</td>
-                                    <td>{{request.created_on}}</td>
-                                   <td><a href="{{url_for('AddLabresult',invoice_id=request.id)}}" ><span class="badge badge-info">Lab Request</span></a></td>
-                                </tr>
-                            {% endfor %}
+                                  
+                                    <td>{{patient.customer_name}}</td>
+                                    <td>{{patient.patient_id}}</td>
+                                    <td>{{patient.visit_type}}</td>
+                                    
+                                    <td>
+                                        <a  href="{{url_for('PatientVital',patient_id =patient.id) }}" ><span class="badge badge-success" style="color: black;">CAPTURE VITALS</span></a>
+                                    </td>
+                                </tr> 
+                                {% endfor %}                     
                             </tbody>
                             
                         </table>
+                       
+
                     </div>
                 </div>
             </div>
         </div>
         <!-- ============================================================== -->
-        <!-- end basic table  -->
+        <!-- end data table  -->
         <!-- ============================================================== -->
     </div>
   </div>
-    <!-- end of consultation -->
-         
-      </div>
       {% endblock %}
-      {% block script %}
-      <script>
-           
-
-      $( document ).ready(function() {
-        $('.table-striped').DataTable()
-        });
-          </script>
-    
-      {% endblock %}
-

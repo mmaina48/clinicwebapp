@@ -112,8 +112,20 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- status -->
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Visit Status</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" style="color: darkgreen;border-color: darkgreen;" type="text" size="50" readonly name="patient_status" id="patient_status"  value="Active" tabindex="6" />
+                                         
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
+
                          </div>
                          </div>
                             <div class="table-responsive" style="margin-top: 10px">
@@ -161,6 +173,7 @@
                                                 <input class="total_price form-control text-right txtcal" type="text" name="total_price" id="total" value="" placeholder="0.00" readonly="readonly" />
                                             </td>
     
+
                                             <td>
                                               <button style="text-align: right;" onclick="addRow()" class="btn btn-info btn-sm" type="button" tabindex="12" id="plus">Add-Row</button>
                                             </td>
@@ -774,8 +787,8 @@ function send() {
                 type: 'POST',
                 success: function(response){
                     alert("Successfully Added")
-                    $('#normalinvoice').fadeOut(1500).fadeIn(1500);
-                    $('#insert_sale').fadeOut(1500).fadeIn(1500);
+                    $('#normalinvoice').fadeOut(1200).fadeIn(1200);
+                    $('#insert_sale').fadeOut(1200).fadeIn(1200);
                     $('#successAlert').text(data.name).show();
                     $('#errorAlert').hide();
                     $("#insert_sale")[0].reset();
