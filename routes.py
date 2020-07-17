@@ -36,7 +36,7 @@ def required_roles(*roles):
         def wrapped(*args, **kwargs):
             if get_current_user_role() not in roles:
                 flash(f'You are not authorised to access this page.','danger')
-                return redirect(url_for('dashbord'))
+                # return redirect(url_for('dashbord'))
             return f(*args, **kwargs)
         return wrapped
     return wrapper
@@ -49,25 +49,52 @@ def make_session_permanent():
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=10)
 
+# ------------------------------------------------------------------------
+
+# User login
 @app.route('/')
 @app.route('/login', methods=['GET','POST'])
 def login():
     form=LoginForm()
     if form.validate_on_submit():
         user=User.query.filter_by(username=form.username.data).first()
+        print(user)
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=True)
-                return redirect(url_for('dashbord'))
+                if user.role=="Admin":
+                    return redirect(url_for('Admindashbord'))
+                elif user.role=="Cashier":
+                    return redirect(url_for('Cashierdashboard'))
+                elif user.role=="Nurse":
+                    return redirect(url_for('Nursesdashbord'))
+                elif user.role=="Doctor":
+                    return redirect(url_for('Doctorsdashboard'))
+                elif user.role=="LabTech":
+                    return redirect(url_for('LabTechdashboard'))
+                elif user.role=="Pharmacist":
+                    return redirect(url_for('Pharmacistdashboard'))
             else:
                 flash(f'Incorrect Username or password','danger')
-        flash(f'Incorrect Username or password','danger')
-        return redirect(url_for('signup'))
-    return render_template('login.html',form=form)
+                return redirect(url_for('login'))
+        return redirect(url_for('login'))
+    return render_template('login.html',form=form)  
 
+
+# --------------------------------------------------------------------------
+
+# Users
+#all system Users
+@app.route('/allusers/',methods=['GET','POST'])
+@login_required
+def AllUsers():
+    users=User.query.all()
+    return render_template('allusers.html',users=users)
+
+# add users 
 @app.route('/signup/',methods=['GET','POST'])
-# @login_required
-# @required_roles('Admin')
+@login_required
+@required_roles('Admin')
 def signup():
     form=RegisterForm()
     if form.validate_on_submit():
@@ -83,14 +110,6 @@ def signup():
             flash(f'This User already exists','danger')
             return redirect(url_for('signup'))
     return render_template('adduser.html', form=form)
-
-# Users
-#all system Users
-@app.route('/allusers/',methods=['GET','POST'])
-@login_required
-def AllUsers():
-    users=User.query.all()
-    return render_template('allusers.html',users=users)
 
 #Edit User
 @app.route('/users/<int:user_id>/edit/', methods = ['GET', 'POST'])
@@ -124,13 +143,41 @@ def deleteUser(user_id):
         flash(f'User successfully Deleted!','danger')
         return redirect(url_for('AllUsers'))
 
-
-@app.route('/Dashboard/',methods=['GET','POST'])
+# -----------------------------------------------------
+# ALL DASHBOARDS
+# admins
+@app.route('/AdminDashboard/',methods=['GET','POST'])
 @login_required
-def dashbord():
-    return render_template('dashboard.html',username=current_user.username)
+def Admindashbord():
+    return render_template('admindashboard.html',username=current_user.username)
+
+# Cashiers
+@app.route('/CashierDashboard/',methods=['GET','POST'])
+@login_required
+def Cashierdashbord():
+    return render_template('cashierdashboard.html',username=current_user.username)
 
 
+# Doctorsdashboard
+@app.route('/DoctorsDashboard/',methods=['GET','POST'])
+@login_required
+def Doctordashbord():
+    return render_template('doctordashboard.html',username=current_user.username)
+
+# LabTechdashboard
+@app.route('/LabtechDashboard/',methods=['GET','POST'])
+@login_required
+def Labtechdashbord():
+    return render_template('labtechdashboard.html',username=current_user.username)
+
+# Pharmacydashboard
+@app.route('/PharmacistDashboard/',methods=['GET','POST'])
+@login_required
+def Pharmacistdashbord():
+    return render_template('Pharmacistdashboard.html',username=current_user.username)
+
+
+# ---------------------------------------------------------------------------
 # Patients
 #all patients
 @app.route('/allpatients/',methods=['GET','POST'])
@@ -209,6 +256,20 @@ def deletePatient(patient_id):
 
 # ----------------------------------------------------------------
 # Vitals
+
+# Nurse's
+@app.route('/NursesDashboard/',methods=['GET','POST'])
+@login_required
+def Nursesdashbord():
+    return render_template('nursedashboard.html',username=current_user.username)
+
+# all patient view
+@app.route('/Allpatientview/',methods=['GET','POST'])
+@login_required
+def NurseAllPatient():
+    customers=Customer.query.all()
+    return render_template('allpatientnurse.html',username=current_user.username,customers=customers)
+
 
 @app.route('/CaptureVitalsWaitingList', methods=['GET','POST'])
 @login_required
@@ -890,7 +951,7 @@ def UpdateInvoice():
                 elif i=="patient_status":
                     patient_status=data[i]
                 elif i=="visittype":
-                    visittype=data[i]
+                    visit_type=data[i]
                 elif i=="productname":
                     product_list.append(data[i])
                 elif i=="producttype":
@@ -953,8 +1014,8 @@ def UpdateInvoice():
         order_to_update.customer_name=patient_name
     if paytype:
         order_to_update.payment_type=paytype
-    if visittype:
-        order_to_update.visit_type=visittype
+    if visit_type:
+        order_to_update.visit_type=visit_type
     if patient_status:
         order_to_update.status=patient_status
     if patient_Id:

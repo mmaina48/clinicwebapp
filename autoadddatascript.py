@@ -6,15 +6,39 @@ from datetime import date
 
 # add user
 
+
 hashed_password= generate_password_hash("2020", method='sha256')
+hashed_password0= generate_password_hash("#n7T$!7DVK6!U%gk", method='sha256')
 today = date.today()
+
+admin0=User(username='SUPERADMIN',password=hashed_password0,startdate=today,role='Admin')
+db.session.add(admin0)
+db.session.commit()
+
 admin1=User(username='admin',password=hashed_password,startdate=today,role='Admin')
 db.session.add(admin1)
 db.session.commit()
 
-admin2=User(username='Michael',password=hashed_password,startdate=today,role='LabTech')
+admin2=User(username='Cashier',password=hashed_password,startdate=today,role='Cashier')
 db.session.add(admin2)
 db.session.commit()
+
+admin3=User(username='Nurse',password=hashed_password,startdate=today,role='Nurse')
+db.session.add(admin3)
+db.session.commit()
+
+admin4=User(username='Doctor',password=hashed_password,startdate=today,role='Doctor')
+db.session.add(admin4)
+db.session.commit()
+
+admin5=User(username='Labtech',password=hashed_password,startdate=today,role='Labtech')
+db.session.add(admin5)
+db.session.commit()
+
+admin6=User(username='Pharmacist',password=hashed_password,startdate=today,role='Pharmacist')
+db.session.add(admin6)
+db.session.commit()
+
 
 # add patient
 pid=db.session.query(db.func.max(Customer.id)).one()

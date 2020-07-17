@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{url_for('.static', filename='daterangepicker.css')}}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
 
     <title>Clinic|Managment|System</title>
 </head>
@@ -71,7 +72,7 @@
         <!-- ============================================================== -->
         <!-- navbar -->
         <!-- ============================================================== -->
-        <div class="dashboard-header">
+        <!-- <div class="dashboard-header">
             <nav class="navbar navbar-expand-lg bg-white fixed-top">
                 <a class="navbar-brand" href="#">BMTec</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,41 +81,7 @@
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto navbar-center-top">
                         <ul class="navbar-nav ml-auto navbar-center-top">
-                            <li class="nav-item dropdown">
-                                <a href="{{url_for('AddCustomer')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Patient</a>
-                                <a href="{{url_for('Addproduct')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Product/Service</a>        
-                                <a href="{{url_for('AddSupplier')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Supplier</a>
-                               <a href="{{url_for('AddPurchase')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >New Purchase</a>
-                               <a href="{{url_for('AddInvoice')}}"style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2">New Invoice </a>
-                               <a style="color: ivory;">.</a>
-                               <li class="nav-item dropdown">
-                                <a class="btn btn-success m-b-5 m-r-2 dropdown-toggle" style="color: black; font-weight: bold;" href="#" id="navbardrop" data-toggle="dropdown">
-                                  Expense
-                                </a>
-                                <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AddExpenseCategory')}}">Add Expense</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AllExpenses')}}">All Expenses</a>
-                                  <a class="dropdown-item"  style="color: black; font-weight: bold;"href="{{url_for('TrackExpenses')}}">Pay Expense</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AllTrackedExpenses')}}">All Paid Expenses</a>
-                                </div>
-                            </li>
-                              
-                               <a style="color: ivory;">.</a>
-                               <li class="nav-item dropdown">
-                                <a class="btn btn-success m-b-5 m-r-2 dropdown-toggle" style="color: black; font-weight: bold;" href="#" id="navbardrop" data-toggle="dropdown">
-                                  Reports
-                                </a>
-                                <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AllInvoices')}}">Sales Report</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('MedicationSalesReport')}}">Sales Report(Med)</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('MedicationStockReport')}}">Stock Report</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('StockReport')}}">Stock Report(Batch)</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('IncomeExpense')}}">Income/Expence</a>
-                                </div>
-                            </li>
-                               
-                                   
-                            </li>
+                            
                             <li class="dropdown notifications-menu">
                                 <a href="" >
                                     <i class="fa fa-bell-o"></i>
@@ -129,8 +96,42 @@
                                     <h5 class="mb-0 text-white nav-user-name">{{username}}</h5> 
                                 </div>
                                
-                                <a class="dropdown-item" href="{{url_for('signup')}}"><i class="fas fa-cog mr-2"></i>Add Users</a>
-                                <a class="dropdown-item" href="{{url_for('AllUsers')}}"><i class="fas fa-user mr-2"></i>All Users</a>
+                               
+                                <a class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div> -->
+        <div class="dashboard-header">
+            <!-- rgb(51, 51, 141) -->
+            <nav class="navbar navbar-expand-lg bg-white fixed-top">
+                <a class="navbar-brand" style="color: rgb(51, 51, 141); font-weight: bold;">BM-TEC</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto navbar-right-top">
+                        <li class="nav-item">
+                            <div id="custom-search" class="top-search-bar">
+                                <input class="form-control" type="text" placeholder="Search..">
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown notification">
+                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-align-justify" aria-hidden="true"></i><span class="indicator"></span></a>
+                          
+                        </li>
+                      
+                        <li class="nav-item dropdown nav-user">
+                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-user-circle"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
+                                <div class="nav-user-info">
+                                    <h5 class="mb-0 text-white nav-user-name">(Nurse) </h5>
+                                    <span class="status"></span><span class="ml-2">Online</span>
+                                </div>
+                                <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
+                              
                                 <a class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
                             </div>
                         </li>
@@ -147,34 +148,26 @@
         <div class="nav-left-sidebar sidebar-dark">
             <div class="menu-list">
                 <nav class="navbar navbar-expand-lg navbar-light">
-                    <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+                    <a class="d-xl-none d-lg-none" href="#"></i>Dashboard</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav flex-column">
                             <!-- <li class="nav-divider">
+                                https://fontawesome.com/v4.7.0/icon/user-circle
                                 Menu
                             </li> -->
                             <li class="nav-item ">
-                                <a class="nav-link active " href="{{url_for('Admindashbord')}}" >Dashboard<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active " href="{{url_for('Nursesdashbord')}}" >Dashboard<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllCustomers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-user-circle-o" aria-hidden="true"></i>All Patients<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('NurseAllPatient')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-align-justify" aria-hidden="true"></i>All Patients<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllInvoices')}}"  aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-user-circle"></i>Sales Report<span class="badge badge-success">6</span></a>     
-                                <!-- <a style="color: rgb(39, 21, 58);">.</a>         
-                                <a class="nav-link active" href="{{url_for('allProducts')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Products/Services<span class="badge badge-success">6</span></a>
+                                
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllSuppliers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Suppliers<span class="badge badge-success">6</span></a> -->
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>NURSE WAITING QUEUE<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-align-justify" aria-hidden="true"></i>NURSE WAITING QUEUE<span class="badge badge-success">6</span></a>
                                
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('ConsultationQue')}}"  aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-user-circle"></i>CONSULTATION QUEUE<span class="badge badge-success">6</span></a> 
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllLabRequest')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>LAB WAITING QUEUE<span class="badge badge-success">6</span></a>
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DispenseLIst')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>PHARMACY QUEUE<span class="badge badge-success">6</span></a>  
+                                
                             </li>
                           
                         </ul>
