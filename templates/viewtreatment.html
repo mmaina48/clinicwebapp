@@ -35,7 +35,9 @@
       <li class="nav-item">
         <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
       </li>
-     
+      <li class="nav-item">
+        <a href="{{url_for('showallvisits',patient_id=patient_id)}}" style="color: black;" class="btn btn-secondary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS NOTES</a>
+      </li>
     </li>
     <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
     <li class="nav-item">
@@ -147,7 +149,8 @@
                                     <tfoot>
                                         <tr>
                                             <td>
-                                               
+                                            
+                                                
                                          <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}"><button style="text-align: right;"  class="btn btn-success " type="button" tabindex="12" id="plus">ADD MEDICTION</button></a>
                                               </td>
                                         </tr>

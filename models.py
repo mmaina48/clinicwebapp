@@ -80,7 +80,8 @@ class Consultation(db.Model):
     clinicalnote=db.Column(db.String(), nullable=True)
     diagnosis=db.Column(db.String(), nullable=True)
     secondarydiagnosis=db.Column(db.String(), nullable=True)
-    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))  # Foreign keyp
+    customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
+    order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign keyp
 
 
 class LabResult(db.Model):
@@ -173,6 +174,7 @@ class Order(db.Model):
     orderitems_line = db.relationship('OrderItems', backref='order')
     lab_test = db.relationship('LabResult', backref='order')
     vitals = db.relationship('Visits', backref='order')
+    consultation = db.relationship('Consultation', backref='order')
 
 
 class OrderItems(db.Model):  

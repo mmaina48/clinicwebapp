@@ -54,14 +54,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for vital in patvisits %}
+                                {% for visit in patvisits %}
                                 <tr>
-                                  <td>{{vital.visit_date}}</td>
-                                    <td>{{vital.patient_name}}</td>
-                                    <td>{{vital.patient_id}}</td>
-                                    <td>{{vital.visit_type}}</td>
+                                  <td>{{visit.visit_date}}</td>
+                                    <td>{{visit.patient_name}}</td>
+                                    <td>{{visit.patient_id}}</td>
+                                    <td>{{visit.visit_type}}</td>
                                     <td>Dr.Ngugi</td>
-                                    <td><a  href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=vital.id)}}"><span class="badge badge-success">VIEW VISIT</span></a></td>
+                                    <td><a  href="{{url_for('editPatientVisit',patient_id=patient_id,visit_id=visit.id)}}"><span class="badge badge-success">VIEW VISIT</span></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>

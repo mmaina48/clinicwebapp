@@ -158,11 +158,7 @@ def Cashierdashbord():
     return render_template('cashierdashboard.html',username=current_user.username)
 
 
-# Doctorsdashboard
-@app.route('/DoctorsDashboard/',methods=['GET','POST'])
-@login_required
-def Doctordashbord():
-    return render_template('doctordashboard.html',username=current_user.username)
+
 
 # LabTechdashboard
 @app.route('/LabtechDashboard/',methods=['GET','POST'])
@@ -267,8 +263,8 @@ def Nursesdashbord():
 @app.route('/Allpatientview/',methods=['GET','POST'])
 @login_required
 def NurseAllPatient():
-    customers=Customer.query.all()
-    return render_template('allpatientnurse.html',username=current_user.username,customers=customers)
+    allvitals=Visits.query.all()
+    return render_template('allpatientnurse.html',username=current_user.username,allvitals=allvitals)
 
 
 @app.route('/CaptureVitalsWaitingList', methods=['GET','POST'])
@@ -277,37 +273,47 @@ def CaptureVitalQueue():
     today = date.today()
     yesterday = today - timedelta(days = 1) 
     todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
-    patientids=[vital.customer_id for vital in todays_captured_vital]
+    patientids=[vital.order_id for vital in todays_captured_vital]
     
+    print(patientids)
     # get all walkins
     walkins=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
     Order.customer_name=="WALK-IN")).all()
     walkinsids=[otc.id for otc in walkins]
+    if not walkinsids:
+        walkinsids.append(0)
+
+    print(walkinsids)
     patient_with_no_conslt=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
-        ~Order.customer_id.in_(patientids),~Order.customer_id.in_(walkinsids))).order_by(desc(Order.inserted_on)).all()
+        ~Order.id.in_(patientids),~Order.id.in_(walkinsids))).order_by(desc(Order.inserted_on)).all()
     exists= bool(patient_with_no_conslt)
     if exists == False:
         flash(f'NO PATIENT ON THE WAITING QUEUE','danger')
     return render_template('vitalqueue.html',patient_with_no_conslt=patient_with_no_conslt)
 
 
-@app.route('/patientvisit/<int:patient_id>/', methods=['GET','POST'])
+@app.route('/CaptureVital/<int:patient_id>/', methods=['GET','POST'])
 @login_required
 def PatientVital(patient_id):
-    patient=Customer.query.filter_by(id=patient_id).one()
+
+    patient=Customer.query.filter_by(id=patient_id).first()
     patientname=patient.name.upper()
-    clinicid=patient.patient_id
-    today = date.today()
-    todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
-    order_id=todaysinvoice.id
-    if todaysinvoice:
-        vistType=todaysinvoice.visit_type
-    else:
-        vistType='OPD'
+    clinicid=patient.id
 
+    
     if request.method == 'POST':
-        # convert stringto date object because SQLite Date type only accepts Python date objects as input
 
+        # convert stringto date object because SQLite Date type only accepts Python date objects as input
+        today = date.today()
+        yesterday = today - timedelta(days = 1) 
+        todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
+        patientids=[vital.order_id for vital in todays_captured_vital]
+
+        todaysinvoice=db.session.query(Order).filter(and_( Order.inserted_on >yesterday,Order.customer_id== clinicid,\
+            ~Order.id.in_(patientids))).first()
+
+        print(todaysinvoice)
+        order_id=todaysinvoice.id
         vitalDate = request.form['invoice_date']
         vitalDate_object = datetime.strptime(vitalDate, "%Y-%m-%d").date()
         newvital=Visits(patient_name=request.form['patient_name'],\
@@ -318,6 +324,7 @@ def PatientVital(patient_id):
             respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
             customer_id=patient.id,order_id=order_id)
         
+        print(newvital)
         db.session.add(newvital)
         try:
             db.session.commit()
@@ -329,7 +336,7 @@ def PatientVital(patient_id):
             return redirect(url_for('PatientVital',patient_id=patient_id))
     else:
         return render_template('vitals.html',patient_id=patient_id,patient=patient,\
-            vistType=vistType,patientname=patientname,order_id=order_id)
+            patientname=patientname)
 
 #new patient vital
 @app.route('/patients/<int:patient_id>/')
@@ -346,21 +353,54 @@ def showallvitals(patient_id):
 
 # ---------------------------------------------------------------
 
+# Doctor
+# Doctorsdashboard
+@app.route('/DoctorsDashboard/',methods=['GET','POST'])
+@login_required
+def Doctorsdashboard():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    todays_consultations=Consultation.query.filter(Consultation.inserted_on>yesterday).all()
+    patientids=[conslt.order_id for conslt in todays_consultations]
+    
+    print(patientids)
 
-# Add Consultation
+    todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
+    vitalids=[vital.order_id for vital in todays_captured_vital]
+
+    print(vitalids)
+
+    patient_with_no_conslt_with_vitals=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        ~Order.id.in_(patientids),Order.id.in_(vitalids))).order_by(desc(Order.inserted_on)).all()
+    
+    print(patient_with_no_conslt_with_vitals)
+
+    exists= bool(patient_with_no_conslt_with_vitals)
+    if exists == False:
+        flash(f'NO PATIENT ON THE WAITING QUEUE','danger')
+    return render_template('doctordashboard.html',username=current_user.username,\
+        patient_with_no_conslt_with_vitals=patient_with_no_conslt_with_vitals)
+
+# Add Consultation(ADMIN)
 @app.route('/consultationwaitinglist', methods=['GET','POST'])
 @login_required
 def ConsultationQue():
     today = date.today()
     yesterday = today - timedelta(days = 1) 
     todays_consultations=Consultation.query.filter(Consultation.inserted_on>yesterday).all()
-    patientids=[conslt.customer_id for conslt in todays_consultations]
+    patientids=[conslt.order_id for conslt in todays_consultations]
     
+    print(patientids)
+
     todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
-    vitalids=[vital.customer_id for vital in todays_captured_vital]
+    vitalids=[vital.order_id for vital in todays_captured_vital]
+
+    print(vitalids)
 
     patient_with_no_conslt_with_vitals=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
-        ~Order.customer_id.in_(patientids),Order.customer_id.in_(vitalids))).order_by(desc(Order.inserted_on)).all()
+        ~Order.id.in_(patientids),Order.id.in_(vitalids))).order_by(desc(Order.inserted_on)).all()
+    
+    print(patient_with_no_conslt_with_vitals)
 
     exists= bool(patient_with_no_conslt_with_vitals)
     if exists == False:
@@ -368,11 +408,10 @@ def ConsultationQue():
     return render_template('consultationqueue.html',patient_with_no_conslt_with_vitals=patient_with_no_conslt_with_vitals)
 
 
-
 @app.route('/patientconsultation/<int:patient_id>/', methods=['GET','POST'])
 @login_required
 def PatientConsultation(patient_id):
-    print(patient_id)
+    
     patient=Customer.query.filter_by(id=patient_id).one()
     capital_name=patient.name.upper()
     patientID=patient.id
@@ -411,7 +450,7 @@ def PatientConsultation(patient_id):
                 respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
                 chiefcomplain=request.form['chief_complain'],patienthistory=request.form['patient_history'],\
                 clinicalnote=request.form['clinical_note'],diagnosis=request.form['primary_diagnosis'],\
-                secondarydiagnosis=request.form['Secondary_diagnosis'],customer_id=patient.id)
+                secondarydiagnosis=request.form['Secondary_diagnosis'],customer_id=patient.id,order_id=invoice_id)
             db.session.add(newvisit)
             print(newvisit.clinicalnote)
             try:
@@ -433,6 +472,7 @@ def PatientConsultation(patient_id):
 @app.route('/patients/<int:patient_id>/visits/')
 @login_required
 def showallvisits(patient_id):
+    print(patient_id)
     patient=Customer.query.filter_by(id=patient_id).one()
     today = date.today()
     invoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.customer_id== patient_id)).order_by(desc(Order.inserted_on)).first()
@@ -450,7 +490,9 @@ def editPatientVisit(patient_id,visit_id):
     patient=Customer.query.filter_by(id=patient_id).one()
     clinicid=patient.patient_id
     today = date.today()
+
     visit=db.session.query(Consultation).filter(or_(Consultation.inserted_on ==today,Consultation.patient_id== clinicid)).first()
+
     todaysinvoice=db.session.query(Order).filter(or_( Order.inserted_on ==today,Order.patient_id== clinicid)).first()
 
     if todaysinvoice:
@@ -459,6 +501,7 @@ def editPatientVisit(patient_id,visit_id):
         vistType='OPD'
     invoice_id=todaysinvoice.id
     editedVisit = Consultation.query.filter_by(id=visit_id).one()
+
     if request.method == 'POST':
 
         # convert stringto date object because SQLite Date type only accepts Python date objects as input
@@ -499,7 +542,7 @@ def editPatientVisit(patient_id,visit_id):
             return redirect(url_for('editPatientVisit',patient_id=patient_id,visit_id=visit_id))
     else:
         return render_template('viewconsultation.html',patient_id=patient_id,patient=patient,\
-            vistType=vistType,visit=visit,invoice_id=invoice_id)
+            vistType=vistType,visit=editedVisit,invoice_id=invoice_id)
 
 # add prescription
 @app.route('/addprescription/<int:invoice_id>/edit',methods=['GET','POST'])

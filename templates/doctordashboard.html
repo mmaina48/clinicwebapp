@@ -1,4 +1,4 @@
-{% extends "nursemain.html" %}
+{% extends "doctormain.html" %}
 {% block content %}
 <div class="container">
   <div class="container">
@@ -19,14 +19,14 @@
   <div>
  
     <div class="row">
-        
+
         <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">(VITALS) PATIENTS WAITING LIST</h3>
+                    <h3 class="mb-0">(CONSULTATION) PATIENTS WAITING LIST</h3>
                    
 
                 </div>
@@ -44,15 +44,14 @@
                             <tbody>
 
                               
-                                {% for patient in  patient_with_no_conslt%}
-                                <tr>
-                                  
+                                {% for patient in  patient_with_no_conslt_with_vitals%}
+                                <tr> 
                                     <td>{{patient.customer_name}}</td>
                                     <td>{{patient.patient_id}}</td>
                                     <td>{{patient.visit_type}}</td>
                                     
                                     <td>
-                                        <a  href="{{url_for('PatientVital',patient_id =patient.customer_id) }}" ><span class="badge badge-success" style="color: black;">CAPTURE VITALS</span></a>
+                                        <a  href="{{url_for('PatientConsultation',patient_id =patient.customer_id)}}"><span class="badge badge-success" style="color: black;">VIEW VISIT</span></a>
                                     </td>
                                 </tr> 
                                 {% endfor %}                     

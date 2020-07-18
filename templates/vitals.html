@@ -57,7 +57,7 @@
                                             <div class="form-group row">
                                                 <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                                 <div class="col-sm-6">
-                                                    <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
+                                                    <input type="text"   name="patient_name" class=" form-control"  value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
                                                     
                                                 </div>  
                                             </div>
@@ -69,9 +69,9 @@
                                                 <label for="customer_name" class="col-sm-4 col-form-label">Visit Type</label>
                                                 <div class="col-sm-6">
                                                     <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
-                                                        <option value="{{vistType}}" selected="">{{vistType}}
+                                                        <option value="OPD" selected="">Out-Patient
                                                         </option>
-                                                        <option value="OPD">Out-Patient</option>
+                                                        
                                                         <option value="IP">In-Patient</option> 
                                                         <option value="FP">Family Planing</option> 
                                                     </select>

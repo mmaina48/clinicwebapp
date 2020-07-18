@@ -31,6 +31,9 @@
             <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW LAB RESULTS</a>
           </li>
           <li class="nav-item">
+            <a href="{{url_for('showallvisits',patient_id=patient_id)}}" style="color: black;" class="btn btn-secondary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS NOTES</a>
+          </li>
+          <li class="nav-item">
             <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2" style="color: black;"><i class="ti-align-justify"> </i>START NEW VISIT</a>
           </li>
           
@@ -52,24 +55,27 @@
             
                 <div class="card-body">
                     <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data"  accept-charset="utf-8">
+                       
                         <div class="panel-body">
+                            {% for entry in patient_lab_results %}
                             <div class="row">
                                 <div class="col-sm-6" id="payment_from_1">
                                     <div class="form-group row">
                                         <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_name" class=" form-control"  value="{{patient_lab_results.patient_name}}" readonly id="patient_name" tabindex="1"  list="id_data" required  />
+                                            <input type="text"   name="patient_name" class=" form-control"  value="{{entry.patient_name}}" readonly id="patient_name" tabindex="1"  list="id_data" required  />
                                            
                                         </div>  
                                     </div>
                                 </div>
+
 
                                 <!-- date -->
                                 <div class="col-sm-6">
                                     <div class="form-group row">
                                         <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
                                         <div class="col-sm-6">
-                                    <input class="form-control" type="text" size="50" name="visit-type"  readonly required value="{{patient_lab_results.visit_type}}" tabindex="6" />
+                                    <input class="form-control" type="text" size="50" name="visit-type"  readonly required value="{{entry.visit_type}}" tabindex="6" />
                                    
                                         </div>
                                     </div>
@@ -77,14 +83,16 @@
                                 
                                 <!-- date -->
                             </div>
-    
+                            {% endfor %}
+
+                            {% for entry in patient_lab_results %}
                             <div class="row">
                                 <!-- patient id -->
                                 <div class="col-sm-6" id="payment_from_1">
                                     <div class="form-group row">
                                         <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
                                         <div class="col-sm-6">
-                                            <input type="text"   name="patient_Id" class=" form-control" readonly  id="patient_Id" value="{{patient_lab_results.patient_id}}" tabindex="1"  list="id_data2" required  />
+                                            <input type="text"   name="patient_Id" class=" form-control" readonly  id="patient_Id" value="{{entry.patient_id}}" tabindex="1"  list="id_data2" required  />
                                         
                                         </div>  
                                     </div>
@@ -95,18 +103,19 @@
                                     <div class="form-group row">
                                         <label for="date" class="col-sm-4 col-form-label">Date</label>
                                         <div class="col-sm-6">
-                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" readonly required value="{{patient_lab_results.visit_date}}" tabindex="6" />
+                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" readonly required value="{{entry.visit_date}}" tabindex="6" />
                                   
                                         </div>
                                     </div>
                                 </div>
                                 
                             </div>
+                            {% endfor %}
                             <div class="row">
                                 <div class="col-sm-6" id="payment_from_1">
                                    
                                     <input type="hidden"   name="order_id" class=" form-control"  value="{{invoice_id}}" id="orderid" tabindex="1" readonly />
-                        </div>
+                            </div>
 
                             </div>
                             

@@ -63,7 +63,7 @@
                                     </div>
                                 
                                     <!-- date -->
-                                    <div class="col-sm-6" id="payment_from_1">
+                                    <div class="col-sm-6" id="payment_from_1" style="display: none;">
                                         <div class="form-group row">
                                             <label for="customer_name" class="col-sm-4 col-form-label">Payment Type</label>
                                             <div class="col-sm-6">
@@ -77,12 +77,6 @@
                                         </div>
                                     </div>
                                     
-                                    
-                                    <!-- date -->
-                                </div>
-        
-                                <div class="row">
-                                    <!-- patient id -->
                                     <div class="col-sm-6" id="payment_from_1">
                                         <div class="form-group row">
                                             <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
@@ -94,6 +88,25 @@
                                                    {% endfor %}
                                                         </datalist>
                                             </div>  
+                                        </div>
+                                    </div>
+                                    <!-- date -->
+                                </div>
+        
+                                <div class="row">
+                                    <!-- patient id -->
+                                    <div class="col-sm-6">
+                                        <div class="form-group row">
+                                            <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
+                                            <div class="col-sm-6">
+                                                <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
+                                                    <option value="{{order.visit_type}}" selected="">{{order.visit_type}}
+                                                    </option>
+                                                    <option value="OP">OUT-Patient</option> 
+                                                    <option value="IP">In-Patient</option> 
+                                                    <option value="FP">Family Planing</option> 
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                    
@@ -112,21 +125,8 @@
                                                 <input type="hidden"   name="order_id" class=" form-control"  value="{{order.id}}" id="orderid" tabindex="1" readonly />
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group row">
-                                            <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
-                                            <div class="col-sm-6">
-                                                <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
-                                                    <option value="{{order.visit_type}}" selected="">{{order.visit_type}}
-                                                    </option>
-                                                    <option value="OP">OUT-Patient</option> 
-                                                    <option value="IP">In-Patient</option> 
-                                                    <option value="FP">Family Planing</option> 
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="row" style="display: none;">
+                                   
     
                                     <!-- status -->
                                     <div class="col-sm-6">
