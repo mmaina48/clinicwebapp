@@ -49,7 +49,7 @@ def make_session_permanent():
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=10)
 
-# ------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
 # User login
 @app.route('/')
@@ -81,7 +81,7 @@ def login():
     return render_template('login.html',form=form)  
 
 
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 # Users
 #all system Users
@@ -143,7 +143,7 @@ def deleteUser(user_id):
         flash(f'User successfully Deleted!','danger')
         return redirect(url_for('AllUsers'))
 
-# -----------------------------------------------------
+# ----------------------------------------------------------------------------------------------
 # ALL DASHBOARDS
 # admins
 @app.route('/AdminDashboard/',methods=['GET','POST'])
@@ -158,14 +158,7 @@ def Cashierdashbord():
     return render_template('cashierdashboard.html',username=current_user.username)
 
 
-# Pharmacydashboard
-@app.route('/PharmacistDashboard/',methods=['GET','POST'])
-@login_required
-def Pharmacistdashbord():
-    return render_template('Pharmacistdashboard.html',username=current_user.username)
-
-
-# ---------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
 # Patients
 #all patients
 @app.route('/allpatients/',methods=['GET','POST'])
@@ -243,7 +236,7 @@ def deletePatient(patient_id):
         return redirect(url_for('AllCustomers', patient_id = patient_id))
 
 
-# ----------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 # Vitals
 
 # Nurse's
@@ -344,7 +337,7 @@ def showallvitals(patient_id):
         flash(f'No Vitals  for {patient.name},Click Add Vitals','info')
     return render_template('AllpatientVitals.html',patient=patient,patvisits=patvisits,patient_id=patient_id)
 
-# ---------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
 # Doctorsdashboard
 @app.route('/DoctorsDashboard/',methods=['GET','POST'])
@@ -1072,11 +1065,146 @@ def showallpatientLabResults(patient_id):
             invoice_id=invoice_id)
 
 
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------
 
 
-# Pharmacy 
+# Pharmacistdashboard
+@app.route('/Pharmacist/Dashboard/',methods=['GET','POST'])
+@login_required
+@required_roles('Pharmacist','Admin')
+def Pharmacistdashboard():
+    username=current_user.username
+    # get todays date and yesterdays date
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
 
+    # get today orderlines with product type medication
+    todays_orderlines_with_med=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.product_type.like('Medication%'))).order_by(desc(OrderItems.inserted_on)).all()
+    
+    # get all order ids with medications
+    order_ids=[item.order_id for item in todays_orderlines_with_med]
+    
+    # Get all order that have medication but are still active(not dispensed)
+    Patient_on_dispense_queue=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        Order.id.in_(order_ids),Order.status=="Active")).order_by(desc(Order.inserted_on)).all()
+    
+    patients=[x.id for x in Patient_on_dispense_queue]
+    count=sum(patients)
+    return render_template('pharmdashboard.html',username=username,count=count)
+
+# Pharm dispense queue
+@app.route('/Pharmacy/dispenselist/',methods=['GET','POST'])
+@login_required
+@required_roles('Pharmacist','Admin')
+def PharmDispenseLIst():
+    # get todays date and yesterdays date
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+
+    # get today orderlines with product type medication
+    todays_orderlines_with_med=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.product_type.like('Medication%'))).order_by(desc(OrderItems.inserted_on)).all()
+    
+    # get all order ids with medications
+    order_ids=[item.order_id for item in todays_orderlines_with_med]
+    
+    # Get all order that have medication but are still active(not dispensed)
+    Patient_on_dispense_queue=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        Order.id.in_(order_ids),Order.status=="Active")).order_by(desc(Order.inserted_on)).all()
+    
+    # Check if their is patients on Pharmacy QUEUE
+    exists=bool(Patient_on_dispense_queue)
+    if exists == False:
+        flash(f'NO PATIENT ON DISPENSE QUEUE','danger')
+    
+    return render_template('pharmdispenselist.html',Patient_on_dispense_queue=Patient_on_dispense_queue)
+
+#Pharm Bill OTC
+@app.route('/OTCBill/new/', methods=['GET'])
+@login_required
+@required_roles('Pharmacist','Admin')
+def PharmOTCBill():
+    patient =Customer.query.filter_by(name='WALK-IN').one()
+    previusdebt=patient.debt
+    products=[p.product_name for p in Product.query.all()]
+    patientids=patient.patient_id
+    previusdebt=patient.debt
+    return render_template('pharmwalkinInvoice.html', patient_id=patientids,patient=patient,products=products,previusdebt=previusdebt,patientids=patientids)
+
+#Pharm view all sales report
+@app.route('/allWalkinBills/report/', methods=['GET'])
+@login_required
+@required_roles('Pharmacist','Admin')
+def PharmAllOtcBill():
+    # Get all WALK-IN Bills
+    allotcinvoices=Order.query.filter_by(customer_name="WALK-IN")\
+        .order_by(Order.inserted_on.desc()).all()
+    return render_template('pharmallwalkinbills.html',allotcinvoices=allotcinvoices)
+
+#Pharm print receipt
+@app.route('/PrintOTCReceipt/<int:invoice_id>/', methods=['GET'])
+@login_required
+@required_roles('Pharmacist','Admin')
+def PharmPrintReceipt(invoice_id):
+    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    username=current_user.username
+    return render_template('posreceipt.html',product_purchase=product_purchase,\
+        order=order,username=username)
+
+# pharm view stock level
+@app.route('/stockreport/',methods=['GET','POST'])
+@login_required
+def PharmStockReport():
+    stock=PurchaseItems.query.with_entities(PurchaseItems.product_name,func.sum(PurchaseItems.in_quantity).label('In_Quantity') ,func.sum(PurchaseItems.quantity).label('Current_Quantity') ,func.sum(PurchaseItems.total_amount).label('Cost_of_Goods')).group_by(PurchaseItems.product_name).all()
+    return render_template("pharmstocklevel.html",stock=stock)
+
+# pharm view stock batch wise
+@app.route('/stockreportbybatch/',methods=['GET','POST'])
+@login_required
+def pharmStockReportbatch():
+    stock=PurchaseItems.query.all()
+    return render_template("pharmstockreportbatch.html",stock=stock)
+
+#pharm inventory sold report(cumulative)
+@app.route('/inventorysoldreport/',methods=['GET','POST'])
+@login_required
+def PharmMedicationSalesReport():
+    # get todays date and yesterdays date
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    
+    orders=Order.query.filter(Order.created_on>yesterday).all()
+    orders_idz=[x.id for x in orders]
+        
+    if request.method == 'POST':
+        try:
+            startdate_object = request.form['Start_Date']
+            startdate = datetime.strptime(startdate_object, "%Y-%m-%d").date()
+            
+            enddate_object = request.form['End_Date']
+            endDate = datetime.strptime(enddate_object, "%Y-%m-%d").date()
+            
+            orders=Order.query.filter(and_(Order.created_on>=startdate,Order.created_on<=endDate)).all()
+            orders_ids=[x.id for x in orders]
+        
+            sales=db.session.query(OrderItems,PurchaseItems).filter(and_(OrderItems.product_id==PurchaseItems.product_id,\
+            OrderItems.order_id.in_(orders_ids))).all()
+
+            return render_template('pharmmedsalesperiod.html',sales=sales,startdate_object=startdate_object,enddate_object=startdate_object)
+        except:
+
+            flash(f'StartDate or EndDate is empty','danger')
+            return redirect(url_for('PharmMedicationSalesReport'))
+    else:
+        todaysales=db.session.query(OrderItems,PurchaseItems).filter(and_(OrderItems.product_id==PurchaseItems.product_id,\
+            OrderItems.order_id.in_(orders_idz))).all()
+        return render_template("pharmmedsalesreport.html",todaysales=todaysales,today=today)
+
+
+# -------------------
+# ADMINPHARMACY VIEWS
 # view bill that have mediction and are active
 @app.route('/dispenselist/',methods=['GET','POST'])
 @login_required
@@ -1123,7 +1251,7 @@ def ViewPrescription(invoice_id):
         products=products,current_debt=current_debt,patvisits=patvisits,patient_id=patient_id)
 
 
-# End Patient Visit 
+# End-Patient Visit (deactivate)
 @app.route('/dispensedrugs',methods=['POST'])
 @login_required
 def DispenseMedication():
@@ -1148,7 +1276,10 @@ def DispenseMedication():
     db.session.commit()
 
     return jsonify({'result':'sucesss'})
-# -----------------------------------------------------------------------------
+
+
+
+# -----------------------------------------------------------------------------------------------
 
 
 # Invoices
@@ -1295,7 +1426,11 @@ def processinvoicedata():
     
      # calculate the amount paid for 
     receive_amount=int(paid_amount)- int(change)
- 
+    # deactvate if its a walk-in client
+    # change status to deactived
+    if patient_name=="WALK-IN":
+        patient_status="Deactived"
+    
     newinvoice=Order(customer_name=patient_name,patient_id=patient_Id,created_on=invoiceDate_object,payment_type=paytype,\
         status=patient_status,payment_amount=receive_amount,visit_type=visittype,total_amount=grand_total_price,previous=previous,net_total=nettotal,due_balance=balance,paydue_amount=debt_pay,customer=patientToAdd)
     
@@ -1337,7 +1472,6 @@ def processinvoicedata():
             db.session.commit()
             db.session.commit()
     return "Success"
-
 
 # show all orders 
 @app.route('/allinvoices/',methods=['GET','POST'])
@@ -1579,7 +1713,7 @@ def InvoiceDetail(invoice_id):
     patientdetails=Customer.query.filter_by(id=patient).one()
     return render_template('invoiceDetails.html',product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails)
 
-# --------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
 
 # Products
 @app.route('/products/',methods=['GET','POST'])
@@ -1654,7 +1788,7 @@ def Productprice(product):
         dataArray.append(productobj)
     return jsonify({'Productprice': dataArray})
 
-# -----------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # Supplier
 @app.route('/suppliers/')
 @login_required
@@ -1727,7 +1861,7 @@ def supplierdata(supplier):
 def ProductSale(product):
     productsale=OrderItems.query.filter_by(product_name=product).all()
     return render_template('productsales.html',productsale=productsale,product=product)
-# ----------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------
 # Purchases
 @app.route('/addPurchase/',methods=['GET'])
 @login_required
@@ -1862,7 +1996,9 @@ def DeletePurchase(purchase_id):
 
     flash(f'Puchase  successfully Deleted!','danger')
     return redirect(url_for('AllPurchase'))
-# -----------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------------------------
 
 # Add Expences
 @app.route('/addexpensecategory/',methods=['GET','POST'])
@@ -1950,7 +2086,7 @@ def deleteTrackedExpense(Expense_id):
         db.session.commit()
         flash(f'Expense successfully Deleted!','danger')
         return redirect(url_for('AllTrackedExpenses'))
-
+# ----------------------------------------------------------------------------
 # All stock
 @app.route('/stockreport/',methods=['GET','POST'])
 @login_required
@@ -1968,7 +2104,9 @@ def ProductDetailsReport():
 @app.route('/medicationsalesreport/',methods=['GET','POST'])
 @login_required
 def MedicationSalesReport():
-    sales=OrderItems.query.with_entities(OrderItems.product_name,OrderItems.buying_price,func.sum(OrderItems.quantity).label('total_quantity') ,func.sum(OrderItems.total_amount).label('total_amount')).group_by(OrderItems.product_name).filter_by(product_type='Medication').all()
+    sales=OrderItems.query.with_entities(OrderItems.product_name,OrderItems.buying_price,\
+    func.sum(OrderItems.quantity).label('total_quantity') ,func.sum(OrderItems.total_amount).\
+    label('total_amount')).group_by(OrderItems.product_name).filter_by(product_type='Medication').all()
     return render_template("medsalesreport.html",sales=sales)
 
 # stock report (cumulative)
@@ -1978,11 +2116,6 @@ def MedicationStockReport():
     stock=PurchaseItems.query.with_entities(PurchaseItems.product_name,func.sum(PurchaseItems.in_quantity).label('In_Quantity') ,func.sum(PurchaseItems.quantity).label('Current_Quantity') ,func.sum(PurchaseItems.total_amount).label('Cost_of_Goods')).group_by(PurchaseItems.product_name).all()
     return render_template("totalstock.html",stock=stock)
 
-# Invoicereceipt
-@app.route('/receipt/',methods=['GET','POST'])
-@login_required
-def Receipt():
-    return render_template("receipt.html")
 
 # account reports
 

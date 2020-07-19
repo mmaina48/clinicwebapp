@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "pharmacymain.html" %}
 {% block content %}
 <div class="container">
   <div class="container">
@@ -17,9 +17,21 @@
     {%endwith%}
   </div>
   <div>
+      <div class="row">
+        <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+            <a  href="{{url_for('pharmStockReportbatch')}}"  class="btn btn-warning btn-sm"  style="color: black; font-weight: bold; float: right;" >Stock level(Batch wise)</a>
+        </div>
+        </div>
+  
+    <!-- ============================================================== -->
+    <!-- end pageheader  -->
+    <!-- ============================================================== -->
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        
         <div class="card">
-            <h3 class="card-header">Stock Level Report</h3>
+            
+            <h3 class="card-header" style="color: black; font-weight: bold;">Drug Stock Level Report</h3>
+          <a  class="btn btn-warning btn-sm"  style="color: black; font-weight: bold; float: right;" ></a>
             <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
@@ -45,7 +57,7 @@
                                   <td>{{product.In_Quantity}}</td>
                                   <td>{{product.Cost_of_Goods}}</td>
                                   <td>{{product.Current_Quantity}}</td>
-                                  
+                                 
         
                               </tr>
                               {% endfor %} 
@@ -73,6 +85,8 @@
         </div>
     </div>
   </div>
+       
+</div>
       {% endblock %}
       {% block script %}
       <script>

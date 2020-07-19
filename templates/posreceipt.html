@@ -1,0 +1,209 @@
+{% extends "pharmacymain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+   
+    <script type="text/javascript">
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            // document.body.style.marginTop="-45px";
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+        </script>
+    <style type="text/css">
+
+        BODY, TD
+        {
+            background-color: #eeecec;
+            color: #000000;
+            font-family: "Times New Roman", Times, serif;
+            /* font-size: 10pt; */
+        }
+        th, td {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    
+.content {
+  max-width: 500px;
+  margin: auto;
+}
+
+    
+    </style>
+    <!-- ============================================================== -->
+    <!-- end pageheader  -->
+    <!-- ============================================================== -->
+    <div class="row content">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card ">
+            
+        <!-- ============================================================== -->
+        <!-- data table  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card-header">
+                Receipt
+              </div>
+             <div class="card-body">
+                <section class="content">
+                    <!-- Alert Message -->
+                    
+                            <body>
+                    <div id="printableArea">
+                       
+                        <table border="0">
+                            <tr>
+                                <td>
+                                    <table border="0" width="100%" >
+                                        <tr>
+                                            
+                                            <td align="center" style="border-bottom:2px #333 solid;"><span>
+                                                    <img src="{{url_for('static',filename='images/receipt.png')}}"" class="" alt=""></span><br>
+                                                FaithBased Clinic, Bypass Road, Utawala 
+                                                <br>
+                                                079009678
+                                            </td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><b>{{order.customer_name}}</b><br>
+                                               
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td align="center"><nobr><date>Date:{{order.created_on}}<time></nobr></td>
+                                            
+                                        </tr>
+                                        
+                                    </table>
+            
+                                    <table width="100%">
+                                        <tr>
+                                            <td>Medicine</th>
+                                            <td>Qty</td>
+                                            <td align="right">Price</td>
+                                            <td align="right">Discount</td>
+                                            <td align="right">Total</td>
+                                        </tr>
+                                        <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                                        {% for product in product_purchase %}
+                                        <tr>
+            
+                                            <td align="left"><nobr>{{product.product_name}}</nobr></td>
+                                            <td align="left"><nobr>{{product.quantity}}<nobr></td>
+                                            <td align="right"><nobr>Ksh{{product.buying_price}}.00</nobr></td>
+                                            <td align="right"><nobr>Ksh0</nobr></td>
+                                            <td align="right"><nobr>Ksh{{product.total_amount}}.00</nobr></td>
+            
+                                        </tr>
+                                        {% endfor %}   
+                                
+                                        
+                                        <tr>
+                                            <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left"><nobr></nobr></td>
+                                            <td align="left" colspan="3"><nobr>Sub Total</nobr></td>
+                                            <td align="right"><nobr>ksh {{order.total_amount}}.00</nobr></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td align="left"><nobr></nobr></td>
+                                            <td align="left" colspan="3"><nobr>Total Discount</nobr></td>
+                                            <td align="right"><nobr>ksh 0.00</nobr></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left"><nobr></nobr></td>
+                                            <td align="left" colspan="3"><nobr><strong>Grand Total</strong></nobr></td>
+                                            <td align="right"><nobr><strong>Ksh {{order.total_amount}}.00</strong></nobr></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left"><nobr></nobr></td>
+                                            <td align="left" colspan="3"><nobr>Paid</nobr></td>
+                                            <td align="right"><nobr>ksh {{order.payment_amount}}</nobr></td>
+                                        </tr>
+            
+                                        <tr>
+                                            <td align="left"><nobr></nobr></td>
+            
+            
+                                            <td align="left" colspan="3">
+                                                <nobr>
+                                                    Due                                    </nobr>
+                                            </td>
+                                            <td align="right">
+                                                <nobr>
+                                                 ksh {{order.due_balance}}0.00                                    </nobr>
+                                            </td>
+            
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" style="border-top:#333 1px solid;"><nobr></nobr></td>
+                                        </tr>
+                                    </table>
+                                    <table width="100%">
+                                        <tr>
+                                           
+                                            <td>Receved By: Admin </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                
+                            </tr>
+                        </table>
+                    
+                    </div>
+                    <div class="panel-footer text-center mx-1">
+                        <a  class="btn btn-warning"  style="color: black; font-weight: bold;"href="{{url_for('PharmAllOtcBill')}}">BACK</a>
+                        <button  style="color: black; font-weight: bold;" class="btn btn-success" onclick="printDiv('printableArea')"><span class="fa fa-print"></span>Print</button>
+            
+                    </div>
+         
+                        </section> <!-- /.content -->
+            </div>
+            
+              </div>
+          
+      </div>
+      <!-- ============================================================== -->
+      <!-- end data table  -->
+      <!-- ============================================================== -->
+
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+  </div>
+      {% endblock %}
