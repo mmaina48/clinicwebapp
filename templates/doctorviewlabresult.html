@@ -1,0 +1,177 @@
+{% extends "doctormain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a href="{{url_for('updatePatientVisit',patient_id=patient_id,visit_id=visit.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW VISIT NOTE</a>
+          </li>
+          
+        <li class="nav-item">
+            <a href="{{url_for('DoctorViewTreatment',invoice_id=invoice_id)}}" style="color: black;" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW TRETMENT AND LAB REQUEST</a>
+           
+          </li>
+         
+          <li class="nav-item">
+            <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW LAB RESULTS</a>
+          </li>
+          <li class="nav-item">
+            <a href="{{url_for('Doctorshowallvisits',patient_id=patient_id)}}" style="color: black;" class="btn btn-secondary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS NOTES</a>
+          </li>
+          <li class="nav-item">
+            <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" class="btn btn-success m-b-5 m-r-2" style="color: black;"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+          </li>
+          
+      </ul>
+
+   
+    <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong>Lab Results succesfully Added!</div>
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;"> <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong></strong> Failed ! Please Make sure all Mandatory Fields hava Data</div>
+    
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h3 class="card-header">Lab Results</h3>
+            
+                <div class="card-body">
+                    <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data"  accept-charset="utf-8">
+                       
+                        <div class="panel-body">
+                            {% for entry in patient_lab_results %}
+                            <div class="row">
+                                <div class="col-sm-6" id="payment_from_1">
+                                    <div class="form-group row">
+                                        <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"   name="patient_name" class=" form-control"  value="{{entry.patient_name}}" readonly id="patient_name" tabindex="1"  list="id_data" required  />
+                                           
+                                        </div>  
+                                    </div>
+                                </div>
+
+
+                                <!-- date -->
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Visit Type</label>
+                                        <div class="col-sm-6">
+                                    <input class="form-control" type="text" size="50" name="visit-type"  readonly required value="{{entry.visit_type}}" tabindex="6" />
+                                   
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- date -->
+                            </div>
+                            {% endfor %}
+
+                            {% for entry in patient_lab_results %}
+                            <div class="row">
+                                <!-- patient id -->
+                                <div class="col-sm-6" id="payment_from_1">
+                                    <div class="form-group row">
+                                        <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
+                                        <div class="col-sm-6">
+                                            <input type="text"   name="patient_Id" class=" form-control" readonly  id="patient_Id" value="{{entry.patient_id}}" tabindex="1"  list="id_data2" required  />
+                                        
+                                        </div>  
+                                    </div>
+                                </div>
+                               
+                               
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="date" class="col-sm-4 col-form-label">Date</label>
+                                        <div class="col-sm-6">
+                                    <input class="form-control" type="date" size="50" name="invoice_date" id="dtpDate1" readonly required value="{{entry.visit_date}}" tabindex="6" />
+                                  
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            {% endfor %}
+                            <div class="row">
+                                <div class="col-sm-6" id="payment_from_1">
+                                   
+                                    <input type="hidden"   name="order_id" class=" form-control"  value="{{invoice_id}}" id="orderid" tabindex="1" readonly />
+                            </div>
+
+                            </div>
+                            
+                         </div>
+                         </div>
+                         <div class="container">
+                            <div class="row clearfix">
+                                <div class="col-md-12 table-responsive">
+                                    <table class="table table-bordered table-hover table-sortable" id="tab_logic">
+                                        <thead>
+                                            <tr >
+                                                <th class="text-center">
+                                                    Test Name
+                                                </th>
+                                            
+                                                <th class="text-center">
+                                                    Result Notes
+                                                </th>
+                                                <th class="text-center">
+                                                    Tested by
+                                                </th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for entry in patient_lab_results %}
+                                            <tr >
+                                                <td >
+                                                    <input type="text" name='test_name[]' readonly value="{{entry.testname}}" list="id_datalist1" class="form-control"/>
+                                                    
+                                                </td>
+                                               
+                                                <td >
+                                                    <textarea name="test_result[]" id="test_result" readonly  class="form-control">{{entry.testresults}}</textarea>
+                                                </td>
+                                                <td style="width: 200px">
+                                                    <input type="text" name="lab_tech[]" value="{{entry.testedby}}" class="form-control text-left" placeholder='Tested By' required="" id="lab_tech" readonly tabindex="7">
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                  
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        </div>
+
+                    </form>                
+
+                </div>
+            </div>
+
+      {% endblock %}
+
+      {% block script %}
+    
+{% endblock %}

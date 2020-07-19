@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header">{{patient.name}} VISIT NOTES </h3>
+                        <h4 class="card-header"> {{visit.visit_date}} {{patient.name}} VISIT NOTES</h4>
                         
                         <div class="card-body">
                             <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
@@ -109,7 +109,7 @@
                                             <div class="form-group row">
                                                 <label for="date" class="col-sm-4 col-form-label">Date</label>
                                                 <div class="col-sm-6">
-                                            <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
+                                            <input class="datepicker form-control" type="date" size="50" name="invoice_date"  required value="{{visit.visit_date}}" tabindex="6" />
                                                 </div>
                                             </div>
                                         </div>

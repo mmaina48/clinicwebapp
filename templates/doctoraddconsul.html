@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "doctormain.html" %}
 {% block content %}
 <div class="container">
   <div class="container">
@@ -17,9 +17,6 @@
     {%endwith%}
   </div>
   <div>
-   
- 
-    
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
@@ -29,13 +26,14 @@
     <li class="nav-item">
       <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">ADD VISIT NOTES</a>
     </li>
+
     <li class="nav-item">
-        <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>ADD PRESCRIPTION / REQUEST LAB TEST</a>
+        <a href="{{url_for('DoctorAddPrescription', invoice_id =invoice_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>ADD PRESCRIPTION / REQUEST LAB TEST</a>
        
       </li>
       
       <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{capital_name}} RECENT VISITS NOTES</a>
+        <a href="{{url_for('Doctorshowallvisits',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{capital_name}} RECENT VISITS NOTES</a>
        
       </li>
       
@@ -57,7 +55,7 @@
                         <h3 class="card-header">New Visit Notes </h3>
                     
                         <div class="card-body">
-                            <form class="needs-validation" action="{{url_for('PatientConsultation',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                            <form class="needs-validation"  novalidate  id="insert_sale" name="" enctype="multipart/form-data" accept-charset="utf-8">
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-6" id="payment_from_1">
@@ -112,7 +110,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+                                    <input class="form-control" type="hidden"  name="invoice_id" value="{{invoice_id}}"/>
                                  </div>
                                  </div>
                                     <div class="table-responsive" style="margin-top: 10px">
@@ -215,7 +213,7 @@
                                         <div class="form-group row">
                                             <label for="example-text-input" class="col-sm-4 col-form-label"></label>
                                             <div class="col-sm-6">
-                                                <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Save" tabindex="7"/>
+                                                <input type="button" id="add_invoice" class="btn btn-success" name="add-invoice" onclick="send()" value="Submit" tabindex="15"/>
                                                 <a href = ""><button class="btn btn-warning"  type="button">Back</button></a>
                                             </div>
                                            
@@ -323,6 +321,82 @@
   $("#plus").hide()
   $('#sec').show()
 }); 
+          </script>
+          <script>
+              function send() {
+    
+    var myTab =  document.getElementById('vitals').getElementsByTagName('tbody')[0];
+   
+    var arrValues = new Array();
+    // loop through each row of the table.
+    for (row = 0; row < myTab.rows.length; row++) {
+        // loop through each cell in a row.
+        for (c = 0; c < myTab.rows[row].cells.length; c++) {  
+            var element = myTab.rows.item(row).cells[c];
+            var element_type=element.firstElementChild.type
+          
+            if (element_type  == 'text' || element_type == 'number' || element_type == 'date')
+             {
+                arrValues.push({height:myTab.rows[row].cells[0].children[0].value,
+                weight:myTab.rows[row].cells[1].children[0].value,
+                BMI:myTab.rows[row].cells[2].children[0].value,
+                temp:myTab.rows[row].cells[3].children[0].value,
+                BP:myTab.rows[row].cells[4].children[0].value,
+                pulse:myTab.rows[row].cells[5].children[0].value,
+                respRate:myTab.rows[row].cells[6].children[0].value,
+                BOS:myTab.rows[row].cells[7].children[0].value,
+
+             }); 
+            }
+        }
+    }
+    // function to remove duplicates
+    function uniqBy(a, key) {
+            var seen = {};
+            return a.filter(function(item) {
+            var k = key(item);
+            return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+            })
+        }
+            var listz = arrValues 
+            var uniqueNames = uniqBy(listz, JSON.stringify)
+            var data = {};
+            $("#insert_sale").serializeArray().map(function(x){data[x.name] = x.value;}); 
+            var keys=["patient_height","patient_weight","patient_BMI","patient_Temp","patient_BP","patient_Pulse","patient_Rrate","patient_BOS"]
+            var i;
+            for (i = 0; i < keys.length; i++) {
+                delete data[keys[i]]
+            }
+
+            var tabledata=uniqueNames
+            tabledata.push(data)
+            console.log(tabledata)
+            $.ajax({
+                url: '/processconsultatonnotes',
+                data: JSON.stringify(tabledata, null, '\t'),
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                success: function(response){
+                    alert("Visit Successfully Added")
+                    $('#vitals').fadeOut(800).fadeIn(800);
+                    $('#insert_sale').fadeOut(800).fadeIn(800);
+                    $('#successAlert').text(data.name).show();
+                    $('#errorAlert').hide();
+                    $("#insert_sale")[0].reset();
+                    $('#addedrow').remove();
+                   
+                    
+                    
+                },
+                error: function(error){
+                    alert("Please Make sure the Date fied or Qty are not empty!")
+                    $('#errorAlert').text(data.error).show();
+                    $('#successAlert').hide();
+                
+                }
+            });
+
+            }
           </script>
    
       {% endblock %}

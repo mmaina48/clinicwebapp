@@ -50,8 +50,9 @@
                                     <td>{{patient.patient_id}}</td>
                                     <td>{{patient.visit_type}}</td>
                                     
+                                    
                                     <td>
-                                        <a  href="{{url_for('PatientConsultation',patient_id =patient.customer_id)}}"><span class="badge badge-success" style="color: black;">VIEW VISIT</span></a>
+                                        <a  href="{{url_for('DoctorAddVisitNotes',patient_id =patient.customer_id)}}"><span class="badge badge-success" style="color: black;">START VISIT</span></a>
                                     </td>
                                 </tr> 
                                 {% endfor %}                     

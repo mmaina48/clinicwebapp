@@ -72,7 +72,7 @@
         <!-- ============================================================== -->
         <!-- navbar -->
         <!-- ============================================================== -->
-     
+
         <div class="dashboard-header">
             <!-- rgb(51, 51, 141) -->
             <nav class="navbar navbar-expand-lg bg-white fixed-top">
@@ -83,12 +83,10 @@
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto navbar-right-top">
                         <li class="nav-item">
-                            <div id="custom-search" class="top-search-bar">
-                                <input class="form-control" type="text" placeholder="Search..">
-                            </div>
+                           
                         </li>
                         <li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-lg fa-bell" aria-hidden="true"></i><span class="indicator"></span>{{notification}}</a>
+                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell" aria-hidden="true"></i><span class="indicator"></span>{{notification}}</a>
                           
                         </li>
                       
@@ -96,7 +94,7 @@
                             <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-user-circle"></i></a>
                             <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                 <div class="nav-user-info">
-                                    <h5 class="mb-0 text-white nav-user-name">(Doctor){{username}} </h5>
+                                    <h5 class="mb-0 text-white nav-user-name">(LAB) </h5>
                                     <span class="status"></span><span class="ml-2">Online</span>
                                 </div>
                                 <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
@@ -108,7 +106,6 @@
                 </div>
             </nav>
         </div>
-      
         <!-- ============================================================== -->
         <!-- end navbar -->
         <!-- ============================================================== -->
@@ -118,26 +115,27 @@
         <div class="nav-left-sidebar sidebar-dark">
             <div class="menu-list">
                 <nav class="navbar navbar-expand-lg navbar-light">
-                    <a class="d-xl-none d-lg-none" href="#"></i>Dashboard</a>
+                    <a class="d-xl-none d-lg-none" href="#"></i>LAB Dashboard</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav flex-column">
-                            
+                            <!-- <li class="nav-divider">
+                                https://fontawesome.com/v4.7.0/icon/user-circle
+                                Menu
+                            </li> -->
                             <li class="nav-item ">
-                                <a class="nav-link active " href="{{url_for('Doctorsdashboard')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>CLINICIAN DASHBOARD</a>
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                
 
-                                <a class="nav-link active" href="{{url_for('Doctorsdashboard')}}" ><i class="fa fa-align-justify" aria-hidden="true"></i>CONSULTATION QUEUE<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active " href="{{url_for('Labtechdashbord')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; LAB DASHBOARD</a>
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                
+                                <a class="nav-link active" href="{{url_for('Labtechdashbord')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1" ><i class="fa fa-align-justify" aria-hidden="true"></i>LAB WAITING QUEUE</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DoctorLabResultQueue')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>LAB RESULTS QUEUE</a>
-                                
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DoctorallvisitsView')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL VISITS<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('labtechviewalltestdone')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-align-justify" aria-hidden="true"></i>ALL TESTS<span class="badge badge-success">6</span></a>
+                               
                                 
                             </li>
                           

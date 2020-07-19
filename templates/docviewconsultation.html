@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "doctormain.html" %}
 {% block content %}
 <div class="container">
   <div class="container">
@@ -18,8 +18,6 @@
   </div>
   <div>
    
- 
-    
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
@@ -27,18 +25,23 @@
  <!-- Single pro tab review Start-->
  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">ADD VISIT NOTES</a>
+      <a class="nav-item nav-link " style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">View visit Notes</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('AddPrescription', invoice_id =invoice_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>ADD PRESCRIPTION / REQUEST LAB TEST</a>
-       
+        <a href="{{url_for('DoctorViewTreatment',invoice_id=visit.order_id)}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW TRETEMENT AND LAB REQUEST</a>
+
       </li>
-      
       <li class="nav-item">
-        <a href="{{url_for('showallvisits',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{capital_name}} RECENT VISITS NOTES</a>
+        <a href="{{url_for('ViewPatientLabResult',invoice_id=visit.order_id,patient_id=patient_id)}}"  class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
+      </li>
+     
+      <li class="nav-item">
+        <a href="{{url_for('Doctorshowallvisits',patient_id=patient_id)}}" style="color: black;" class="btn btn-secondary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS NOTES</a>
+      </li>
+      <a href="{{url_for('DoctorAddVisitNotes',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+      <li class="nav-item">
        
       </li>
-      
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="home" role="tabpanel">
@@ -54,10 +57,10 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header">New Visit Notes </h3>
-                    
+                        <h4 class="card-header">{{visit.visit_date}} {{patient.name}} VISIT NOTES </h4>
+                        
                         <div class="card-body">
-                            <form class="needs-validation" action="{{url_for('PatientConsultation',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                            <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data"  accept-charset="utf-8">
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-6" id="payment_from_1">
@@ -70,7 +73,6 @@
                                             </div>
                                         </div>
         
-
                                         <!-- date -->
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
@@ -107,12 +109,12 @@
                                             <div class="form-group row">
                                                 <label for="date" class="col-sm-4 col-form-label">Date</label>
                                                 <div class="col-sm-6">
-                                            <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
+                                            <input class="datepicker form-control" type="date" size="50" readonly name="invoice_date" id="dtpDate"  value="{{visit.visit_date}}" tabindex="6" />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
+                                    <input class="form-control" type="hidden"  name="visit_id" value="{{visit_id}}"/>
                                  </div>
                                  </div>
                                     <div class="table-responsive" style="margin-top: 10px">
@@ -134,89 +136,81 @@
                                             <tbody id="addinvoiceItem">
                                                 <tr>
                                                     <td >
-                                                        <input type="text" name="patient_height" class="form-control   text-left" value="{{vital.height}}"  id="patient_height"  tabindex="7">
+                                                        <input type="text" name="patient_height" class="form-control   text-left" value="{{visit.height}}"  id="patient_height" readonly tabindex="7">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_weight"  class="form-control text-left" value="{{vital.weight}}" id="patient_weight"/>
+                                                        <input type="text" name="patient_weight"  class="form-control text-left" value="{{visit.weight}}" readonly id="patient_weight"/>
                                                     </td>
                                                     <td >
-                                                        <input type="text" name="patient_BMI" class="form-control text-left" value="{{vital.bmi}}" readonly id="patient_BMI"  tabindex="7">
+                                                        <input type="text" name="patient_BMI" class="form-control text-left" value="{{visit.bmi}}" readonly id="patient_BMI"  tabindex="7">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_Temp" class="form-control text-left " value="{{vital.temparature}}"  id="patient_Temp"/>
+                                                        <input type="text" name="patient_Temp" class="form-control text-left " value="{{visit.temparature}}" readonly id="patient_Temp"/>
                                                     </td>
                                                     <td >
-                                                        <input type="text" name="patient_BP"  class="form-control text-left" value="{{vital.bloodpressure}}" tabindex="9"   id="patient_BP"/>
+                                                        <input type="text" name="patient_BP"  class="form-control text-left" value="{{visit.bloodpressure}}" readonly tabindex="9"   id="patient_BP"/>
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_Pulse"  class="form-control text-left" id="patient_Pulse" value="{{vital.pulse}}" tabindex="9" />
+                                                        <input type="text" name="patient_Pulse"  class="form-control text-left" id="patient_Pulse" value="{{visit.pulse}}" readonly tabindex="9" />
                                                     </td>
                                                     <td style="width: 100px">
-                                                        <input class=" form-control text-left" type="text" name="patient_Rrate" id="patient_Rrate" value="{{vital.respiratory_rate}}"  tabindex="9"/>
+                                                        <input class=" form-control text-left" type="text" name="patient_Rrate" id="patient_Rrate" value="{{visit.respiratory_rate}}" readonly tabindex="9"/>
                                                     </td>
             
                                                     <td>
-                                                        <input type="text" name="patient_BOS" class="form-control   text-left" id="patient_BOS" value="{{vital.oxygesaturation}}"  tabindex="7">
+                                                        <input type="text" name="patient_BOS" class="form-control   text-left" id="patient_BOS" readonly value="{{visit.oxygesaturation}}"  tabindex="7">
                                                     </td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
-                                                
-                                                   
-                                            
-                                           
-                                                
-                                                
                                             </tfoot>
                                         </table>
                                            <hr>
                                            
                                         </div>
                                         <div class="card">
-                                            <div class="card-body">
-                                            
-                                            <div class="form-group green-border-focus row">
+                                            <div class="form-group row">
                                                 <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Chief Complain</label>
-                                                <textarea rows="4" name="chief_complain" cols="50"></textarea>
+    
+                                                <textarea rows="4" name="chief_complain" id="chief_complain" cols="50">{{visit.chiefcomplain}}</textarea>
                                             </div>
                                             <br>
-                                            <div class="form-group green-border-focus row">
+                                            <div class="form-group row">
                                                 <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Patient_history</label>
-                                                <textarea rows="4" name="patient_history" cols="50"></textarea>
+                                                <textarea rows="4" name="patient_history" cols="50">{{visit.patienthistory}}</textarea>
                                             </div>
                                             <br>
-                                            <div class="form-group green-border-focus row">
+                                            <div class="form-group row">
                                                 <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Clinical Note</label>
-                                                <textarea rows="4"  name="clinical_note" cols="50"></textarea>
+                                                <textarea rows="4" name="clinical_note" cols="50">{{visit.clinicalnote}}</textarea>
                                             </div> 
-                                           
-                                        
-                                            
+                                            <br>
                                             <div class="form-group row">
                                                 <label for="email" class="col-sm-2 col-form-label">Diagnosis:<i class="text-danger">*</i></label>
                                                 <div class="col-sm-4">
                                                     
-                                                    <input class="form-control" style="color: black;" name ="primary_diagnosis" id="primary_diagnosis" type="text" placeholder="Primary Diagnosis" tabindex="2"/>
-                                                    <button style="text-align: right; display: block;" onclick="" class="btn btn-primary btn-sm add_button" type="button" tabindex="12" id="plus">Add-Diagnosis</button>
+                                                    <input class="form-control" style="color: black;" required="" name ="primary_diagnosis" id="primary_diagnosis" type="text" value="{{visit.diagnosis}}" placeholder="Primary Diagnosis" tabindex="2"/>
+                                                    <button style="text-align: right; display: none;" onclick="" class="btn btn-primary btn-sm add_button" type="button" tabindex="12" id="plus">Add-Diagnosis</button>
                                                    
                                             </div>
-                                    
                                             </div>
-                                            <div class="form-group row" style="display: none;" id="sec">
+                                            <div class="form-group row" id="sec">
                                                 <label for="email" class="col-sm-2 col-form-label">Secondary Diagnosis:</label>
                                                 <div class="col-sm-4">
                                                     
-                                                    <input class="form-control" style="color: black;"  name ="Secondary_diagnosis" id="Secondary_diagnosis" type="text" placeholder="Secondary Diagnosis" tabindex="3"/>
+                                                    <input class="form-control" required="" name ="Secondary_diagnosis" id="Secondary_diagnosis" type="text" value="{{visit.secondarydiagnosis}}" placeholder="Secondary Diagnosis" tabindex="3"/>
                                                    
                                             </div>
                                             </div>
+                                           
+                    
                                         </div>
-                                    </div>
                                         <div class="form-group row">
                                             <label for="example-text-input" class="col-sm-4 col-form-label"></label>
                                             <div class="col-sm-6">
-                                                <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Save" tabindex="7"/>
-                                                <a href = ""><button class="btn btn-warning"  type="button">Back</button></a>
+                                                
+                                                <input type="button" id="add_invoice" style="color: black; font-weight: bold;" class="btn btn-success" name="add-invoice" onclick="send()" value="UPDATE" tabindex="15"/>
+                                                <a href="{{url_for('DoctorallvisitsView')}}"><button class="btn btn-warning"  type="button">Back</button></a>
                                             </div>
                                            
                                         </div>
@@ -240,7 +234,6 @@
       {% block script %}
       <script>
            
-    
     $('#vitals').on("click","input" ,function(e) {
         var target=e.target
         if(target.matches("input#patient_height")){
@@ -319,11 +312,101 @@
     })
 
 
-    $("#plus").click(function(){
-  $("#plus").hide()
-  $('#sec').show()
-}); 
+    // End calculate BMI
+
+    
           </script>
-   
+    <script>
+      $( document ).ready(function() {
+    var Secondary_diagnosis=$('#Secondary_diagnosis').val()
+    console.log(Secondary_diagnosis)
+    $('#plus').hide()
+    if (!Secondary_diagnosis){
+        $('#Secondary_diagnosis').hide()
+        $('#sec').hide()
+    }
+    else{
+        $('#Secondary_diagnosis').show()
+        $('#sec').show()
+    }
+           });
+    </script>
+        <script>
+            function send() {
+  
+  var myTab =  document.getElementById('vitals').getElementsByTagName('tbody')[0];
+ 
+  var arrValues = new Array();
+  // loop through each row of the table.
+  for (row = 0; row < myTab.rows.length; row++) {
+      // loop through each cell in a row.
+      for (c = 0; c < myTab.rows[row].cells.length; c++) {  
+          var element = myTab.rows.item(row).cells[c];
+          var element_type=element.firstElementChild.type
+        
+          if (element_type  == 'text' || element_type == 'number' || element_type == 'date')
+           {
+              arrValues.push({height:myTab.rows[row].cells[0].children[0].value,
+              weight:myTab.rows[row].cells[1].children[0].value,
+              BMI:myTab.rows[row].cells[2].children[0].value,
+              temp:myTab.rows[row].cells[3].children[0].value,
+              BP:myTab.rows[row].cells[4].children[0].value,
+              pulse:myTab.rows[row].cells[5].children[0].value,
+              respRate:myTab.rows[row].cells[6].children[0].value,
+              BOS:myTab.rows[row].cells[7].children[0].value,
+
+           }); 
+          }
+      }
+  }
+  // function to remove duplicates
+  function uniqBy(a, key) {
+          var seen = {};
+          return a.filter(function(item) {
+          var k = key(item);
+          return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+          })
+      }
+          var listz = arrValues 
+          var uniqueNames = uniqBy(listz, JSON.stringify)
+          var data = {};
+          $("#insert_sale").serializeArray().map(function(x){data[x.name] = x.value;}); 
+          var keys=["patient_height","patient_weight","patient_BMI","patient_Temp","patient_BP","patient_Pulse","patient_Rrate","patient_BOS"]
+          var i;
+          for (i = 0; i < keys.length; i++) {
+              delete data[keys[i]]
+          }
+
+          var tabledata=uniqueNames
+          tabledata.push(data)
+          console.log(tabledata)
+          $.ajax({
+              url: '/updateconsultatonnotes',
+              data: JSON.stringify(tabledata, null, '\t'),
+              contentType: 'application/json;charset=UTF-8',
+              type: 'POST',
+              success: function(response){
+                  alert("Visit Successfully Added")
+                  $('#vitals').fadeOut(800).fadeIn(800);
+                  $('#insert_sale').fadeOut(800).fadeIn(800);
+                  $('#successAlert').text(data.name).show();
+                  $('#errorAlert').hide();
+                  $("#insert_sale")[0].reset();
+                  $('#addedrow').remove();
+                  location.reload()
+                 
+                  
+                  
+              },
+              error: function(error){
+                  alert("Please Make sure the Date fied or Qty are not empty!")
+                  $('#errorAlert').text(data.error).show();
+                  $('#successAlert').hide();
+              
+              }
+          });
+
+          }
+        </script>
       {% endblock %}
 

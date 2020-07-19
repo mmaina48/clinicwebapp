@@ -1,0 +1,97 @@
+{% extends "doctormain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+   
+
+ <!-- Single pro tab review Start-->
+ <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="btn btn-warning m-b-5 m-r-2 "><i class="ti-align-justify"> </i>ALL {{patient.name}} RECENT VISITS</a>
+      <a href="{{url_for('DoctorAddVisitNotes',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+    </li>
+   
+  <!-- <li class="nav-item">
+    <a href="" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECENT LAB REPORT</a>
+  </li> -->
+</ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="home" role="tabpanel">
+        <div class="row">
+        <!-- ============================================================== -->
+        <!-- basic table  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Basic Table</h5>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered first">
+                            <thead>
+                                <tr>
+                                  <th>Date</th>
+                                    <th>Patient Name</th>
+                                    <th>OPD No</th>
+                                    <th>Visit Type</th>
+                                    
+                                    <th>Seen By</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for visit in patvisits %}
+                                <tr>
+                                  <td>{{visit.visit_date}}</td>
+                                    <td>{{visit.patient_name}}</td>
+                                    <td>{{visit.patient_id}}</td>
+                                    <td>{{visit.visit_type}}</td>
+                                    <td>Dr.Ngugi</td>
+                                    <td><a  href="{{url_for('updatePatientVisit',patient_id=patient_id,visit_id=visit.id)}}"><span class="badge badge-success">VIEW VISIT</span></a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end basic table  -->
+        <!-- ============================================================== -->
+    </div>
+  </div>
+    <!-- end of consultation -->
+         
+      </div>
+      {% endblock %}
+      {% block script %}
+      <script>
+           
+      $(function () {
+       $('#myTab a:last').tab('show')
+       
+      })
+
+      $( document ).ready(function() {
+        $('.table-striped').DataTable()
+        });
+          </script>
+    
+      {% endblock %}
+

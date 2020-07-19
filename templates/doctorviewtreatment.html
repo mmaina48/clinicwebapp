@@ -1,0 +1,843 @@
+{% extends "doctormain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+   
+ 
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <!-- consultation -->
+ <!-- Single pro tab review Start-->
+ <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a href="{{url_for('updatePatientVisit',patient_id=patient_id,visit_id=patvisits.id)}}" class="btn btn-primary m-b-5 m-r-2" style="color: black;"><i class="ti-align-justify"> </i>VIEW VISIT NOTES</a>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-link" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW TREATMENT/LAB TESTS</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('Doctorshowallvisits',patient_id=patient_id)}}" style="color: black;" class="btn btn-secondary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS NOTES</a>
+      </li>
+    </li>
+    <a href="{{url_for('PatientConsultation',patient_id=patient_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>START NEW VISIT</a>
+    <li class="nav-item">
+     
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="home" role="tabpanel">
+      <div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card">
+                    <h3 class="card-header">Visit Treatment and Lab Test </h3>
+                    
+                   
+                    <div class="card-body">
+                        <form class="needs-validation" action="" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6" id="payment_from_1">
+                                        <div class="form-group row">
+                                            <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
+                                            <div class="col-sm-6">
+                                                <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{order.customer_name}}" id="patient_name" tabindex="1" readonly list="id_data" required  />
+                                               
+                                            </div>  
+                                        </div>
+                                    </div>
+    
+                                    <!-- date -->
+                                    <div class="col-sm-6" id="payment_from_1">
+                                        <div class="form-group row">
+                                            <label for="customer_name" class="col-sm-4 col-form-label">Payment Type</label>
+                                            <div class="col-sm-6">
+                                                <select name="paytype" id="paytype" class="form-control" readonly required="" >
+                                                    <option selected value="{{order.payment_type}}">{{order.payment_type}}</option>
+                                                    <option value="Cash">Cash Payment</option>
+                                                    <option value="Mpesa">Mpesa Payment</option> 
+                                                    <option value="NHIF">NHIF Payment</option> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <!-- date -->
+                                </div>
+        
+                                <div class="row">
+                                    <!-- patient id -->
+                                    <div class="col-sm-6" id="payment_from_1">
+                                        <div class="form-group row">
+                                            <label for="patient_id" class="col-sm-4 col-form-label">OPD No</label>
+                                            <div class="col-sm-6">
+                                                <input type="text"   name="patient_Id" class=" form-control" readonly  id="patient_Id" value="{{order.patient_id}}" tabindex="1"  list="id_data2" required placeholder="Enter OPD No"  />
+                                                
+                                            </div>  
+                                        </div>
+                                    </div>
+                                   
+                                    <!-- patient -->
+                                    <div class="col-sm-6">
+                                        <div class="form-group row">
+                                            <label for="date" class="col-sm-4 col-form-label">Date</label>
+                                            <div class="col-sm-6">
+                                        <input class="form-control" type="date" readonly size="50" name="invoice_date" id="dtpDate1" required value="{{order.created_on}}" tabindex="6" />
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6" id="payment_from_1">
+                                       
+                                                <input type="hidden"   name="order_id" class=" form-control"  value="{{order.id}}" id="orderid" tabindex="1" readonly />
+                                    </div>
+                                </div>
+                                
+                             </div>
+                             </div>
+                                <div class="table-responsive" style="margin-top: 10px">
+                                    <table class="table table-bordered table-hover" id="normalinvoice">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 220px">Treatment Information <i class="text-danger">*</i></th>
+                                                <th class="text-center" width="120">Type</th>
+                                                
+                                                <th class="text-center"  width="70">Qty <i class="text-danger">*</i></th>
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody id="addinvoiceItem">
+                                            {% for prod in product_purchase %}
+                                            <tr>
+                                                <td style="width: 200px">
+                                                    <input type="text" name="product_name" class="form-control productSelection  text-left" value="{{prod.product_name}}" readonly placeholder='Product Name' required="" id="product_name" list="id_datalist" tabindex="7">
+                                                    
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="productType"  class="form-control text-center " value="{{prod.product_type}}" readonly value=""  id="productType"/>
+                                                </td>
+                                               
+                                                <td style="width: 120px" >
+                                                    <input type="text" name="quantity"  class="form-control text-left" value="{{prod.quantity}}" tabindex="9" readonly onkeyup="checkqty()"  id="quantity"/>
+                                                </td>
+                                               
+                                            </tr>
+                                            {% endfor %}   
+                                        </tbody>
+                                      
+                                    </table>
+                                    <tfoot>
+                                        <tr>
+                                            <td>
+                                            
+                                                
+                                         <a href="{{url_for('DoctorAddPrescription', invoice_id =invoice_id)}}"><button style="text-align: right;"  class="btn btn-success " type="button" tabindex="12" id="plus">ADD MEDICTION</button></a>
+                                              </td>
+                                        </tr>
+                                    </tfoot>
+                                </div>
+                                
+                            </div>
+    
+                        </form>                
+    
+                    </div>
+                </div>
+
+      </div>
+        
+    </div>
+    
+  </div>
+    <!-- end of consultation -->
+         
+      </div>
+      {% endblock %}
+      {% block script %}
+      <script>
+           
+    //   $(function () {
+    //    $('#myTab a:last').tab('show')
+    //   })
+
+    //   calculate BMI
+    $('#vitals').on("click","input" ,function(e) {
+        var target=e.target
+        if(target.matches("input#patient_height")){
+           var events=['keyup','change','keydown'];
+           for (i = 0; i < events.length; i++){
+
+            target.addEventListener(events[i] ,function(){
+            const height =target.value;
+            
+            var weight= target.parentNode.parentNode.children[1].children[0].value
+            console.log(weight)
+            var BMI= target.parentNode.parentNode.children[2].children[0]
+            var Height_val=parseFloat(height)
+            var Weight_val=parseInt(weight)
+            console.log(Height_val,Weight_val)
+            
+            const height_meters= parseFloat(height/3.2808398950131)
+            const sqr_height= parseFloat(height_meters * height_meters)
+            console.log(height_meters,sqr_height)
+            const BMI_value=((Weight_val/sqr_height).toFixed(2))
+
+            document.getElementById('patient_BMI').value=BMI_value
+
+
+            })
+           }
+        }
+        if(target.matches("input#patient_weight")){
+           var events=['keyup','change','keydown'];
+           for (i = 0; i < events.length; i++){
+
+            target.addEventListener(events[i] ,function(){
+            const weight =target.value;
+            
+            var height= target.parentNode.parentNode.children[0].children[0].value
+            console.log(weight)
+            console.log(height)
+            var BMI= target.parentNode.parentNode.children[2].children[0]
+            var Height_val=parseFloat(height)
+            var Weight_val=parseInt(weight)
+            console.log(Height_val,Weight_val)
+            
+            const height_meters= parseFloat(height/3.2808398950131)
+            const sqr_height= parseFloat(height_meters * height_meters)
+            console.log(height_meters,sqr_height)
+            const BMI_value=((Weight_val/sqr_height).toFixed(2))
+            
+            if (isNaN(BMI_value)){
+                document.getElementById('patient_BMI').value='0'
+            }
+            else{
+                document.getElementById('patient_BMI').value=BMI_value
+
+            }
+
+            if (BMI_value > 30){
+                document.getElementById('bmi_label').innerHTML='Obese'
+            }
+            else if(BMI_value >18.4 && BMI_value < 25 ){
+                
+                document.getElementById('bmi_label').innerHTML='Overweight'
+
+            }
+            else if (BMI_value > 24.9 && BMI_value < 30){
+                document.getElementById('bmi_label').innerHTML='Normal'
+            }
+            else if (BMI_value < 18.5){
+                document.getElementById('bmi_label').innerHTML='Underweight'
+            }
+            
+
+            
+        })
+           }
+        }
+    })
+
+
+    // End calculate BMI
+          </script>
+      <script>
+        function addRow() {
+  
+  var empTab = document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
+  var rowCnt = empTab.rows.length;   // table row count.
+  var tr = empTab.insertRow(rowCnt); // the table row.
+  tr = empTab.insertRow(rowCnt);
+  tr.setAttribute("id","addedrow")
+  
+  for (var c = 0; c < 8; c++) {
+      var td = document.createElement('td'); // table definition.
+      td = tr.insertCell(c);
+
+
+
+      if (c == 7) {     
+          var button = document.createElement('input');
+          button.setAttribute('type', 'button');
+          button.setAttribute('value', 'Remove');
+          button.setAttribute('tabindex','16');
+          button.setAttribute('onclick', 'removeRow(this)');
+          button.setAttribute('class','btn btn-danger btn-sm row-remove')
+          td.appendChild(button);
+      }
+
+      else if(c==0){
+          var ele = document.createElement('input');
+          ele.setAttribute('type', 'text');
+          ele.setAttribute('value', '');
+          ele.setAttribute('name', 'product_name[]');
+          ele.setAttribute('placeholder', 'Product Name');
+          ele.setAttribute('tabindex','7');
+          ele.setAttribute('class','form-control')
+          ele.setAttribute("id", "product_name");
+          ele.setAttribute("list","id_datalist")
+          td.appendChild(ele);
+          
+      }
+      else if(c==1){
+          var element = document.createElement('input');
+          element.setAttribute('text', 'text');
+          element.setAttribute('name', 'productType');
+          element.setAttribute('readonly','');
+          element.setAttribute('id', 'productType');
+          element.setAttribute('class','form-control text-center')
+         
+          td.appendChild(element)
+      }
+      else if(c==2){
+          var le = document.createElement('select')
+          le.setAttribute('id', "ExpDate")
+          le.setAttribute('style','border-color:green')
+          le.setAttribute('class','form-control  text-left')
+          td.appendChild(le);
+      }
+      else if(c==3){
+          var element = document.createElement('input');
+          element.setAttribute('text', 'number');
+          element.setAttribute('name', 'avl_quantity[]');
+          element.setAttribute('readonly','')
+          element.setAttribute('id', 'avlquantity_1');
+          element.setAttribute('class','form-control text-left')
+         
+          td.appendChild(element)
+      }
+      else if(c==4){
+          var ele = document.createElement('input')
+          ele.setAttribute('type', 'text')
+          ele.setAttribute('name', "quantity[]")
+          element.setAttribute('onkeyup','checkqty()')
+          ele.setAttribute('id', "quantity")
+          ele.setAttribute('class','form-control text-left')
+          
+          td.appendChild(ele)
+      }
+      else if(c==5){
+          var ele = document.createElement('input')
+          ele.setAttribute('type', 'text')
+          ele.setAttribute('name', "selling_price[]")
+          ele.setAttribute('readonly','')
+          ele.setAttribute('id', "selling_price")
+          ele.setAttribute('placeholder', '0.00')
+          ele.setAttribute('class','form-control text-left')
+          td.appendChild(ele)
+      }
+      else {
+          var ele = document.createElement('input');
+          ele.setAttribute('type', 'text')
+          ele.setAttribute('name', 'total_price')
+          ele.setAttribute('readonly','')
+          ele.setAttribute('class','form-control text-right txtcal')
+          ele.setAttribute('id', 'total_price')
+          ele.setAttribute('placeholder', '0.00')
+          td.appendChild(ele)
+      }
+
+  }
+}
+
+function removeRow(oButton) {
+  var empTab = document.getElementById('normalinvoice');
+  empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
+  var total=oButton.parentNode.parentNode.children[6].children[0].value
+  document.getElementById("grand_total_price").value -=total
+  document.getElementById("nettotal").value -=total
+}
+
+$('#insert_sale').on('change',"input" ,function(e) {
+      var target=e.target
+      if(target.matches("input#patient_name")){
+          var target=target.value
+          prod=target
+          fetch('/patientdata/' + prod).then(function(response){
+              response.json().then(function(data){
+                  var lentha=data.Patient.length
+                  if (lentha==0){
+                  alert("That Patient is not registered!");
+                     $("#patient_name").val() = '';
+                      return false;
+                  }
+                let previousbal='';
+                let patientid='';
+                
+                          for(let patient of data.Patient){
+                              previousbal +=  patient.debt
+                              patientid =patient.patient_Id
+                           }
+                          document.getElementById('previous').value=previousbal
+                          document.getElementById('patient_Id').value=patientid
+               });
+              
+              });
+          
+          }
+          if(target.matches("input#patient_Id")){
+          var target=target.value
+          prod=target
+         
+          originalString = prod; 
+          newString = originalString.replace('/', '');
+          
+          fetch('/patientdatabyId/' + newString).then(function(response){
+              response.json().then(function(data){
+                 
+                  var lentha=data.Patient.length
+                  if (lentha==0){
+                  alert("That Patient is not registered!");
+                     $("#patient_name").val() = '';
+                      return false;
+                  }
+                let previousbal='';
+                let patientname='';
+                
+                          for(let patient of data.Patient){
+                              previousbal +=  patient.debt
+                              patientname =patient.name
+            
+                           }
+                          document.getElementById('previous').value=previousbal
+                          document.getElementById('patient_name').value=patientname
+               });
+              
+              });
+          
+          }
+          
+      });
+
+   $('#normalinvoice').on("click","input" ,function(e) {
+   var target=e.target
+   if(target.matches("input#product_name")){
+      target.addEventListener('change' ,function(){
+          var target=e.target
+          var product_type=target.parentNode.parentNode.children[1].children[0]
+          var expiry_options=target.parentNode.parentNode.children[2].children[0]
+          var avlqty=target.parentNode.parentNode.children[3].children[0]
+          var qty= target.parentNode.parentNode.children[4].children[0]
+          var selling_price=target.parentNode.parentNode.children[5].children[0]
+          const values =target.value;
+          prod=values
+
+          fetch('/productdata/' + prod).then(function(response){
+              response.json().then(function(data){
+                  
+                  var lentha=data.Product.length
+
+                  let optionHTML = '';
+                  // function to convert string to date
+                  function convert(str) {
+                  var date = new Date(str),
+                  mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+                  day = ("0" + date.getDate()).slice(-2);
+                  return [day, mnth, date.getFullYear()].join("-");
+                  }
+
+                  if (lentha !==0){
+                  
+                              for(let product of data.Product){
+                              var date=product.expiry_date
+                              var normalDate=convert(date)
+                          optionHTML += '<option value= "' + product.id + '">' + normalDate + '</option>';
+                              }
+                          expiry_options.innerHTML= optionHTML;
+
+                              var value_id=expiry_options.value
+
+                                  fetch('/productqty/' + value_id).then(function(response){
+                                      response.json().then(function(data){
+                                          let available_quantity='';
+                                      for(let prod of data.ProductQty){
+                                          available_quantity +=  prod.quantity
+                                      }
+                                      avlqty.value=available_quantity
+                              });
+                          });
+                              
+                          var option_date=expiry_options.options[expiry_options.selectedIndex].text
+                                  var today = new Date();
+                                  var dd = today.getDate();
+                                  var mm = today.getMonth()+1; //January is 0!
+                                  var yyyy = today.getFullYear();
+
+                                  if(dd<10){
+                                      dd='0'+dd;
+                                      }
+                                      if(mm<10){
+                                      mm='0'+mm;
+                                      }
+                                      var today = yyyy+'-'+mm+'-'+ dd;
+                                      
+                                      var date = option_date;
+                                      var expiry_date = date.split("-").reverse().join("-");
+
+                                      var current_date = new Date(today);
+                                      var exp =new Date(expiry_date);
+                                      
+                                      if (exp <= current_date) {
+                                          expiry_options.style.borderColor = "red";
+                                          qty.setAttribute('disabled', true)
+                                      }
+                                      
+                                      else {
+                                          expiry_options.style.borderColor = "green";
+                                          qty.removeAttribute('disabled')
+                                      
+                                      }
+                  }
+                  else{
+                  
+                      avlqty.value=''
+                      expiry_options.innerHTML= ''
+
+                  }
+              });
+               
+
+               });
+                // third fetch call
+                fetch('/productprice/' + prod).then(function(response){
+               response.json().then(function(data){
+                  var lentha=data.Productprice.length
+                  if (lentha ===0){
+                      alert('items is not Found')
+                      target.value= '';
+                      return false;
+                  }
+                let unit_price='';
+                let producttype='';
+                          for(let prod of data.Productprice){
+                              unit_price +=  prod.sell_price
+                              producttype =prod.product_type
+                           }
+                           selling_price.value=unit_price
+                           product_type.value=producttype
+                });
+              
+               });
+
+          }); 
+          
+          
+          }
+  
+          // Another if to check the quanty entered
+
+       if(target.matches("input#quantity")){
+       var events=['keyup','change','keydown'];
+       for (i = 0; i < events.length; i++){
+       target.addEventListener(events[i] ,function(){
+       const values =target.value;
+       var aval_qty= target.parentNode.parentNode.children[3].children[0].value
+       var quantity=parseInt(values)
+       var available_quantity=parseInt(aval_qty)
+       if (isNaN(values)){
+       alert("Input Must Be a Number");
+       target.value= '';
+       return false;
+       }
+       if(quantity>available_quantity){
+          alert("You can not sell more than Available Quantity!");
+       target.value= '';
+       return false;
+       }
+          const price_td=target.parentNode.parentNode.children[5].children[0].value
+          const total=values*price_td
+          target.parentNode.parentNode.children[6].children[0].value=total
+          
+          var calculated_total_sum = 0
+          $("#normalinvoice .txtcal").each(function () {
+          var get_textbox_value = $(this).val();
+          if ($.isNumeric(get_textbox_value)) {
+          calculated_total_sum += parseFloat(get_textbox_value);
+          
+          } 
+
+        })
+        document.getElementById("grand_total_price").value=calculated_total_sum
+
+        var calculated_net_sum = 0
+        $("#normalinvoice .txtnet").each(function () {
+         var get_textbox_value = $(this).val();
+         if ($.isNumeric(get_textbox_value)) {
+          calculated_net_sum += parseFloat(get_textbox_value);
+            
+            } 
+ 
+          })
+          document.getElementById("nettotal").value=calculated_net_sum
+       //   end
+
+        })
+
+       }
+      
+
+       }
+       if(target.matches("input#paidAmount")){
+          target.addEventListener('keyup' ,function(){
+              const values =target.value;
+              if (isNaN(values)){
+              alert("Input Must Be a Number");
+              target.value= '';
+              return false;
+               }
+              const grandtotal=document.getElementById('grand_total_price').value
+              const netprevious=document.getElementById('previous').value
+              const netTotal=document.getElementById('nettotal').value
+              var paid_net=parseInt(values)-parseInt(netTotal)
+              var paid_grand=parseInt(values)-parseInt(grandtotal)
+
+              if(paid_grand==0 && paid_net<0){
+                  
+                  document.getElementById('change').value= 0
+                  document.getElementById('balance').value= 0
+                  document.getElementById('debt_pay').value= 0
+                  document.getElementById('dueAmmount').value= netprevious
+                  document.getElementById("full_paid_tab").style.display="block";
+                  document.getElementById("print_inv").style.display="block";
+              }
+              else if(paid_grand<0 && paid_net<0){
+                  var total_balance=paid_grand*-1
+                  document.getElementById('change').value= 0
+                  document.getElementById('balance').value= total_balance
+                  document.getElementById('debt_pay').value= 0
+                  document.getElementById('dueAmmount').value=parseInt(total_balance)+parseInt(netprevious) 
+                  document.getElementById("full_paid_tab").style.display="none";
+                  document.getElementById("print_inv").style.display="none";
+              }
+              else if(paid_grand>0 && paid_net<0){
+                  document.getElementById('change').value= 0
+                  document.getElementById('balance').value= 0
+                  document.getElementById('debt_pay').value= paid_grand
+                  document.getElementById('dueAmmount').value=parseInt(netprevious)- parseInt(paid_grand)
+                  document.getElementById("full_paid_tab").style.display="block";
+                  document.getElementById("print_inv").style.display="block";
+              }
+              else if(paid_grand>0 && paid_net==0){
+                  document.getElementById('change').value= 0
+                  document.getElementById('balance').value= 0
+                  document.getElementById('debt_pay').value= paid_grand
+                  document.getElementById('dueAmmount').value=0
+                  document.getElementById("full_paid_tab").style.display="block";
+                  document.getElementById("print_inv").style.display="block";
+              }
+              else if(paid_grand>0 && paid_net>0){
+                  document.getElementById('change').value= paid_net
+                  document.getElementById('balance').value= 0
+                  document.getElementById('debt_pay').value= netprevious
+                  document.getElementById('dueAmmount').value=0
+                  document.getElementById("full_paid_tab").style.display="block";
+                  document.getElementById("print_inv").style.display="block";
+              }
+              else if(paid_grand==0 && paid_net==0){
+                  document.getElementById('change').value= 0
+                  document.getElementById('balance').value= 0
+                  document.getElementById('debt_pay').value= 0
+                  document.getElementById('dueAmmount').value=0
+                  document.getElementById("full_paid_tab").style.display="block";
+                  document.getElementById("print_inv").style.display="block";
+              }
+              else if(paid_grand ==0){
+                 
+              document.getElementById("full_paid_tab").style.display="block";
+              document.getElementById("print_inv").style.display="block";
+         
+              }
+          })
+       }
+        });
+      //  check if this invoice is fullly paid
+      $( document ).ready(function() {
+            grandtotal=document.getElementById('grand_total_price').value
+            paid_amount=document.getElementById('paidAmount').value
+            
+            var grand_total=parseInt(grandtotal)
+            var paid_amount_val=parseInt(paid_amount)
+            
+            if (paid_amount_val == grandtotal || paid_amount_val > grandtotal){
+                
+                document.getElementById("full_paid_tab").style.display="block";
+                document.getElementById("print_inv").style.display="block";
+            }
+             
+         });
+      // end
+
+       // check on the clicked expiry_date then polulate the available_quantity field
+               $(document).on('change','#ExpDate',function(e){
+                 var avlqty= e.target.parentNode.parentNode.children[3].children[0]
+                 var qty= e.target.parentNode.parentNode.children[4].children[0]
+                 var value_id=e.target.value
+
+              fetch('/productqty/' + value_id).then(function(response){
+                 response.json().then(function(data){
+                 let available_quantity='';
+                          for(let prod of data.ProductQty){
+                              available_quantity +=  prod.quantity
+            
+                           }
+                           avlqty.value=available_quantity
+               });
+                  
+              });
+              var option_date=e.target.options[e.target.selectedIndex].text
+
+              var today = new Date();
+               var dd = today.getDate();
+               var mm = today.getMonth()+1; //January is 0!
+               var yyyy = today.getFullYear();
+
+               if(dd<10){
+                  dd='0'+dd;
+                  }
+                  if(mm<10){
+                  mm='0'+mm;
+                  }
+                  var today = yyyy+'-'+mm+'-'+ dd;
+                  
+                  var date = option_date;
+                  var expiry_date = date.split("-").reverse().join("-");
+
+                  var current_date = new Date(today);
+                  var exp =new Date(expiry_date);
+                   
+                  if (exp <= current_date) {
+                     $(this).css("border-color", "red")
+                     alert("Expired! Choose another exipiration Date")
+                     qty.setAttribute('disabled', true)
+                     
+                   }
+                   else if(exp===null){
+                              qty.setAttribute('disabled', true)
+                              }
+                   else {
+                      $(this).css("border-color", "green");
+                      qty.removeAttribute('disabled')
+                  
+                   }
+
+
+              });           
+  //  detect if quantity field changes
+
+function checkqty()
+{
+
+var quant=$("#quantity").val();
+var paid_amount=$("#paidAmount").val();
+
+if (isNaN(quant))
+{
+  alert("Must input numbers");
+  // document.getElementById("quantity").value = '';
+   $("#quantity").val() = '';
+  return false;
+}
+if (isNaN(paid_amount))
+{
+  alert("Must input numbers");
+  $("#paidAmount").val() = '';
+  return false;
+}
+
+}
+
+function send() {
+  
+  var checkdate= document.getElementById('dtpDate1').value
+  var myTab =  document.getElementById('normalinvoice').getElementsByTagName('tbody')[0];
+ 
+  var arrValues = new Array();
+  // loop through each row of the table.
+  for (row = 0; row < myTab.rows.length; row++) {
+      // loop through each cell in a row.
+      for (c = 0; c < myTab.rows[row].cells.length; c++) {  
+          var element = myTab.rows.item(row).cells[c];
+          var element_type=element.firstElementChild.type
+        
+          if (element_type  == 'text' || element_type == 'number' || element_type == 'date')
+           {
+              arrValues.push({productname:myTab.rows[row].cells[0].children[0].value,
+              producttype:myTab.rows[row].cells[1].children[0].value,
+              expirydata:myTab.rows[row].cells[2].children[0].value,
+              quantity:myTab.rows[row].cells[4].children[0].value,
+              selling_price:myTab.rows[row].cells[5].children[0].value,
+              total_amount:myTab.rows[row].cells[6].children[0].value
+           }); 
+          }
+      }
+  }
+  // function to remove duplicates
+  function uniqBy(a, key) {
+          var seen = {};
+          return a.filter(function(item) {
+          var k = key(item);
+          return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+          })
+      }
+          var listz = arrValues 
+          var uniqueNames = uniqBy(listz, JSON.stringify)
+          var data = {};
+          $("#insert_sale").serializeArray().map(function(x){data[x.name] = x.value;}); 
+          var keys=["product_name","quantity","Expiry_date","selling_price","total_price","productType"]
+          var i;
+          for (i = 0; i < keys.length; i++) {
+              delete data[keys[i]]
+          }
+
+          var tabledata=uniqueNames
+          tabledata.push(data)
+          console.log(tabledata)
+          $.ajax({
+              url: '/processUpdatedInvoice',
+              data: JSON.stringify(tabledata, null, '\t'),
+              contentType: 'application/json;charset=UTF-8',
+              type: 'POST',
+              success: function(response){
+                  alert("Successfully Added")
+                  $('#normalinvoice').fadeOut(2000).fadeIn(2000);
+                  $('#insert_sale').fadeOut(2000).fadeIn(2000);
+                  $('#successAlert').text(data.name).show();
+                  $('#errorAlert').hide();
+                  $("#insert_sale")[0].reset();
+                  $('#addedrow').remove();
+                  location.reload();
+                  
+                  
+              },
+              error: function(error){
+                  alert("Please Make sure the Date fied or Qty are not empty!")
+                  $('#errorAlert').text(data.error).show();
+                  $('#successAlert').hide();
+              
+              }
+          });
+
+          }
+    </script>
+      {% endblock %}
+
