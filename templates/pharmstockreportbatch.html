@@ -18,20 +18,17 @@
   </div>
   <div>
     <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="page-header">
-                <h3 class="mb-2" style="color: black;font-weight: bold;">Stock Report(Batch Wise) </h3>
-               
-              <hr>
-            </div>
-        </div>
-    </div>
-   
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+          <a  href="{{url_for('PharmStockReport')}}"  class="btn btn-warning btn-sm"  style="color: black; font-weight: bold; float: right;" >Stock level(Cumulatively )</a>
+      </div>
+      </div>
     <!-- ============================================================== -->
     <!-- end pageheader  -->
     <!-- ============================================================== -->
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
+          <h3 class="card-header" style="color: black; font-weight: bold;">Stock Level Report(Batch Wise)</h3>
+          <a  class="btn btn-warning btn-sm"  style="color: black; font-weight: bold; float: right;" ></a>
             <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
@@ -39,34 +36,35 @@
           
               <div class="card-body">
                   <div class="table-responsive">
-                      <table id="example" class="table table-striped table-bordered second" style="width:100%">
+                      <table id="example2" class="table table-striped table-bordered second" style="width:100%">
                           <thead>
                               <tr>
-                                  <th>Medication</th>
+                                  <th>Medication(unit)</th>
                                   <th>Expiry</th>
-                                  <th>In Qty</th>
-                                  <th>Buying Price(unit)</th>
-                                  <th>Cost</th>
+                                  
                                   <th>Current Qty</th>
+                                  <th>Stock Value</th>
                                  
+                                 <th>Action</th>
                               </tr>
                           </thead>
                           <tbody>
-                            {% for product in stock %}
+                            {% for purchase in stock1 %}
                               <tr>
-                                  <td>{{product.product_name}}</td>
-                                  <td>{{product.expiry_date}}</td>
-                                  <td>{{product.in_quantity}}</td>
-                                  <td>{{product.buying_price}}</td>
-                                  <td>{{product.total_amount}}</td>
-                                   
-                                  <td align="center">{{product.quantity}}</td>
-                                  
+                                  <td>{{purchase.product_name}}</td>
+                                  <td>{{purchase.expiry_date}}</td>
+                                  <td align="center"><input type="text" style="color: black; font-weight: bold;" name="Current_qty" class="form-control productSelection  text-left" readonly value='{{purchase.quantity}}'></td>
+                                  <td>{{purchase.buying_price*purchase.quantity}}</td>
+                                  <td><a href="" class="btn btn-warning btn-xs" style="font-weight: bold; color: black;">UPDATE</a></td>
                               </tr>
                               {% endfor %} 
                           </tbody>
                           <tfoot>
-                             
+                            <tr>
+                              <th colspan="3" style="text-align:right">Total:</th>
+                              <th></th>
+                              <th></th> 
+                          </tr>
                           </tfoot>
                       </table>
                   </div>
@@ -82,4 +80,48 @@
         </div>
     </div>
   </div>
-      {% endblock %}
+  {% endblock %}
+  {% block script %}
+  <script>
+  $( document ).ready(function() {
+    $('#example2').DataTable( {
+    "footerCallback": function ( row, data, start, end, display ) {
+        var api = this.api(), data;
+
+        // Remove the formatting to get integer data for summation
+        var intVal = function ( i ) {
+            return typeof i === 'string' ?
+                i.replace(/[\$,]/g, '')*1 :
+                typeof i === 'number' ?
+                    i : 0;
+        };
+
+        // Total over all pages
+        total = api
+            .column( 3 )
+            .data()
+            .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+            }, 0 );
+
+        // Total over this page
+        pageTotal = api
+            .column( 3, { page: 'current'} )
+            .data()
+            .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+            }, 0 );
+
+        // Update footer
+        $( api.column( 3 ).footer() ).html(
+            'Ksh'+pageTotal 
+        );
+    }
+} );
+} );
+
+
+</script>
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script> -->
+{% endblock %}

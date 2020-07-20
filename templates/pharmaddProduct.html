@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "pharmacymain.html" %}
 {% block content %}
 <div class="container">
   <div class="container">
@@ -17,19 +17,11 @@
     {%endwith%}
   </div>
   <div>
-    <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="page-header">
-                <h2 class="pageheader-title">Medication/Service</h2>
-               
-               <hr>
-            </div>
-        </div>
-    </div>
+    
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="column">
-            <a href="{{url_for('allProducts')}}" class="btn btn-primary m-b-5 m-r-2" ><i class="ti-align-justify"> </i>All Product/Service</a>
+            <a href="{{url_for('PharmViewallProducts')}}" style="font-weight: bold;" class="btn btn-primary m-b-5 m-r-2" ><i class="ti-align-justify"> </i>All Product</a>
             </div>
         </div>
     </div>
@@ -41,43 +33,41 @@
         <!-- ============================================================== -->
         <!-- Start validation form -->
         <!-- ============================================================== -->
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h3 class="card-header">Add New Medication/Service</h3>
+                <h3 class="card-header" style="font-weight: bold; color: #000; text-align: center;">Add Product</h3>
             
                 <div class="card-body">
                     <form class="needs-validation justify-content-left" novalidate action="{{url_for('Addproduct')}}" method="POST">
                         <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label for="validationCustom03">Medication/Service Name</label>
-                                <input type="text" class="form-control" name="product_name" id="validationCustom03" placeholder="Enter Product Name" required="">
+                            <div class="col-xl-5 col-lg-4 col-md-8 col-sm-8 col-12 mb-2">
+                                <label style="font-weight: bold; color: #000;" for="validationCustom03">Product Name</label>
+                                <input type="text" class="form-control" style="font-weight: bold; color: #000;" name="product_name" id="validationCustom03" placeholder="Enter Product Name" required="">
                                 <div class="invalid-feedback">
                                     Please Fill this Field.
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label for="validationCustom04">Type</label>
-                                <div class="col-sm-6">
-                                    <select name="product_type" id="product_type" onchange="myFunction()" class="form-control" required="" >
-                                        <option value="Medication">Medication</option>
-                                        <option value="Service">Service</option> 
-                                    </select>
-                                </div>
+                            <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label style="font-weight: bold; color: #000;" for="validationCustom04">Product Type</label>
+                                
+                                    <input  type="text" style="font-weight: bold; color: #000;" name="product_type" readonly value="Medication" class="form-control">
+                                    
+                                
                             </div>
                         </div>
                         <br>
                         <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label>Selling Price</label>
+                            <div class="col-xl-5 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label style="font-weight: bold; color: #000;">Selling Price</label>
                     
-                                <input required="" type="number" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" class="form-control">
+                                <input style="font-weight: bold; color: #000;" required="" type="text" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" class="form-control">
                                 <div class="invalid-feedback">
                                     Please provide a valid Selling price.
                                 </div>
                             </div>
-                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                    <label>Reorder Level</label>
-                                    <input required="" type="text" id="reoder_level" name="reoder_level"min="0" max="1000000000000" placeholder="Enter Reorder-Level" class="form-control">
+                                <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                    <label style="font-weight: bold; color: #000;">Reorder Level</label>
+                                    <input  style="font-weight: bold; color: #000;" type="text" id="reoder_level" name="reoder_level" placeholder="Enter Reorder-Level" value="0" class="form-control">
                                     <div class="invalid-feedback">
                                         Please provide a valid Reorder-Level.
                                     </div>
@@ -86,8 +76,8 @@
                         <br>
                         <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 " >
-                            <button class="btn btn-success" type="submit">Save</button>
-                            <a href = "{{ url_for('Admindashbord')}}"><button class="btn btn-warning"  style="float: center;" type="button">Cancel</button></a>
+                            <button style="font-weight: bold; color: #000;" class="btn btn-success" type="submit">Save</button>
+                            <a href = "{{ url_for('PharmViewallProducts')}}"><button style="font-weight: bold; color: #000;" class="btn btn-warning"  style="float: center;" type="button">Cancel</button></a>
                         </div>
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
                             
@@ -105,12 +95,6 @@
       {% endblock %}
       {% block script%}
       <script>
-          function myFunction() {
-          var x = document.getElementById("product_type").value;
-          if (x ==='Service'){
-            document.getElementById("reoder_level").value= "0"
-          }
-       
-           }
+         
       </script>
       {% endblock %}

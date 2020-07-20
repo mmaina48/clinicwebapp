@@ -1,0 +1,119 @@
+{% extends "pharmacymain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    
+ 
+    
+    <div class="content-wrapper">
+      
+        </div>
+    
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="column">
+                <a href="{{url_for('PharmViewAllPurchase')}}"class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Back</a>
+                </div>
+            </div>
+        </div>
+        <!-- Invoice information -->
+        <section class="content">
+    
+            <!-- Alert Message -->
+                    
+            <!-- Printable area start -->
+    <script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        // document.body.style.marginTop="-45px";
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+    </script>
+          
+            <!-- Purchase Ledger -->
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="panel panel-bd lobidrag" id="printableArea">
+                        <div class="card">
+                            <div class="panel-title text-center">
+                                 
+                                <th width="100%" colspan="5" style="font-weight:normal">
+                              <h2></h2>Supplier  Name : &nbsp;<span style="font-weight:bold">{{purchase.supplier_name}}</span> <br />
+                                Date :&nbsp;<span style="font-weight:bold">{{purchase.purchase_date}}</span><br />Invoice No :&nbsp;<span style="font-weight:bold">{{purchase.invoice_no}}</span><br/>
+                                Total Amount :&nbsp;<span style="font-weight:bold">{{purchase.total_amount}}</span><br>
+                                Paid Amount :&nbsp;<span style="font-weight:bold">{{purchase.payment_amount}}</span><br>
+                                Due Amount :&nbsp;<span style="font-weight:bold" id="due">{{purchase.due_balance}}</span><br>
+                                Debt payed Amount :&nbsp;<span style="font-weight:bold" id="pay_due">{{purchase.paydue_amount}}</span><br>
+                                </th>
+                                
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="example" class="table table-striped table-bordered second" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Expiry  date</th>
+                                            <th>Quantity</th>
+                                            <th>Purchase Price</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for product in product_purchase %}                        
+                                        <tr>
+                                            
+                                            <td style="font-weight: bold;">
+                                               
+                                                {{product.product_name}}
+                                                
+                                            </td>
+                                            <td style="text-align: left">{{product.expiry_date}}</td>
+                                            <td style="text-align: center">{{product.in_quantity}}</td> 
+                                            <td style="text-align: center;">ksh {{product.buying_price}}</td>
+                                            <td style="text-align: left;">ksh {{product.total_amount}}</td>
+                                        </tr>
+                                        {% endfor %} 
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                            </div>
+                        </div>
+                    <!-- hapa juu -->
+                    </div>
+                    
+                </div>
+            </div>
+                    </section>
+  </div>
+      {% endblock %}
+      {% block script%}
+      <script>
+       
+      </script>
+      {% endblock %}

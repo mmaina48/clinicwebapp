@@ -21,6 +21,10 @@ login_manager.init_app(app)
 login_manager.login_view='login'
 
 
+
+
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -36,7 +40,7 @@ def required_roles(*roles):
         def wrapped(*args, **kwargs):
             if get_current_user_role() not in roles:
                 flash(f'You are not authorised to access this page.','danger')
-                # return redirect(url_for('dashbord'))
+                return redirect(url_for('login'))
             return f(*args, **kwargs)
         return wrapped
     return wrapper
@@ -1154,7 +1158,8 @@ def PharmPrintReceipt(invoice_id):
         order=order,username=username)
 
 # pharm view stock level
-@app.route('/stockreport/',methods=['GET','POST'])
+@app.route('/pharmstockreport/',methods=['GET','POST'])
+@required_roles('Pharmacist')
 @login_required
 def PharmStockReport():
     stock=PurchaseItems.query.with_entities(PurchaseItems.product_name,func.sum(PurchaseItems.in_quantity).label('In_Quantity') ,func.sum(PurchaseItems.quantity).label('Current_Quantity') ,func.sum(PurchaseItems.total_amount).label('Cost_of_Goods')).group_by(PurchaseItems.product_name).all()
@@ -1165,7 +1170,7 @@ def PharmStockReport():
 @login_required
 def pharmStockReportbatch():
     stock=PurchaseItems.query.all()
-    return render_template("pharmstockreportbatch.html",stock=stock)
+    return render_template("pharmstockreportbatch.html",stock1=stock)
 
 #pharm inventory sold report(cumulative)
 @app.route('/inventorysoldreport/',methods=['GET','POST'])
@@ -1201,6 +1206,269 @@ def PharmMedicationSalesReport():
         todaysales=db.session.query(OrderItems,PurchaseItems).filter(and_(OrderItems.product_id==PurchaseItems.product_id,\
             OrderItems.order_id.in_(orders_idz))).all()
         return render_template("pharmmedsalesreport.html",todaysales=todaysales,today=today)
+
+#Pharmacy Enter  Purchases
+@app.route('/PharmaddPurchase/',methods=['GET'])
+@login_required
+def PharmAddPurchase():
+    products=[p.product_name for p in Product.query.filter_by(product_type='Medication')]
+    suppliers=[s.supplier_name for s in Supplier.query.all()]
+    return render_template('pharmaddpurchase.html',products=products,suppliers=suppliers)
+      
+    
+# allPurchase
+@app.route('/PharmViewallPurchase/',methods=['GET','POST'])
+@login_required
+def PharmViewAllPurchase():
+    Purchases=Purchase.query.all()
+    return render_template('pharmallPurchases.html',Purchases=Purchases)
+
+# ProductPuchaseDetails
+@app.route('/PharmViewPurchaseDetails/<int:purchase_id>/',methods=['GET','POST'])
+@login_required
+def PharmViewPurchaseDetail(purchase_id):
+    product_purchase=PurchaseItems.query.filter_by(purchase_id=purchase_id).all()
+    purchase=Purchase.query.filter_by(id=purchase_id).one()
+    return render_template('pharmviewpurchaseDetails.html',product_purchase=product_purchase,purchase_id=purchase_id,purchase=purchase)
+
+# ProductPuchaseDetails
+# @app.route('/PharmViewProductPuchaseDetails/<product>/',methods=['GET','POST'])
+# @login_required
+# def PharmViewProductPurchaseDetail(product):
+#     product_purchase=PurchaseItems.query.filter_by(product_name=product).all()
+#     productPurchased=Product.query.filter_by(product_name=product).one()
+#     return render_template('productpurchaseinfo.html',product_purchase=product_purchase,product=product,productPurchased=productPurchased)
+
+# 
+# Pharm Delete Purchase order
+@app.route('/PharmDeletePurchase/<int:purchase_id>/delete',methods=['POST'])
+@login_required
+def PharmDeletePurchases(purchase_id):
+    PurchaseToDelete =Purchase.query.filter_by(id = purchase_id).one()
+
+    supplierId=PurchaseToDelete.supplier_id
+    balance=PurchaseToDelete.due_balance
+    debt_pay=PurchaseToDelete.paydue_amount
+        
+    # Get the supplier for this purchase
+    suppliert_obj=Supplier.query.filter_by(id=supplierId).one()
+    suppliert_obj.openbalance -=int(balance)
+    suppliert_obj.openbalance +=int(debt_pay)
+   
+        
+    purchaseitems=PurchaseItems.query.filter_by(purchase_id=purchase_id).all()
+    for item in purchaseitems:
+        db.session.delete(item)
+        db.session.commit()
+            
+    db.session.add(suppliert_obj)
+    db.session.commit()
+
+    db.session.delete(PurchaseToDelete)
+    db.session.commit()
+
+    flash(f'Purchase Order successfully Deleted!','danger')
+    return redirect(url_for('PharmViewAllPurchase'))
+
+#Pharm View all  Supplier
+@app.route('/viewallsuppliers/')
+@login_required
+def PharmViewAllSuppliers():
+    suppliers = Supplier.query.all()
+    return render_template('pharmviewallSuppliers.html',suppliers=suppliers)
+    
+#Pharm Add Supplier
+@app.route('/pharmaddSupplier/',methods=['GET','POST'])
+@login_required
+def PharmAddSupplier():
+    if request.method == 'POST':
+        newItem = Supplier(supplier_name=request.form['supplier_name'],supplier_phone=request.form['supplier_phone'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.supplier_name} Successfully Created!', 'success')
+            return redirect(url_for('PharmViewAllSuppliers'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Supplier already exists','danger')
+            return redirect(url_for('PharmAddSupplier'))
+    else:
+        return render_template('pharmaddSupplier.html')
+
+#Pharm Edit suppliers
+@app.route('/supplier/<int:supplier_id>/pharm/edit/', methods = ['GET', 'POST'])
+@login_required
+def PharmEditSupplier(supplier_id):
+    editedItem = Supplier.query.filter_by(id = supplier_id).one()
+    if request.method == 'POST':
+        if request.form['supplier_name']:
+          editedItem.supplier_name = request.form['supplier_name']
+        if request.form['supplier_phone']:
+          editedItem.supplier_phone = request.form['supplier_phone']
+    
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f' {editedItem.supplier_name} record has been updated!', 'success')
+        return redirect(url_for('PharmViewAllSuppliers'))
+    else:
+        return render_template('PharmEditSupplier.html',supplier_id=supplier_id, s= editedItem)
+
+# Pharm delete supplier
+@app.route('/supplier/<int:supplier_id>/pharm/delete/', methods = ['POST'])
+@login_required
+def PharmdeleteSupplier(supplier_id):
+        supplierToDelete = Supplier.query.filter_by(id = supplier_id).one()
+        db.session.delete(supplierToDelete)
+        db.session.commit()
+        flash(f'Supplier successfully Deleted!','danger')
+        return redirect(url_for('PharmViewAllSuppliers', supplier_id = supplier_id))
+
+
+#Pharm view Products
+@app.route('/view/products/',methods=['GET','POST'])
+@login_required
+def PharmViewallProducts():
+    products = Product.query.all()
+    # filter by medication 
+    return render_template('pharmviewallProducts.html', products = products) 
+
+
+#Pharm Add Product 
+@app.route('/PharmaddProduct/pharm/',methods=['GET','POST'])
+@login_required
+def PharmAddproduct():
+    if request.method == 'POST':
+        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'],reoder_level=request.form['reoder_level'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.product_name} Successfully Created!', 'success')
+            return redirect(url_for('PharmViewallProducts'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This product already exists','danger')
+            return redirect(url_for('PharmAddproduct'))
+    else:
+        return render_template('pharmaddProduct.html')
+
+#Pharm Edit a  product
+@app.route('/product/<int:product_id>/pharm/edit/', methods = ['GET', 'POST'])
+@login_required
+def PharmeditProduct(product_id):
+    editedItem = Product.query.filter_by(id = product_id).one()
+    if request.method == 'POST':
+        if request.form['product_name']:
+          editedItem.product_name = request.form['product_name']
+        if request.form['product_type']:
+          editedItem.product_type = request.form['product_type']
+        if request.form['sell_price']:
+          editedItem.sell_price = request.form['sell_price'] 
+        if request.form['reoder_level']:
+            editedItem.reoder_level = request.form['reoder_level'] 
+
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f'Your product {editedItem.product_name}   has been updated!', 'success')
+        return redirect(url_for('PharmViewallProducts'))
+    else:
+        return render_template('pharmeditProduct.html',product_id=product_id, d = editedItem)
+
+
+#Pharm Delete a product
+@app.route('/products/<int:product_id>/pharm/delete/', methods = ['POST'])
+@login_required
+def PharmdeleteProduct(product_id):
+        productToDelete = Product.query.filter_by(id = product_id).one()
+        db.session.delete(productToDelete)
+        db.session.commit()
+        flash(f'product successfully Delete!','danger')
+        return redirect(url_for('PharmViewallProducts', product_id = product_id))
+
+#Pharm Add Expences
+@app.route('/pharmaddexpensecategory/',methods=['GET','POST'])
+@login_required
+def PharmAddExpenseCategory():
+    if request.method == 'POST':
+        newItem = Expense(ExpenseCategory_name=request.form['ExpenseCategory_name'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.ExpenseCategory_name} Successfully Added!', 'success')
+            return redirect(url_for('PharmViewAllExpenses'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Expense Category already exists','danger')
+            return redirect(url_for('PharmAddExpenseCategory'))
+    else:
+        return render_template('pharmaddexpensecategory.html')
+
+#Pharm all Expences
+@app.route('/pharmviewallexpenses/')
+@login_required
+def PharmViewAllExpenses():
+    Expensecategory = Expense.query.all()
+    return render_template('pharmviewallExpenseCategory.html',Expensecategory=Expensecategory)
+
+
+#pharm  edit expense
+@app.route('/expense/<int:expense_id>/pharm/edit/', methods = ['POST'])
+@login_required
+def Pharmeditexpe(expense_id):
+    editedItem = Expense.query.filter_by(id =expense_id).one()
+    editedItem.ExpenseCategory_name = request.form['expense']
+    db.session.add(editedItem)
+    db.session.commit() 
+    flash(f'expense has been updated!', 'success')
+    return redirect(url_for('PharmViewAllExpenses'))
+    
+
+# delete expense
+@app.route('/expense/<int:expense_id>/pharm/delete/', methods = ['POST'])
+@login_required
+def PharmdeleteExpense(expense_id):
+        expenseToDelete = Expense.query.filter_by(id = expense_id).one()
+        db.session.delete(expenseToDelete)
+        db.session.commit()
+        flash(f'Expense successfully Deleted!','danger')
+        return redirect(url_for('PharmViewAllExpenses', expense_id = expense_id))
+
+# TrackExpense
+@app.route('/pharmtrackexpenses/',methods=['GET','POST'])
+@login_required
+def PharmTrackExpenses():
+    entries=[E.ExpenseCategory_name for E in Expense.query.all()]
+    if request.method == 'POST':
+        date_str = request.form['dtpDate']
+        date_object = datetime.strptime(date_str, "%Y-%m-%d").date()
+        newItem = TrackExpense(created_on=date_object,expense_type=request.form['expense_type'],payment_type=request.form['paytype'],amount=int(request.form['amount']))
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.expense_type} Successfully Added!', 'success')
+            return redirect(url_for('PharmViewAllTrackedExpenses'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Expense Category already exists','danger')
+            return redirect(url_for('PharmTrackExpenses'))
+    else:
+        return render_template('PharmTrackExpenses.html',entries=entries)
+
+# all tracked Expences
+@app.route('/pharmviewalltrackedexpenses/',methods=['GET','POST'])
+@login_required
+def PharmViewAllTrackedExpenses():
+    trackedexpense=TrackExpense.query.all()
+    return render_template("PharmexpenseStatement.html",trackedexpense=trackedexpense)
+
+# delete a tracked expense
+@app.route('/trackedexpense/<int:Expense_id>/pharm/delete/', methods = ['POST'])
+@login_required
+def PharmdeleteTrackedExpense(Expense_id):
+    expenseToDelete = TrackExpense.query.filter_by(id = Expense_id).one()
+    db.session.delete(expenseToDelete)
+    db.session.commit()
+    flash(f'Expense successfully Deleted!','danger')
+    return redirect(url_for('PharmViewAllTrackedExpenses'))
 
 
 # -------------------
@@ -1861,6 +2129,8 @@ def supplierdata(supplier):
 def ProductSale(product):
     productsale=OrderItems.query.filter_by(product_name=product).all()
     return render_template('productsales.html',productsale=productsale,product=product)
+
+
 # -----------------------------------------------------------------------------------------------
 # Purchases
 @app.route('/addPurchase/',methods=['GET'])
