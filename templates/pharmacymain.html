@@ -89,13 +89,13 @@
        
        
        
-            <nav class="navbar navbar-expand-lg bg-white fixed-top">
-                <a href=""  class="navbar-brand d-flex w-50 mr-auto">BM-TEC</a>
+            <nav class="navbar navbar-expand-lg bg-white justify-content-left fixed-top">
+                <a href="" class="navbar-brand d-flex w-50 mr-auto">BM-TEC</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse w-100" id="navbarSupportedContent">
-                    <ul class="navbar-nav w-100 justify-content-center">
+                    <ul class="navbar-nav w-100 justify-content-left">
                        
                         <li class="nav-item dropdown nav-link mx-1">
                             <a class="btn btn-outline-success m-b-5 m-r-2 dropdown-toggle" style="color: black; font-weight: bold;" href="#" id="navbardrop" data-toggle="dropdown">
@@ -127,30 +127,46 @@
                                 </a>
                                 <div class="dropdown-menu">
                                   <a class="dropdown-item" style="color: rgb(4, 109, 4); font-weight: bold;" href="{{url_for('PharmAddExpenseCategory')}}">Add Expense Category</a>
-                                  <a class="dropdown-item"  style="color: rgb(97, 97, 1); font-weight: bold;"href="{{url_for('PharmTrackExpenses')}}">Track Expenses</a>
+                                  <a class="dropdown-item"  style="color: rgb(197, 197, 6); font-weight: bold;"href="{{url_for('PharmTrackExpenses')}}">Track Expenses</a>
                                   <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmViewAllExpenses')}}">All Expense Category</a>
                                   
                                   <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmViewAllTrackedExpenses')}}">All Paid Expenses</a>
                                 </div>
                             </li>
 
+                            <li class="nav-item dropdown nav-link mx-1">
+                                <a class="btn btn-outline-success m-b-5 m-r-2 dropdown-toggle" style="color: black; font-weight: bold;" href="#" id="navbardrop" data-toggle="dropdown">
+                                  Pharmacy Reports
+                                </a>
+                                <div class="dropdown-menu">
+                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="">Profit/Loss Report</a>
+                                  <a class="dropdown-item"  style="color: black; font-weight: bold;"href="">Profit/Loss Report(Per Drug)</a>
+                                  <a class="dropdown-item" style="color: rgb(62, 92, 3); font-weight: bold;" href="">Reorder Level</a>
+                                  
+                                  <a class="dropdown-item" style="color: red; font-weight: bold;" href="">Expired Drugs</a>
+                                </div>
+                            </li>
+                            <li style="display: none;" class="nav-item dropdown nav-link mx-1" id="notification">
+                                <button type="button" class="badge badge-danger">
+                                    Nofications <span id="notif" class="badge badge-light">0</span>
+                                    <span class="sr-only">unread messages</span>
+                                  </button>
+                            </li>
 
-                    <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
-                        <li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-lg fa-bell" aria-hidden="true"></i><span class="indicator"></span>{{notification}}</a>
-                          
-                        </li>
+                    <ul class="nav navbar-nav ml-auto w-100 justify-content-left">
+
                       
                         <li class="nav-item dropdown nav-user">
-                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-user-circle"></i></a>
+                            <!-- <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle-o" aria-hidden="true"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Settings </a> -->
+                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-spin fa-2x fa-fw"></i>&nbsp;Settings</a>
                             <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                 <div class="nav-user-info">
                                     <h5 class="mb-0 text-white nav-user-name">{{username}} </h5>
-                                    <span class="status"></span><span class="ml-2">Online</span>
+                                    <span class="status "></span><span class="ml-2">Online</span>
                                 </div>
-                                <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
+                                <a class="dropdown-item" style="font-weight: bolder; color: #000;" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
                               
-                                <a class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                                <a class="dropdown-item" style="font-weight: bolder; color: red;" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
                             </div>
                         </li>
                     </ul>
@@ -340,12 +356,17 @@ $(document).ready( function() {
     
 <script>
         $(document).ready(function() {
+            var notification= document.getElementById('notif').innerHTML
+            if (notification > 0){
+                $('#notification').show()
+            }
+            else{
+                $('#notification').hide()
+            }
     $('#example1').DataTable( {
         dom: 'Bfrtip',
-        buttons:[ {
-                    extend: "csv", title: "ExampleFile", className: "btn-sm"
-                }
-                , {
+        buttons:[ 
+                {
                     extend: "excel", title: "ExampleFile", className: "btn-sm"
                 }
                 , {
