@@ -1134,8 +1134,7 @@ def LabtecheditProduct(product_id):
     if request.method == 'POST':
         if request.form['product_name']:
           editedItem.product_name = request.form['product_name']
-        if request.form['product_type']:
-          editedItem.product_type = request.form['product_type']
+    
         if request.form['sell_price']:
           editedItem.sell_price = request.form['sell_price'] 
         editedItem.inserted_by=username
