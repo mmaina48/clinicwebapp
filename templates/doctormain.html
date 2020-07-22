@@ -83,25 +83,22 @@
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto navbar-right-top">
                         <li class="nav-item">
-                            <div id="custom-search" class="top-search-bar">
-                                <input class="form-control" type="text" placeholder="Search..">
-                            </div>
+                           
                         </li>
-                        <li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-lg fa-bell" aria-hidden="true"></i><span class="indicator"></span>{{notification}}</a>
+                       
                           
-                        </li>
+                       
                       
                         <li class="nav-item dropdown nav-user">
-                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-user-circle"></i></a>
+                            <a class="nav-link nav-user-img"  href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-spin fa-1x fa-fw"></i>&nbsp;Settings</a>
                             <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                 <div class="nav-user-info">
-                                    <h5 class="mb-0 text-white nav-user-name">(Doctor){{username}} </h5>
+                                    <h5 class="mb-0 text-white nav-user-name">{{username}} </h5>
                                     <span class="status"></span><span class="ml-2">Online</span>
                                 </div>
-                                <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
+                                <a style="color: black; font-weight: bold;" class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
                               
-                                <a class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                                <a style="font-weight: bold; color: red;" class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
                             </div>
                         </li>
                     </ul>
@@ -128,16 +125,16 @@
                             <li class="nav-item ">
                                 <a class="nav-link active " href="{{url_for('Doctorsdashboard')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>CLINICIAN DASHBOARD</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                
+                            </li>
 
-                                <a class="nav-link active" href="{{url_for('Doctorsdashboard')}}" ><i class="fa fa-align-justify" aria-hidden="true"></i>CONSULTATION QUEUE<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('Doctorsdashboard')}}" ><i class="fas fa-child" aria-hidden="true"></i>CONSULTATION QUEUE<span class="badge badge-success">{{notification}}</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DoctorLabResultQueue')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>LAB RESULTS QUEUE</a>
+                                
+                                <a class="nav-link active" href="{{url_for('DoctorLabResultQueue')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>LAB RESULTS QUEUE<span class="badge badge-success">{{notifcations_results_back}}</span></a>
                                 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DoctorallvisitsView')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL VISITS<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('DoctorallvisitsView')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL VISITS</a>
                                 
                             </li>
                           

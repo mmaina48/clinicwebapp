@@ -6,12 +6,12 @@ function addRow() {
     tr = empTab.insertRow(rowCnt);
     
 
-    for (var c = 0; c < 6; c++) {
+    for (var c = 0; c < 7; c++) {
         var td = document.createElement('td'); // table definition.
         td = tr.insertCell(c);
         tr.setAttribute("id","addedrow")
 
-        if (c == 5) {     
+        if (c == 6) {     
             var button = document.createElement('input');
             button.setAttribute('type', 'button');
             button.setAttribute('value', 'Remove');
@@ -45,14 +45,28 @@ function addRow() {
         }
         else if(c==2){
             var element = document.createElement('input');
-            element.setAttribute('text', 'number');
+            element.setAttribute('text', 'text');
             element.setAttribute('name', 'quantity[]');
             element.setAttribute('id', 'quantity_1');
             element.setAttribute('class','form-control text-right')
            
             td.appendChild(element)
+
+            
         }
         else if(c==3){
+           
+            var element = document.createElement('input');
+            element.setAttribute('text', 'text');
+            element.setAttribute('name', 'reoder_level');
+            element.setAttribute('id', 'reoder_level');
+            element.setAttribute('placeholder',"Reoder level")
+            element.setAttribute('value',"0")
+            element.setAttribute('class','form-control text-right')
+           
+            td.appendChild(element)
+        }
+        else if(c==4){
             var ele = document.createElement('input')
             ele.setAttribute('type', 'number')
             ele.setAttribute('name', "unit_cost[]")
@@ -79,7 +93,7 @@ function addRow() {
 
 function removeRow(oButton) {
     var empTab = document.getElementById('normalpurchase');
-    var total=oButton.parentNode.parentNode.children[4].children[0].value
+    var total=oButton.parentNode.parentNode.children[5].children[0].value
     empTab.deleteRow(oButton.parentNode.parentNode.rowIndex); 
     document.getElementById("total_sum_value").value -=total
    
@@ -117,11 +131,16 @@ $('#normalpurchase').on("click","input" ,function(e) {
     
     if(target.matches("input#quantity_1")){
         target.addEventListener('keyup' ,function(){
-        const values =target.value;
-        const price_td=target.parentNode.parentNode.children[3].children[0].value
-        const total=values*price_td
-        target.parentNode.parentNode.children[4].children[0].value=total
         
+        const values =target.value;
+     
+        const price_td=target.parentNode.parentNode.children[4].children[0].value
+        
+        const total=values*price_td
+        target.parentNode.parentNode.children[5].children[0].value=total
+        
+        
+
         var calculated_total_sum = 0
         $("#normalpurchase .txtCal").each(function () {
          var get_textbox_value = $(this).val();
@@ -144,18 +163,77 @@ $('#normalpurchase').on("click","input" ,function(e) {
             })
             document.getElementById("nettotal").value=calculated_net_sum
         //   end
-        //    start calculating balance
+        //   ** start calculating balance**
+
+        // get the paid amout values
+       
+        var paid_amount_value = document.getElementById("paidAmount").value
+        const netTotal=document.getElementById('nettotal').value
+        const grandtotal=document.getElementById('total_sum_value').value
+        const total_previous=document.getElementById('previous').value
+        
+        var paid_net=parseInt(paid_amount_value)-parseInt(netTotal)
+        var paid_grand=parseInt(paid_amount_value)-parseInt(grandtotal)
+
+       
+        
+        if(paid_grand<0 && paid_net < 0){
+            var total_balance=paid_grand*-1
+            document.getElementById('balance').value= total_balance
+            document.getElementById('dueAmmount').value=parseInt(total_previous) + parseInt(total_balance)
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="none";
+        }
+        else if(paid_grand==0 && paid_net<0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= parseInt(total_previous)
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand>0 && paid_net<0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value=parseInt(total_previous)- parseInt(paid_grand)
+            document.getElementById('OpenBalance').value= paid_grand
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand>0 && paid_net==0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= 0
+            document.getElementById('OpenBalance').value= total_previous
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand==0 && paid_net==0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= 0
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_net>0 && paid_grand>0){
+           
+            
+            $("#paidAmount").value = '';
+            return false;
+        }
         
         // end calculating 
         })
         }
         if(target.matches("input#total_qntt_1")){
+
             target.addEventListener('keyup' ,function(){
+           
             const values =target.value;
+            
             const quantity=target.parentNode.parentNode.children[2].children[0].value
+            
+            
             const total=values*quantity
-            target.parentNode.parentNode.children[4].children[0].value=total
+            
+            
+            target.parentNode.parentNode.children[5].children[0].value=total
+
             var calculated_total_sum = 0
+
         $("#normalpurchase .txtCal").each(function () {
          var get_textbox_value = $(this).val();
          if ($.isNumeric(get_textbox_value)) {
@@ -176,6 +254,56 @@ $('#normalpurchase').on("click","input" ,function(e) {
             })
             document.getElementById("nettotal").value=calculated_net_sum
         //   end
+
+        var paid_amount_value = document.getElementById("paidAmount").value
+        const netTotal=document.getElementById('nettotal').value
+        const grandtotal=document.getElementById('total_sum_value').value
+        const total_previous=document.getElementById('previous').value
+        
+        var paid_net=parseInt(paid_amount_value)-parseInt(netTotal)
+        var paid_grand=parseInt(paid_amount_value)-parseInt(grandtotal)
+
+       
+        
+        if(paid_grand<0 && paid_net < 0){
+            var total_balance=paid_grand*-1
+            document.getElementById('balance').value= total_balance
+            document.getElementById('dueAmmount').value=parseInt(total_previous) + parseInt(total_balance)
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="none";
+        }
+        else if(paid_grand==0 && paid_net<0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= parseInt(total_previous)
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand>0 && paid_net<0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value=parseInt(total_previous)- parseInt(paid_grand)
+            document.getElementById('OpenBalance').value= paid_grand
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand>0 && paid_net==0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= 0
+            document.getElementById('OpenBalance').value= total_previous
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand==0 && paid_net==0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= 0
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_net>0 && paid_grand>0){
+           
+            
+            $("#paidAmount").value = '';
+            return false;
+        }
+        
+        // end calculating 
             })
         }
         if(target.matches("input#paidAmount")){
@@ -239,3 +367,56 @@ $('#normalpurchase').on("click","input" ,function(e) {
         }
         return true;
     });
+
+    $( "#target" ).keyup(function() {
+        
+        var paid_amount_value = document.getElementById("paidAmount").value
+        const netTotal=document.getElementById('nettotal').value
+        const grandtotal=document.getElementById('total_sum_value').value
+        const total_previous=document.getElementById('previous').value
+        
+        var paid_net=parseInt(paid_amount_value)-parseInt(netTotal)
+        var paid_grand=parseInt(paid_amount_value)-parseInt(grandtotal)
+
+       
+        
+        if(paid_grand<0 && paid_net < 0){
+            var total_balance=paid_grand*-1
+            document.getElementById('balance').value= total_balance
+            document.getElementById('dueAmmount').value=parseInt(total_previous) + parseInt(total_balance)
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="none";
+        }
+        else if(paid_grand==0 && paid_net<0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= parseInt(total_previous)
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand>0 && paid_net<0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value=parseInt(total_previous)- parseInt(paid_grand)
+            document.getElementById('OpenBalance').value= paid_grand
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand>0 && paid_net==0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= 0
+            document.getElementById('OpenBalance').value= total_previous
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_grand==0 && paid_net==0){
+            document.getElementById('balance').value= 0
+            document.getElementById('dueAmmount').value= 0
+            document.getElementById('OpenBalance').value= 0
+            document.getElementById("full_paid_tab").style.display="block";
+        }
+        else if(paid_net>0 && paid_grand>0){
+           
+            
+            $("#paidAmount").value = '';
+            return false;
+        }
+        
+        // end calculating 
+      });

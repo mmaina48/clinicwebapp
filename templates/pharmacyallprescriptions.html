@@ -17,7 +17,15 @@
     {%endwith%}
   </div>
   <div>
-   
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title" style="font-weight: bolder; color: #000;">ALL PRESCIPTIONS</h2>
+                
+                <hr>
+            </div>
+        </div>
+    </div>
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
       <div class="card">
           
@@ -53,40 +61,29 @@
           
               <div class="card-body">
                   <div class="table-responsive">
-                      <table id="example2" class="table table-striped table-bordered second" style="width:100%">
+                      <table id="example" class="table table-striped table-bordered second" style="width:100%">
                           <thead>
                               <tr>
-                                <th>Invoice Date</th>
+                                <th>Date</th>
                                   <th>PatientName</th>
-                                  <th>Total</th>
+                                  <th>clinic No</th>
                                   <th>Action</th>
-                                 
                               </tr>
-                              
-                              
+             
                           </thead>
                           <tbody>
-                            {% for invoice in allotcinvoices %}
+                            {% for invoice in allinvoices %}
                               <tr>
                                  <td>{{invoice.created_on}}</td>
                                  <td>{{invoice.customer_name}}</td>
-                                 <td >{{invoice.total_amount}}</td>
+                                 <td>{{invoice.patient_id}}</td>
                                  
-                                  <td>
-                                    <div class="btn-group">
-                                      <a href="{{url_for('PharmPrintReceipt',invoice_id=invoice.id)}}" style="color: black; font-weight: bold;" class="btn btn-warning btn-sm" >RECEPT</a>
-                                </td>
+                                <td><a href="{{url_for('PharmInvoiceDetail', invoice_id =invoice.id)}}" ><button style="font-weight: bolder; color: #000;" type="button" class="btn btn-success btn-xs">View</button></td></a>
                               </tr>
                               {% endfor %} 
                           </tbody>
                           
-                          <tfoot>
-                            <tr>
-                                <th colspan="2" style="text-align:right">Total:</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </tfoot>
+                  
                       </table>
                   </div>
               </div>
@@ -104,7 +101,7 @@
       {% endblock %}
       {% block script %}
       <script>
-        
+       
         
         $('#filter').click(function(){
         $.fn.dataTable.ext.search.push(
@@ -112,7 +109,6 @@
             var min = $('#min').val();
             var max = $('#max').val();
             var startDate =(data[0]);
-            console.log(startDate)
             if (min == null && max == null) return true;
             if (min == null && startDate <= max) return true;
             if (max == null && startDate >= min) return true;
@@ -121,48 +117,14 @@
         }
         );
 
-            var table = $('#example2').DataTable();
+            var table = $('#example').DataTable();
+
             table.draw();
-            
+            // Event listener to the two range filtering inputs to redraw on input
+            // $('#filter').click(function () {
+            //     table.draw();
+            // });
         });
   
       </script>
-      <script>
-      $(document).ready(function() {
-        $('#example2').DataTable( {
-            "footerCallback": function ( row, data, start, end, display ) {
-                var api = this.api(), data;
-     
-                // Remove the formatting to get integer data for summation
-                var intVal = function ( i ) {
-                    return typeof i === 'string' ?
-                        i.replace(/[\$,]/g, '')*1 :
-                        typeof i === 'number' ?
-                            i : 0;
-                };
-     
-                // Total over all pages
-                total = api
-                    .column( 2 )
-                    .data()
-                    .reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0 );
-     
-                // Total over this page
-                pageTotal = api
-                    .column( 2, { page: 'current'} )
-                    .data()
-                    .reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0 );
-     
-                // Update footer
-                $( api.column( 2 ).footer() ).html(
-                    'ksh'+pageTotal 
-                );
-            }
-        } );
-    } );
-</script>
       {% endblock %}

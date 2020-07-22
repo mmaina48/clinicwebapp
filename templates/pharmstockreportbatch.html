@@ -43,6 +43,7 @@
                                   <th>Expiry</th>
                                   
                                   <th>Current Qty</th>
+                                  <th>Buying Price(Unit)</th>
                                   <th>Stock Value</th>
                                  
                                  <th>Action</th>
@@ -54,6 +55,7 @@
                                   <td>{{purchase.product_name}}</td>
                                   <td>{{purchase.expiry_date}}</td>
                                   <td align="center"><input type="text" style="color: black; font-weight: bold;" name="Current_qty" class="form-control productSelection  text-left" readonly value='{{purchase.quantity}}'></td>
+                                  <td>{{purchase.buying_price}}</td>
                                   <td>{{purchase.buying_price*purchase.quantity}}</td>
                                   <td><a href="" class="btn btn-warning btn-xs" style="font-weight: bold; color: black;">UPDATE</a></td>
                               </tr>
@@ -61,7 +63,7 @@
                           </tbody>
                           <tfoot>
                             <tr>
-                              <th colspan="3" style="text-align:right">Total:</th>
+                              <th colspan="4" style="text-align:right; color: #000; font-weight: bolder;">Total:</th>
                               <th></th>
                               <th></th> 
                           </tr>
@@ -98,7 +100,7 @@
 
         // Total over all pages
         total = api
-            .column( 3 )
+            .column( 4 )
             .data()
             .reduce( function (a, b) {
                 return intVal(a) + intVal(b);
@@ -106,14 +108,14 @@
 
         // Total over this page
         pageTotal = api
-            .column( 3, { page: 'current'} )
+            .column( 4, { page: 'current'} )
             .data()
             .reduce( function (a, b) {
                 return intVal(a) + intVal(b);
             }, 0 );
 
         // Update footer
-        $( api.column( 3 ).footer() ).html(
+        $( api.column( 4 ).footer() ).html(
             'Ksh'+pageTotal 
         );
     }

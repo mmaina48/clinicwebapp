@@ -128,15 +128,22 @@
                             <li class="nav-item ">
                                 <a class="nav-link active " href="{{url_for('Nursesdashbord')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                
-                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1" ><i class="fa fa-align-justify" aria-hidden="true"></i>NURSE WAITING QUEUE</a>
+                            </li> 
+                            
+                                <a class="nav-link active" href="{{url_for('NurseAllPatientview')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1" ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL PATIENTS </a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                
+                            
+                            
+                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1" ><i class="fa fa-align-justify" aria-hidden="true"></i>NURSE WAITING QUEUE<span class="badge badge-success">6</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('NurseAllPatient')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-align-justify" aria-hidden="true"></i>ALL CAPTURED VITALS<span class="badge badge-success">6</span></a>
+                            
+                          
                                
-                                
-                            </li>
+                                <a class="nav-link active" href="{{url_for('NurseAllPatient')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-align-justify" aria-hidden="true"></i>ALL CAPTURED VITALS</a>
+                               
+
+    
+                            
                           
                         </ul>
                     </div>
@@ -229,10 +236,8 @@
         $(document).ready(function() {
     $('#example').DataTable( {
         dom: 'Bfrtip',
-        buttons:[ {
-                    extend: "csv", title: "csv ReporT", className: "btn-sm"
-                }
-                , {
+        buttons:[ 
+                {
                     extend: "excel", title: "Excel Report", className: "btn-sm"
                 }
                 , {

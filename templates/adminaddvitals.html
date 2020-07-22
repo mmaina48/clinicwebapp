@@ -1,4 +1,4 @@
-{% extends "nursemain.html" %}
+{% extends "main.html" %}
 {% block content %}
 <div class="container">
   <div class="container">
@@ -29,7 +29,7 @@
       <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add Vitals</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{patient.name}} RECENT VITALS </a>
+        <a href="{{url_for('AdminViewallvitalsFor',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{patient.name}} RECENT VITALS </a>
       </li>
   </ul>
   
@@ -47,17 +47,17 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header" style="font-weight: bold; color: #000;">Add New Vitals</h3>
+                        <h3 class="card-header" style="font-weight: bold;"> {{patient.name}} Age {{patient.age}}</h3>
                     
                         <div class="card-body">
-                            <form class="needs-validation" action="{{url_for('PatientVital',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                            <form class="needs-validation" action="{{url_for('AdminAddPatientVital',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
                                                 <label style="font-weight: bold; color: #000;" for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" style="font-weight: bold; color: #000;"  name="patient_name" class=" form-control"  value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
+                                                    <input type="text"  style="font-weight: bold; color: #000;"  name="patient_name" class=" form-control"  value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
                                                     
                                                 </div>  
                                             </div>
@@ -68,7 +68,7 @@
                                             <div class="form-group row">
                                                 <label style="font-weight: bold; color: #000;" for="customer_name" class="col-sm-4 col-form-label">Visit Type</label>
                                                 <div class="col-sm-6">
-                                                    <select name="visittype" style="font-weight: bold; color: #000;" id="visittype" class="form-control" required="" tabindex="1" >
+                                                    <select name="visittype"  style="font-weight: bold; color: #000;" id="visittype" class="form-control" required="" tabindex="1" >
                                                         <option value="OPD" selected="">Out-Patient
                                                         </option>
                                                         
@@ -88,7 +88,7 @@
                                             <div class="form-group row">
                                                 <label style="font-weight: bold; color: #000;" for="patient_id" class="col-sm-4 col-form-label">Clinic No</label>
                                                 <div class="col-sm-6">
-                                                    <input style="font-weight: bold; color: #000;" type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1" value="{{patient.patient_id}}" required readonly  />
+                                                    <input type="text"  style="font-weight: bold; color: #000;"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1" value="{{patient.patient_id}}" required readonly  />
                                                     
                                                 </div>  
                                             </div>
@@ -115,7 +115,7 @@
                                                     <th class="text-center" style="font-weight: bold;" >Height</th>
                                                     <th class="text-center"  style="font-weight: bold;">Weight</th>
                                                     <th class="text-center"  style="font-weight: bold;" id="bmi_label" >BMI</th>
-                                                    <th class="text-center"  style="font-weight: bold;" >Temparature</th>
+                                                    <th class="text-center"  style="font-weight: bold;" >Temp</th>
                                                     <th class="text-center"  style="font-weight: bold;" >BP</th>
                                                     <th class="text-center"  style="font-weight: bold;" >Pulse</th>
                                                     <th class="text-center"  style="font-weight: bold;" >Respiratory rate</th>

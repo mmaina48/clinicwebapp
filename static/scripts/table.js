@@ -13,8 +13,9 @@ function send() {
                 arrValues.push({productname:myTab.rows[row].cells[0].children[0].value,
                 expirydata:myTab.rows[row].cells[1].children[0].value,
                 quantity:myTab.rows[row].cells[2].children[0].value,
-                buying_price:myTab.rows[row].cells[3].children[0].value,
-                total_price:myTab.rows[row].cells[4].children[0].value
+                reorder_level:myTab.rows[row].cells[3].children[0].value,
+                buying_price:myTab.rows[row].cells[4].children[0].value,
+                total_price:myTab.rows[row].cells[5].children[0].value
              }); 
             }
         }
@@ -31,7 +32,7 @@ return a.filter(function(item) {
     var uniqueNames = uniqBy(listz, JSON.stringify)
 var data = {};
 $("#insert_purchase").serializeArray().map(function(x){data[x.name] = x.value;}); 
-var keys=["product_name","quantity","expiry_date","unit_cost","total_price"]
+var keys=["product_name","quantity","expiry_date","reorder_level","unit_cost","total_price"]
 var i;
 for (i = 0; i < keys.length; i++) {
     delete data[keys[i]]

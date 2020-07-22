@@ -155,6 +155,9 @@ def deleteUser(user_id):
 def Admindashbord():
     return render_template('admindashboard.html',username=current_user.username)
 
+
+
+
 # Cashiers
 @app.route('/CashierDashboard/',methods=['GET','POST'])
 @login_required
@@ -249,7 +252,15 @@ def deletePatient(patient_id):
 def Nursesdashbord():
     return render_template('nursedashboard.html',username=current_user.username)
 
-# all patient view
+
+#Nurser View  all patient data
+@app.route('/viewallpatientdata/',methods=['GET','POST'])
+@login_required
+def NurseAllPatientview():
+    allpatients=Customer.query.all()
+    return render_template('nurseviewallpatients.html',username=current_user.username,allpatients=allpatients)
+
+#Nurser View  all patient vitals
 @app.route('/Allpatientview/',methods=['GET','POST'])
 @login_required
 def NurseAllPatient():
@@ -341,6 +352,93 @@ def showallvitals(patient_id):
         flash(f'No Vitals  for {patient.name},Click Add Vitals','info')
     return render_template('AllpatientVitals.html',patient=patient,patvisits=patvisits,patient_id=patient_id)
 
+# -------------------------------
+# Admin Nurse View
+@app.route('/AdminCaptureVitalsWaitingList/Admin/view/', methods=['GET','POST'])
+@login_required
+def AdminCaptureVitalQueue():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
+    patientids=[vital.order_id for vital in todays_captured_vital]
+    
+    print(patientids)
+    # get all walkins
+    walkins=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+    Order.customer_name=="WALK-IN")).all()
+    walkinsids=[otc.id for otc in walkins]
+    if not walkinsids:
+        walkinsids.append(0)
+
+    print(walkinsids)
+    patient_with_no_conslt=db.session.query(Order).filter(and_( Order.inserted_on>yesterday,\
+        ~Order.id.in_(patientids),~Order.id.in_(walkinsids))).order_by(desc(Order.inserted_on)).all()
+    exists= bool(patient_with_no_conslt)
+    if exists == False:
+        flash(f'NO PATIENT ON THE WAITING QUEUE','danger')
+    return render_template('adminviewvitalqueue.html',patient_with_no_conslt=patient_with_no_conslt)
+
+
+# Admin Enter Vitals
+@app.route('/Admin/CaptureVital/<int:patient_id>/', methods=['GET','POST'])
+@login_required
+def AdminAddPatientVital(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).first()
+    patientname=patient.name.upper()
+    clinicid=patient.id
+
+    
+    if request.method == 'POST':
+
+        # convert stringto date object because SQLite Date type only accepts Python date objects as input
+        today = date.today()
+        yesterday = today - timedelta(days = 1) 
+        todays_captured_vital=Visits.query.filter(Visits.inserted_on>yesterday).all()
+        patientids=[vital.order_id for vital in todays_captured_vital]
+
+        todaysinvoice=db.session.query(Order).filter(and_( Order.inserted_on >yesterday,Order.customer_id== clinicid,\
+            ~Order.id.in_(patientids))).first()
+
+        print(todaysinvoice)
+        order_id=todaysinvoice.id
+        vitalDate = request.form['invoice_date']
+        vitalDate_object = datetime.strptime(vitalDate, "%Y-%m-%d").date()
+        newvital=Visits(patient_name=request.form['patient_name'],\
+            patient_id=request.form['patient_Id'],visit_type=request.form['visittype'],visit_date=vitalDate_object,\
+            height=request.form['patient_height'],weight=request.form['patient_weight'],\
+            bmi=request.form['patient_BMI'],temparature=request.form['patient_Temp'],\
+            bloodpressure=request.form['patient_BP'],pulse=request.form['patient_Pulse'],\
+            respiratory_rate=request.form['patient_Rrate'],oxygesaturation=request.form['patient_BOS'],\
+            customer_id=patient.id,order_id=order_id)
+        
+        print(newvital)
+        db.session.add(newvital)
+        try:
+            db.session.commit()
+            flash(f' {newvital.patient_name} record Successfully Added!', 'success')
+            return redirect(url_for('AdminAddPatientVital',patient_id=patient_id))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Try Again ','danger')
+            return redirect(url_for('AdminAddPatientVital',patient_id=patient_id))
+    else:
+        return render_template('adminaddvitals.html',patient_id=patient_id,patient=patient,\
+            patientname=patientname)
+
+#Admin View all vitals taken for a patient
+@app.route('/patients/<int:patient_id>/')
+@app.route('/patients/<int:patient_id>/Admin/vitals/')
+@login_required
+def AdminViewallvitalsFor(patient_id):
+    print(patient_id)
+    patient=Customer.query.filter_by(id=patient_id).one()
+    patvisits=Visits.query.filter_by(customer_id=patient_id).order_by(desc(Visits.inserted_on)).all()
+    exists= bool(Visits.query.filter_by(customer_id=patient_id).all())
+    if exists == False:
+        flash(f'No Vitals  for {patient.name},Click Add Vitals','info')
+    return render_template('adminviewAllVitalsfor.html',patient=patient,patvisits=patvisits,patient_id=patient_id)
+
+
 # ---------------------------------------------------------------------------------------------
 
 # Doctorsdashboard
@@ -364,9 +462,29 @@ def Doctorsdashboard():
 
     # count the number of requests
     requests=[req.id for req in patient_with_no_conslt_with_vitals]
-    notification=sum(requests)
+    notification=len(requests)
+
+    # results queue
+    # get all order
+    orderliine_with_lab=Order.query.filter(Order.inserted_on > yesterday).all()
+    
+    # get all ids 
+    order_with_lab_med=[item.id for item in orderliine_with_lab]
+    
+    
+    orders_dispensed=db.session.query(OrderItems).filter(and_(OrderItems.inserted_on >yesterday,\
+        OrderItems.order_id.in_(order_with_lab_med),OrderItems.product_type=="Medication")).all()
+    
+    ids_with_meds=[item.order_id for item in orders_dispensed]
+
+    doct_lab_results=db.session.query(LabResult).filter(and_(LabResult.inserted_on >yesterday,\
+        ~LabResult.order_id.in_(ids_with_meds)))
+
+    resultsback=[x.id for x in doct_lab_results]
+    notifcations_results_back=len(resultsback)
     return render_template('doctordashboard.html',username=current_user.username,\
-        patient_with_no_conslt_with_vitals=patient_with_no_conslt_with_vitals,notification=notification)
+        patient_with_no_conslt_with_vitals=patient_with_no_conslt_with_vitals,notification=notification,\
+            notifcations_results_back=notifcations_results_back)
 
 
 # doctoraddconsultation
@@ -470,6 +588,7 @@ def processvisitnotes():
 @app.route('/patients/<int:patient_id>/visits/<int:visit_id>/edit',methods=['GET', 'POST'])
 @login_required
 def updatePatientVisit(patient_id,visit_id):
+    print(patient_id,visit_id)
     patient=Customer.query.filter_by(id=patient_id).one()
     clinicid=patient.patient_id
     today = date.today()
@@ -652,10 +771,12 @@ def DoctorLabResultQueue():
 
     doct_lab_results=db.session.query(LabResult).filter(and_(LabResult.inserted_on >yesterday,\
         ~LabResult.order_id.in_(ids_with_meds)))
-
+    
     exists= bool(doct_lab_results)
     if exists == False:
         flash(f'NO LAB RESULTS FOUND !','danger')
+    resultsback=[x.id for x in doct_lab_results]
+    notifcations_results_back=len(resultsback)
     return render_template('doctorlabresultqueue.html',doct_lab_results=doct_lab_results)
 
 
@@ -864,7 +985,7 @@ def ViewPreviousTreatment(invoice_id):
         invoice_id=invoice_id,order=order,patient_name=patient_name,patient_id=patient_id,\
             patvisits=patvisits)
 
-@app.route('/viewpatientlabresult/<int:invoice_id>/view/<int:patient_id>/',methods=['GET','POST'])
+@app.route('/Admin/viewpatientlabresult/<int:invoice_id>/view/<int:patient_id>/',methods=['GET','POST'])
 @login_required
 def ViewPatientLabResult(invoice_id,patient_id):
     
@@ -875,10 +996,11 @@ def ViewPatientLabResult(invoice_id,patient_id):
     order=Order.query.filter_by(id=invoice_id).first()
     
     visit=db.session.query(Consultation).filter(or_(Consultation.visit_date ==order.created_on,Consultation.customer_id== patient_id)).first()
+
     return render_template('viewlabresult.html',patient_lab_results=patient_lab_results,invoice_id=invoice_id,\
         patient_id=patient_id,visit=visit,order=order)
 
-# -----------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 # LabTechdashboard
 
@@ -909,7 +1031,7 @@ def Labtechdashbord():
     
     # count the number of requests
     requests=[req.id for req in labrequest]
-    notification=sum(requests)
+    notification=len(requests)
 
     exists= bool(labrequest)
     if exists == False:
@@ -932,7 +1054,39 @@ def LabtechAddResult(invoice_id):
     return render_template('labtecaddlabresult.html',labtech=labtech,order=order,orderliine_with_lab=orderliine_with_lab,\
     invoice_id=invoice_id,patient_name=patient_name,labservices=labservices,\
         patient_id=patient_id,username=current_user.username)
+
+
+@app.route('/patientLabResults/<int:patient_id>/')
+@app.route('/patientLabResults/<int:patient_id>/labresults/labtech/')
+@login_required
+def LabtechshowallpatientLabResults(patient_id):
+    patient=Customer.query.filter_by(id=patient_id).one()
+    patient_name=patient.name
+    patient_lab_results=LabResult.query.filter_by(customer_id=patient_id).order_by(desc(LabResult.inserted_on)).all()
+    exists= bool(patient_lab_results)
+    if exists == False:
+        flash(f'No Results found for {patient.name}','danger')
+
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    orderliine_with_lab=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.product_name.like('Lab%'))).order_by(desc(OrderItems.inserted_on)).all()
     
+    exists= bool(orderliine_with_lab)
+    if exists == False:
+        flash(f'No Lab Requests','warning')
+    list_id=[]
+    for item in orderliine_with_lab:
+        invoice_id=item.order_id
+        list_id.append(invoice_id)
+    print(list_id,patient.id)
+
+    invoice=db.session.query(Order).filter(and_(Order.id.in_(list_id),Order.customer_id==patient.id)).order_by(desc(Order.inserted_on)).first()
+    invoice_id=invoice.id
+    print(invoice_id)
+    return render_template('labtecviewallpatientlabresults.html',patient_name=patient_name,\
+        patient_lab_results=patient_lab_results,patient_id=patient_id,\
+            invoice_id=invoice_id)
 
 @app.route('/alltestsdone/')
 @login_required
@@ -942,6 +1096,69 @@ def labtechviewalltestdone():
     if exists == False:
         flash(f'NO LAB TESTS DONE ','danger')
     return render_template('laballtestsdone.html',alllabtests=alllabtests)
+
+@app.route('/alllabservice/',methods=['GET','POST'])
+@login_required
+def LabViewservices():
+    products = Product.query.filter(and_(Product.product_type=="Service",\
+        ~Product.product_name.like('Consultation'))).all()
+    return render_template('laballservices.html', products = products) 
+# Add Product 
+@app.route('/Lab/addservice/',methods=['GET','POST'])
+@login_required
+def LabAddservice():
+    if request.method == 'POST':
+        username=current_user.role
+        newItem = Product(product_name=request.form['product_name']\
+        ,product_type=request.form['product_type'],sell_price=request.form['sell_price'],\
+            inserted_by=username)
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.product_name} Successfully Created!', 'success')
+            return redirect(url_for('LabViewservices'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This product already exists','danger')
+            return redirect(url_for('LabAddservice'))
+    else:
+        return render_template('labaddservice.html')
+
+
+#Edit a  product
+@app.route('/service/<int:product_id>/edit/', methods = ['GET', 'POST'])
+@login_required
+def LabtecheditProduct(product_id):
+    editedItem = Product.query.filter_by(id = product_id).one()
+    username=current_user.role
+    if request.method == 'POST':
+        if request.form['product_name']:
+          editedItem.product_name = request.form['product_name']
+        if request.form['product_type']:
+          editedItem.product_type = request.form['product_type']
+        if request.form['sell_price']:
+          editedItem.sell_price = request.form['sell_price'] 
+        editedItem.inserted_by=username
+
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f'Your product {editedItem.product_name}   has been updated!', 'success')
+        return redirect(url_for('LabViewservices'))
+    else:
+        return render_template('labtecheditservice.html',product_id=product_id, d = editedItem)
+
+
+#Delete a product
+@app.route('/products/<int:product_id>/labtech/delete/', methods = ['POST'])
+@login_required
+def LabtechdeleteProduct(product_id):
+        productToDelete = Product.query.filter_by(id = product_id,).one()
+        db.session.delete(productToDelete)
+        db.session.commit()
+        flash(f'product successfully Delete!','danger')
+        return redirect(url_for('LabViewservices', product_id = product_id))
+
+
 # ------------
 
 # labADMIN
@@ -1094,7 +1311,7 @@ def Pharmacistdashboard():
         Order.id.in_(order_ids),Order.status=="Active")).order_by(desc(Order.inserted_on)).all()
     
     patients=[x.id for x in Patient_on_dispense_queue]
-    count=sum(patients)
+    count=len(patients)
     return render_template('pharmdashboard.html',username=username,count=count)
 
 # Pharm dispense queue
@@ -1124,12 +1341,54 @@ def PharmDispenseLIst():
     
     return render_template('pharmdispenselist.html',Patient_on_dispense_queue=Patient_on_dispense_queue)
 
+
+@app.route('/pharm/view/allprescriptions/')
+@login_required
+def PharmViewallprescriptions():
+    # get all walkins orders
+    allwalkins=Order.query.filter(Order.customer_name=='WALK-IN').all()
+    allwalkins_ids=[x.id for x in allwalkins]
+ 
+    # get all orders and remove the walkins
+    allinvoices=Order.query.filter(~Order.id.in_(allwalkins_ids)).order_by(Order.inserted_on.desc()).all()
+
+    exists= bool(allinvoices)
+    if exists == False:
+        flash(f'NO PRESCRIPTIONS FOUND! ','danger')
+    return render_template('pharmacyallprescriptions.html',allinvoices=allinvoices)
+
+
+@app.route('/pharmviewprescription/<int:invoice_id>/details',methods=['GET','POST'])
+@login_required
+def PharmInvoiceDetail(invoice_id):
+    product_purchase=OrderItems.query.filter(and_(OrderItems.order_id==invoice_id,\
+        OrderItems.product_type=="Medication")).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient=order.customer_id
+    patientdetails=Customer.query.filter_by(id=patient).one()
+    return render_template('pharmviewprescriptionDetails.html',product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails)
+
 #Pharm Bill OTC
 @app.route('/OTCBill/new/', methods=['GET'])
 @login_required
 @required_roles('Pharmacist','Admin')
 def PharmOTCBill():
-    patient =Customer.query.filter_by(name='WALK-IN').one()
+    patient =Customer.query.filter_by(name='WALK-IN').first()
+    exits=bool(patient)
+    def patientid(setids):
+        import datetime
+        id=['0' if v is None else v for v in setids]
+        year=str(datetime.date.today().year) + '/100'
+        patient_id=year+ str(id[0])
+        return patient_id
+    if exits==False:
+        pid=db.session.query(db.func.max(Customer.id)).one()
+        opd=patientid(pid)
+        patient1 = Customer(name = "WALK-IN",patient_id = opd,age =0, gender = "0",\
+            patient_phone='0',National_id='0',nhif_no='0',debt=0)
+        db.session.add(patient1)
+        db.session.commit()
+    patient =Customer.query.filter_by(name='WALK-IN').first()
     previusdebt=patient.debt
     products=[p.product_name for p in Product.query.all()]
     patientids=patient.patient_id
@@ -1172,6 +1431,7 @@ def pharmStockReportbatch():
     stock=PurchaseItems.query.all()
     return render_template("pharmstockreportbatch.html",stock1=stock)
 
+
 #pharm inventory sold report(cumulative)
 @app.route('/inventorysoldreport/',methods=['GET','POST'])
 @login_required
@@ -1207,6 +1467,7 @@ def PharmMedicationSalesReport():
             OrderItems.order_id.in_(orders_idz))).all()
         return render_template("pharmmedsalesreport.html",todaysales=todaysales,today=today)
 
+
 #Pharmacy Enter  Purchases
 @app.route('/PharmaddPurchase/',methods=['GET'])
 @login_required
@@ -1231,15 +1492,7 @@ def PharmViewPurchaseDetail(purchase_id):
     purchase=Purchase.query.filter_by(id=purchase_id).one()
     return render_template('pharmviewpurchaseDetails.html',product_purchase=product_purchase,purchase_id=purchase_id,purchase=purchase)
 
-# ProductPuchaseDetails
-# @app.route('/PharmViewProductPuchaseDetails/<product>/',methods=['GET','POST'])
-# @login_required
-# def PharmViewProductPurchaseDetail(product):
-#     product_purchase=PurchaseItems.query.filter_by(product_name=product).all()
-#     productPurchased=Product.query.filter_by(product_name=product).one()
-#     return render_template('productpurchaseinfo.html',product_purchase=product_purchase,product=product,productPurchased=productPurchased)
 
-# 
 # Pharm Delete Purchase order
 @app.route('/PharmDeletePurchase/<int:purchase_id>/delete',methods=['POST'])
 @login_required
@@ -1270,6 +1523,7 @@ def PharmDeletePurchases(purchase_id):
     flash(f'Purchase Order successfully Deleted!','danger')
     return redirect(url_for('PharmViewAllPurchase'))
 
+
 #Pharm View all  Supplier
 @app.route('/viewallsuppliers/')
 @login_required
@@ -1277,6 +1531,7 @@ def PharmViewAllSuppliers():
     suppliers = Supplier.query.all()
     return render_template('pharmviewallSuppliers.html',suppliers=suppliers)
     
+
 #Pharm Add Supplier
 @app.route('/pharmaddSupplier/',methods=['GET','POST'])
 @login_required
@@ -1294,6 +1549,7 @@ def PharmAddSupplier():
             return redirect(url_for('PharmAddSupplier'))
     else:
         return render_template('pharmaddSupplier.html')
+
 
 #Pharm Edit suppliers
 @app.route('/supplier/<int:supplier_id>/pharm/edit/', methods = ['GET', 'POST'])
@@ -1313,6 +1569,7 @@ def PharmEditSupplier(supplier_id):
     else:
         return render_template('PharmEditSupplier.html',supplier_id=supplier_id, s= editedItem)
 
+
 # Pharm delete supplier
 @app.route('/supplier/<int:supplier_id>/pharm/delete/', methods = ['POST'])
 @login_required
@@ -1328,8 +1585,8 @@ def PharmdeleteSupplier(supplier_id):
 @app.route('/view/products/',methods=['GET','POST'])
 @login_required
 def PharmViewallProducts():
-    products = Product.query.all()
     # filter by medication 
+    products = Product.query.filter(Product.product_type=="Medication").all()
     return render_template('pharmviewallProducts.html', products = products) 
 
 
@@ -1338,7 +1595,7 @@ def PharmViewallProducts():
 @login_required
 def PharmAddproduct():
     if request.method == 'POST':
-        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'],reoder_level=request.form['reoder_level'])
+        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'])
         db.session.add(newItem)
         try:
             db.session.commit()
@@ -1350,6 +1607,7 @@ def PharmAddproduct():
             return redirect(url_for('PharmAddproduct'))
     else:
         return render_template('pharmaddProduct.html')
+
 
 #Pharm Edit a  product
 @app.route('/product/<int:product_id>/pharm/edit/', methods = ['GET', 'POST'])
@@ -1363,8 +1621,7 @@ def PharmeditProduct(product_id):
           editedItem.product_type = request.form['product_type']
         if request.form['sell_price']:
           editedItem.sell_price = request.form['sell_price'] 
-        if request.form['reoder_level']:
-            editedItem.reoder_level = request.form['reoder_level'] 
+       
 
         db.session.add(editedItem)
         db.session.commit() 
@@ -1384,12 +1641,14 @@ def PharmdeleteProduct(product_id):
         flash(f'product successfully Delete!','danger')
         return redirect(url_for('PharmViewallProducts', product_id = product_id))
 
+
 #Pharm Add Expences
 @app.route('/pharmaddexpensecategory/',methods=['GET','POST'])
 @login_required
 def PharmAddExpenseCategory():
+    username=current_user.role
     if request.method == 'POST':
-        newItem = Expense(ExpenseCategory_name=request.form['ExpenseCategory_name'])
+        newItem = Expense(ExpenseCategory_name=request.form['ExpenseCategory_name'],inserted_by=username)
         db.session.add(newItem)
         try:
             db.session.commit()
@@ -1402,11 +1661,12 @@ def PharmAddExpenseCategory():
     else:
         return render_template('pharmaddexpensecategory.html')
 
+
 #Pharm all Expences
 @app.route('/pharmviewallexpenses/')
 @login_required
 def PharmViewAllExpenses():
-    Expensecategory = Expense.query.all()
+    Expensecategory = Expense.query.filter(Expense.inserted_by=='Pharmacist').all()
     return render_template('pharmviewallExpenseCategory.html',Expensecategory=Expensecategory)
 
 
@@ -1414,15 +1674,17 @@ def PharmViewAllExpenses():
 @app.route('/expense/<int:expense_id>/pharm/edit/', methods = ['POST'])
 @login_required
 def Pharmeditexpe(expense_id):
+    username=current_user.role
     editedItem = Expense.query.filter_by(id =expense_id).one()
     editedItem.ExpenseCategory_name = request.form['expense']
+    editedItem.inserted_by=username
     db.session.add(editedItem)
     db.session.commit() 
     flash(f'expense has been updated!', 'success')
     return redirect(url_for('PharmViewAllExpenses'))
     
 
-# delete expense
+#Pharm delete expense
 @app.route('/expense/<int:expense_id>/pharm/delete/', methods = ['POST'])
 @login_required
 def PharmdeleteExpense(expense_id):
@@ -1432,15 +1694,19 @@ def PharmdeleteExpense(expense_id):
         flash(f'Expense successfully Deleted!','danger')
         return redirect(url_for('PharmViewAllExpenses', expense_id = expense_id))
 
-# TrackExpense
+
+#Pharm TrackExpense
 @app.route('/pharmtrackexpenses/',methods=['GET','POST'])
 @login_required
 def PharmTrackExpenses():
     entries=[E.ExpenseCategory_name for E in Expense.query.all()]
+    username=current_user.role
     if request.method == 'POST':
         date_str = request.form['dtpDate']
         date_object = datetime.strptime(date_str, "%Y-%m-%d").date()
-        newItem = TrackExpense(created_on=date_object,expense_type=request.form['expense_type'],payment_type=request.form['paytype'],amount=int(request.form['amount']))
+        newItem = TrackExpense(created_on=date_object,expense_type=request.form['expense_type'],\
+            payment_type=request.form['paytype'],amount=int(request.form['amount']),
+            inserted_by=username)
         db.session.add(newItem)
         try:
             db.session.commit()
@@ -1453,14 +1719,14 @@ def PharmTrackExpenses():
     else:
         return render_template('PharmTrackExpenses.html',entries=entries)
 
-# all tracked Expences
+#Pharm all tracked Expences
 @app.route('/pharmviewalltrackedexpenses/',methods=['GET','POST'])
 @login_required
 def PharmViewAllTrackedExpenses():
-    trackedexpense=TrackExpense.query.all()
+    trackedexpense=TrackExpense.query.filter(TrackExpense.inserted_by=='Pharmacist').all()
     return render_template("PharmexpenseStatement.html",trackedexpense=trackedexpense)
 
-# delete a tracked expense
+#Pharm delete a tracked expense
 @app.route('/trackedexpense/<int:Expense_id>/pharm/delete/', methods = ['POST'])
 @login_required
 def PharmdeleteTrackedExpense(Expense_id):
@@ -1470,8 +1736,124 @@ def PharmdeleteTrackedExpense(Expense_id):
     flash(f'Expense successfully Deleted!','danger')
     return redirect(url_for('PharmViewAllTrackedExpenses'))
 
+# Pharmacy reports Profit margin per drug
+@app.route('/pharm_dashboard/profit_productwise/',methods=['GET','POST'])
+@login_required
+def PharmrunProductDetailsReport():
+    products=[p.product_name for p in Product.query.filter(Product.product_type=='Medication').all()]
 
-# -------------------
+    if request.method == 'POST':
+        try:
+            Medicine_name= request.form['product_name']
+            
+            startdate_object = request.form['from_date']
+            startdate = datetime.strptime(startdate_object, "%Y-%m-%d").date()
+            
+            enddate_object = request.form['to_date']
+            endDate = datetime.strptime(enddate_object, "%Y-%m-%d").date()
+            
+           
+            # order between this dates TrackExpense.created_on.between(startdate,endDate)
+            orders=Order.query.filter(Order.created_on.between(startdate,endDate)).all()
+            order_ids=[x.id for x in orders]
+            
+            
+
+            sales=db.session.query(OrderItems,PurchaseItems,func.sum(OrderItems.quantity).label('total_quantity'),\
+                func.sum(PurchaseItems.total_amount).label('puchase_cost'),\
+                func.sum(OrderItems.total_amount).label('sales_cost'))\
+                .filter(and_(OrderItems.product_id==PurchaseItems.product_id,\
+            OrderItems.order_id.in_(order_ids),OrderItems.product_name== Medicine_name)).all()
+            func.sum(OrderItems.quantity).label('total_quantity') ,func.sum(OrderItems.total_amount)
+
+                
+            return render_template('PharmrunproductReport.html',Medicine_name=Medicine_name,sales=sales,products=products,startdate_object=startdate_object,enddate_object=startdate_object)
+        except:
+
+
+            flash(f'NO SALES FOUND FOR {Medicine_name} BETWEEN THE SELECTED DATES !', 'warning')
+            return redirect(url_for('PharmrunProductDetailsReport'))
+    else:
+
+        return render_template("PharmrunproductReport.html",products=products)
+    
+# Pharmacy  profit loss reports for all products 
+@app.route('/pharm_dashboard/all_profit_productwise/',methods=['GET','POST'])
+@login_required
+def PharmrunProfitforalldrugsReport():
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    
+    def my_function(x):
+        return list(dict.fromkeys(x))
+
+    orders=Order.query.filter(Order.created_on >yesterday).all()
+    order_ids=[x.id for x in orders]
+      
+
+    sales=OrderItems.query.filter(and_(OrderItems.order_id.in_(order_ids),\
+    OrderItems.product_type=='Medication')).all()
+            
+    total_sales=[x.product_name for x in sales]
+   
+    unique=len(my_function(total_sales))
+           
+    sales_amount=sum([x.total_amount for x in sales])
+    orderlines_id=[x.product_id for x in sales]
+    Pucharses=PurchaseItems.query.filter(PurchaseItems.product_id.in_(orderlines_id)).all()
+    purchase_cost=sum([(x.in_quantity-x.quantity)*x.buying_price for x in Pucharses])
+
+    profit =sales_amount-purchase_cost
+    
+    if request.method == 'POST':
+        try:
+            
+            startdate_object = request.form['from_date']
+            startdate = datetime.strptime(startdate_object, "%Y-%m-%d").date()
+            
+            enddate_object = request.form['to_date']
+            endDate = datetime.strptime(enddate_object, "%Y-%m-%d").date()
+            
+           
+            # order between this dates TrackExpense.created_on.between(startdate,endDate)
+            orders=Order.query.filter(Order.created_on.between(startdate,endDate)).all()
+            order_ids=[x.id for x in orders]
+            
+
+            sales=OrderItems.query.filter(and_(OrderItems.order_id.in_(order_ids),\
+                OrderItems.product_type=='Medication')).all()
+            
+            total_sales=[x.product_name for x in sales]
+
+            unique=len(my_function(total_sales))
+           
+            sales_amount=sum([x.total_amount for x in sales])
+            orderlines_id=[x.product_id for x in sales]
+            Pucharses=PurchaseItems.query.filter(PurchaseItems.product_id.in_(orderlines_id)).all()
+            purchase_cost=sum([(x.in_quantity-x.quantity)*x.buying_price for x in Pucharses])
+
+            profit =sales_amount-purchase_cost
+            
+       
+            return render_template('pharmrunprofitforalldrugs.html',\
+            total_sales=unique,sales_amount=sales_amount,\
+            purchase_cost=purchase_cost,profit=profit,\
+            startdate=startdate,endDate=endDate)
+        except:
+
+
+            flash(f'NO SALES FOUND BETWEEN THE SELECTED DATES !', 'warning')
+            return redirect(url_for('PharmrunProfitforalldrugsReport'))
+    else:
+
+        return render_template('pharmrunprofitforalldrugs.html',\
+        total_sales=unique,sales_amount=sales_amount,\
+        purchase_cost=purchase_cost,profit=profit,\
+        startdate=today)
+    
+
+
+# ----------------------------------
 # ADMINPHARMACY VIEWS
 # view bill that have mediction and are active
 @app.route('/dispenselist/',methods=['GET','POST'])
@@ -1498,6 +1880,7 @@ def DispenseLIst():
         flash(f'NO PATIENT ON DISPENSE QUEUE','danger')
     
     return render_template('dispenselist.html',Patient_on_dispense_queue=Patient_on_dispense_queue)
+
 
 @app.route('/ViewPrescriptionNote/<int:invoice_id>/VIEW',methods=['GET','POST'])
 @login_required
@@ -1562,6 +1945,7 @@ def newpatientBill(patient_id):
    
     return render_template('addpatientInvoice.html', patient_id=patient_id,patient=patient,products=products,patients=patients,previusdebt=previusdebt,patientids=patientids)
 
+
 @app.route('/addinvoices/',methods=['GET'])
 @login_required
 def AddInvoice():
@@ -1569,6 +1953,7 @@ def AddInvoice():
     patients=[s.name for s in Customer.query.all()]
     patientids=[s.patient_id for s in Customer.query.all()]
     return render_template('addInvoice.html',products=products,patients=patients,patientids=patientids)
+
 
 # Get patient data API ENDPOINT
 @app.route('/patientdata/<patient>')
@@ -1584,6 +1969,7 @@ def Patientdata(patient):
         patientobj['debt']=patient.debt
         dataArray.append(patientobj)
     return jsonify({'Patient': dataArray})
+
 
 # Get patient data API ENDPOINT by patient_id
 @app.route('/patientdatabyId/<patientid>')
@@ -1602,6 +1988,7 @@ def PatientIddata(patientid):
         dataArray.append(patientobj)
     return jsonify({'Patient': dataArray})
 
+
 # PurchaseItems API ENDPOINT
 @app.route('/productdata/<product>')
 def Productdata(product):
@@ -1616,6 +2003,7 @@ def Productdata(product):
         dataArray.append(productobj)
     return jsonify({'Product': dataArray})
 
+
 # API
 @app.route('/productqty/<int:product_id>')
 def Productqty(product_id):
@@ -1627,6 +2015,7 @@ def Productqty(product_id):
         productobj['quantity']=product.quantity
         dataArray.append(productobj)
     return jsonify({'ProductQty': dataArray})
+
 
 # process incoming order 
 @app.route('/processinvoicedata', methods=['POST'])
@@ -1764,6 +2153,7 @@ def InvoiceUpdate(invoice_id):
     patientdetails=Customer.query.filter_by(id=patient).one()
     return render_template('editinvoice.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
         products=products,current_debt=current_debt)
+
 
 @app.route('/processUpdatedInvoice',methods=['POST'])
 @login_required
@@ -1971,6 +2361,7 @@ def deleteInvoice(invoice_id):
         flash(f'Invoice  successfully Deleted!','danger')
         return redirect(url_for('AllInvoices'))
 
+
 # show invoice details
 @app.route('/InvoiceDetails/<int:invoice_id>/',methods=['GET','POST'])
 @login_required
@@ -1997,7 +2388,7 @@ def allProducts():
 @login_required
 def Addproduct():
     if request.method == 'POST':
-        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'],reoder_level=request.form['reoder_level'])
+        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'])
         db.session.add(newItem)
         try:
             db.session.commit()
@@ -2009,6 +2400,7 @@ def Addproduct():
             return redirect(url_for('Addproduct'))
     else:
         return render_template('addProduct.html')
+
 
 #Edit a  product
 @app.route('/product/<int:product_id>/edit/', methods = ['GET', 'POST'])
@@ -2022,8 +2414,7 @@ def editProduct(product_id):
           editedItem.product_type = request.form['product_type']
         if request.form['sell_price']:
           editedItem.sell_price = request.form['sell_price'] 
-        if request.form['reoder_level']:
-            editedItem.reoder_level = request.form['reoder_level'] 
+       
 
         db.session.add(editedItem)
         db.session.commit() 
@@ -2042,6 +2433,7 @@ def deleteProduct(product_id):
         db.session.commit()
         flash(f'product successfully Delete!','danger')
         return redirect(url_for('allProducts', product_id = product_id))
+
 
 # API ENDPOINT
 @app.route('/productprice/<product>')
@@ -2063,7 +2455,8 @@ def Productprice(product):
 def AllSuppliers():
     suppliers = Supplier.query.all()
     return render_template('allSuppliers.html',suppliers=suppliers)
-    
+
+
 # Add Supplier
 @app.route('/addSupplier/',methods=['GET','POST'])
 @login_required
@@ -2082,6 +2475,7 @@ def AddSupplier():
     else:
         return render_template('addSupplier.html')
 
+
 # Edit suppliers
 @app.route('/supplier/<int:supplier_id>/edit/', methods = ['GET', 'POST'])
 @login_required
@@ -2099,6 +2493,7 @@ def EditSupplier(supplier_id):
         return redirect(url_for('AllSuppliers'))
     else:
         return render_template('editSupplier.html',supplier_id=supplier_id, s= editedItem)
+
 
 @app.route('/supplier/<int:supplier_id>/delete/', methods = ['POST'])
 @login_required
@@ -2139,14 +2534,17 @@ def AddPurchase():
     products=[p.product_name for p in Product.query.filter_by(product_type='Medication')]
     suppliers=[s.supplier_name for s in Supplier.query.all()]
     return render_template('purchase.html',products=products,suppliers=suppliers)
-      
+
+
 #ProcessPurchaseData
 @app.route('/processpurchasedata', methods=['POST'])
 def processdata():
     table= request.json
+    print(table)
     product_list=[]
     date=[]
     quantityarray=[]
+    reoderlevelarray=[]
     price=[]
     total_amount=[]   
     
@@ -2166,6 +2564,8 @@ def processdata():
                     date.append(data[i])
                 elif i=="quantity":
                     quantityarray.append(data[i])
+                elif i=="reorder_level":
+                    reoderlevelarray.append(data[i])
                 elif i=="buying_price":
                     price.append(data[i])
                 elif i=="total_price":
@@ -2190,14 +2590,21 @@ def processdata():
 
     newpurchase=Purchase(purchase_date=purchasedate_object,supplier_name=suplier_name,invoice_no=invoiceNo,\
         payment_type=paytype,total_amount=grand_total_price,due_balance=balance,paydue_amount=OpenBalance,payment_amount=paid_amount,supplier=supplierToAdd)
-    for (prod,expiry,qty,price,total) in zip(product_list,date,quantityarray,price,total_amount):
+    print(product_list)
+    print(date)
+    print(quantityarray)
+    print(reoderlevelarray)
+    print(total_amount)
+    for (prod,expiry,qty,reodlv,price,total) in zip(product_list,date,quantityarray,reoderlevelarray,price,total_amount):
+        
         expiry_date = expiry
         expirydate_object = datetime.strptime(expiry_date, "%Y-%m-%d").date()
         product_name=Product.query.filter_by(product_name=prod).one()
         seling_price=product_name.sell_price
 
-        itemlines=PurchaseItems(product_name=prod,invoice_no=invoiceNo,expiry_date=expirydate_object,quantity=qty,in_quantity=qty,buying_price=price,\
-            total_amount=total,sell_price=seling_price,purchase=newpurchase,product=product_name)
+        itemlines=PurchaseItems(product_name=prod,invoice_no=invoiceNo,reorder_level=reodlv,\
+        expiry_date=expirydate_object,quantity=qty,in_quantity=qty,buying_price=price,\
+        total_amount=total,sell_price=seling_price,purchase=newpurchase,product=product_name)
     
     db.session.add(newpurchase)
     db.session.add(itemlines)
@@ -2213,13 +2620,15 @@ def processdata():
         return jsonify({'error' : 'Invoice No already used!'})
 
     return jsonify({'error' : 'Invoice No already used!'})
-    
+
+
 # allPurchase
 @app.route('/allPurchase/',methods=['GET','POST'])
 @login_required
 def AllPurchase():
     Purchases=Purchase.query.all()
     return render_template('allPurchases.html',Purchases=Purchases)
+
 
 # ProductPuchaseDetails
 @app.route('/PurchaseDetails/<int:purchase_id>/',methods=['GET','POST'])
@@ -2228,6 +2637,7 @@ def PurchaseDetail(purchase_id):
     product_purchase=PurchaseItems.query.filter_by(purchase_id=purchase_id).all()
     purchase=Purchase.query.filter_by(id=purchase_id).one()
     return render_template('purchaseDetails.html',product_purchase=product_purchase,purchase_id=purchase_id,purchase=purchase)
+
 
 # ProductPuchaseDetails
 @app.route('/ProductPuchaseDetails/<product>/',methods=['GET','POST'])
@@ -2288,6 +2698,7 @@ def AddExpenseCategory():
     else:
         return render_template('addExpenseCategory.html')
 
+
 # all Expences
 @app.route('/allexpenses/')
 @login_required
@@ -2319,6 +2730,7 @@ def deleteExpense(expense_id):
         flash(f'Expense successfully Deleted!','danger')
         return redirect(url_for('AllExpenses', expense_id = expense_id))
 
+
 # TrackExpense
 @app.route('/trackexpenses/',methods=['GET','POST'])
 @login_required
@@ -2340,12 +2752,14 @@ def TrackExpenses():
     else:
         return render_template('trackExpense.html',entries=entries)
 
+
 # all tracked Expences
 @app.route('/alltrackedexpenses/',methods=['GET','POST'])
 @login_required
 def AllTrackedExpenses():
     trackedexpense=TrackExpense.query.all()
     return render_template("expenseStatement.html",trackedexpense=trackedexpense)
+
 
 # delete a tracked expense
 @app.route('/trackedexpense/<int:Expense_id>/delete/', methods = ['POST'])
@@ -2356,7 +2770,10 @@ def deleteTrackedExpense(Expense_id):
         db.session.commit()
         flash(f'Expense successfully Deleted!','danger')
         return redirect(url_for('AllTrackedExpenses'))
+
+
 # ----------------------------------------------------------------------------
+# REPORTS
 # All stock
 @app.route('/stockreport/',methods=['GET','POST'])
 @login_required
@@ -2364,11 +2781,13 @@ def StockReport():
     stock=PurchaseItems.query.all()
     return render_template("stockreport.html",stock=stock)
 
+
 # Product purchase sales report
 @app.route('/productsalepurchasereport/',methods=['GET','POST'])
 @login_required
 def ProductDetailsReport():
     return render_template("productReport.html")
+
 
 # sales report (cummulative)
 @app.route('/medicationsalesreport/',methods=['GET','POST'])
@@ -2379,6 +2798,7 @@ def MedicationSalesReport():
     label('total_amount')).group_by(OrderItems.product_name).filter_by(product_type='Medication').all()
     return render_template("medsalesreport.html",sales=sales)
 
+
 # stock report (cumulative)
 @app.route('/medicationstockreport/',methods=['GET','POST'])
 @login_required
@@ -2388,11 +2808,11 @@ def MedicationStockReport():
 
 
 # account reports
-
 @app.route('/profitlossreport/',methods=['GET','POST'])
 @login_required
 def IncomeExpense():
     return render_template('incomeExpense.html')
+
 
 @app.route('/statementreceipt/',methods=['POST'])
 @login_required
@@ -2473,6 +2893,7 @@ def StatementReceipt():
         Totalservsale_Amount=Totalservsale_Amount,expensesresult=expensesresult,header_startdate=header_startdate,header_enddate=header_enddate,\
             total_income=total_income,total_expense_amount=total_expense_amount,Profit_loss=Profit_loss)
 
+
 @app.route('/processprofitlossreport/',methods=['POST'])
 @login_required
 def ProcessIncomeExpenseData():
@@ -2550,6 +2971,7 @@ def ProcessIncomeExpenseData():
     respnd= make_response(jsonify(data),200)
 
     return respnd
+
 
 # logout 
 @app.route('/logout')

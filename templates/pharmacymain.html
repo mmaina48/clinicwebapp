@@ -139,26 +139,21 @@
                                   Pharmacy Reports
                                 </a>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="">Profit/Loss Report</a>
-                                  <a class="dropdown-item"  style="color: black; font-weight: bold;"href="">Profit/Loss Report(Per Drug)</a>
+                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmrunProfitforalldrugsReport')}}">Medication Profit/Loss Report </a>
+                                  <a class="dropdown-item"  style="color: rgb(4, 38, 82); font-weight: bold;"href="{{url_for('PharmrunProductDetailsReport')}}">Profit/Loss Report(Per Drug)</a>
                                   <a class="dropdown-item" style="color: rgb(62, 92, 3); font-weight: bold;" href="">Reorder Level</a>
                                   
                                   <a class="dropdown-item" style="color: red; font-weight: bold;" href="">Expired Drugs</a>
                                 </div>
                             </li>
-                            <li style="display: none;" class="nav-item dropdown nav-link mx-1" id="notification">
-                                <button type="button" class="badge badge-danger">
-                                    Nofications <span id="notif" class="badge badge-light">0</span>
-                                    <span class="sr-only">unread messages</span>
-                                  </button>
-                            </li>
+                            
 
                     <ul class="nav navbar-nav ml-auto w-100 justify-content-left">
 
                       
                         <li class="nav-item dropdown nav-user">
                             <!-- <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle-o" aria-hidden="true"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Settings </a> -->
-                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-spin fa-2x fa-fw"></i>&nbsp;Settings</a>
+                            <a class="nav-link nav-user-img"  href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-spin fa-1x fa-fw"></i>&nbsp;Settings</a>
                             <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                 <div class="nav-user-info">
                                     <h5 class="mb-0 text-white nav-user-name">{{username}} </h5>
@@ -194,16 +189,19 @@
                                 <a class="nav-link active " href="{{url_for('Pharmacistdashboard')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>PHARMACY DASHBOARD</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                             </li>
-                                <a class="nav-link active" href="{{url_for('PharmDispenseLIst')}}" ><i class="fa fa-align-justify" aria-hidden="true"></i>PHARMACY QUEUE<span class="badge badge-danger">{{count}}</span></a>
-                               
+                                <a class="nav-link active" href="{{url_for('PharmDispenseLIst')}}" ><i class="fas fa-child" aria-hidden="true"></i>PHARMACY QUEUE<span class="badge badge-danger">{{count}}</span></a>
+
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('PharmViewallprescriptions')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL PRESCRIPTIONS</a>
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('PharmMedicationSalesReport')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>SALES REPORT(Med)</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('PharmOTCBill')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>POS INVOICE</a>
                                 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmAllOtcBill')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>ALL SALES REPORT</a>
+                                <a class="nav-link active" href="{{url_for('PharmAllOtcBill')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>OTC SALES</a>
                                 
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmMedicationSalesReport')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>SALES REPORT(Med)</a>
+                                
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('PharmStockReport')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>STOCK LEVELS</a>
                                 
@@ -356,13 +354,7 @@ $(document).ready( function() {
     
 <script>
         $(document).ready(function() {
-            var notification= document.getElementById('notif').innerHTML
-            if (notification > 0){
-                $('#notification').show()
-            }
-            else{
-                $('#notification').hide()
-            }
+            
     $('#example1').DataTable( {
         dom: 'Bfrtip',
         buttons:[ 

@@ -60,25 +60,25 @@ db.session.commit()
 
 
 # add products and Service
-product1 = Product(product_name = "Amoxly 100mg pack", product_type = "Medication", sell_price = 100, reoder_level = "500")
+product1 = Product(product_name = "Amoxly 100mg pack", product_type = "Medication", sell_price = 100)
 db.session.add(product1)
 db.session.commit()
 
 
-product2 = Product(product_name = "Brufen 100mg Tablet", product_type = "Medication", sell_price = 5, reoder_level = "500")
+product2 = Product(product_name = "Brufen 100mg Tablet", product_type = "Medication", sell_price = 5)
 db.session.add(product2)
 db.session.commit()
 
 
-product3 = Product(product_name = "Consultation", product_type = "Service", sell_price = 300, reoder_level = "0")
+product3 = Product(product_name = "Consultation", product_type = "Service", sell_price = 300)
 db.session.add(product3)
 db.session.commit()
 
-product4 = Product(product_name = "Lab:Malaria Test", product_type = "Service", sell_price = 300, reoder_level = "0")
+product4 = Product(product_name = "Lab:Malaria Test", product_type = "Service", sell_price = 300)
 db.session.add(product4)
 db.session.commit()
 
-product5 = Product(product_name = "Lab:HIV Test", product_type = "Service", sell_price = 100, reoder_level = "0")
+product5 = Product(product_name = "Lab:HIV Test", product_type = "Service", sell_price = 100)
 db.session.add(product5)
 db.session.commit()
 

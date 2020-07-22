@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
+    inserted_by=db.Column(db.String(), nullable=True)
     password = db.Column(db.String(), nullable=False)
     startdate= db.Column(db.Date(), default=datetime.utcnow)
     role = db.Column(db.String(), nullable=False)
@@ -25,6 +26,7 @@ class Customer(db.Model):
     __tablename__ = "customer"
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.Date(), default=datetime.utcnow)
+    inserted_by=db.Column(db.String(), nullable=True)
     name=db.Column(db.String(), nullable=True)
     patient_id=db.Column(db.String(), nullable=True)
     age=db.Column(db.Integer,nullable=True)
@@ -42,6 +44,7 @@ class Visits(db.Model):
     __tablename__ = 'visit'
     id = db.Column(db.Integer(), primary_key=True)
     inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
+    inserted_by=db.Column(db.String(), nullable=True)
     patient_name = db.Column(db.String(255), nullable=False)
     patient_id=db.Column(db.String(), nullable=False)
     visit_type=db.Column(db.String(255), nullable=False)
@@ -63,6 +66,7 @@ class Consultation(db.Model):
     __tablename__ = 'consultation'
     id = db.Column(db.Integer(), primary_key=True)
     inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
+    inserted_by=db.Column(db.String(), nullable=True)
     patient_name = db.Column(db.String(255), nullable=False)
     patient_id=db.Column(db.String(), nullable=False)
     visit_type=db.Column(db.String(255), nullable=False)
@@ -94,7 +98,7 @@ class LabResult(db.Model):
     visit_date=db.Column(db.Date(), nullable=False)
     testname=db.Column(db.String(), nullable=False)
     testresults=db.Column(db.String(), nullable=False)
-    testedby=db.Column(db.String(), nullable=False)
+    testedby=db.Column(db.String(), nullable=True)
     customer_id = db.Column(db.Integer(), db.ForeignKey('customer.id'))
     order_id = db.Column(db.Integer(), db.ForeignKey('orders.id'))  # Foreign keyp
 
@@ -105,6 +109,7 @@ class Supplier(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     supplier_name = db.Column(db.String(25), unique=True, nullable=False)
     supplier_phone=db.Column(db.Integer, unique=True,nullable=False)
+    inserted_by=db.Column(db.String(), nullable=True)
     openbalance=db.Column(db.Integer,default=0)
     purchases = db.relationship('Purchase', backref='supplier')
     
@@ -114,6 +119,7 @@ class Purchase(db.Model):
     __tablename__ = "purchases"
     id = db.Column(db.Integer, primary_key=True)
     purchase_date = db.Column(db.Date(), nullable=False)
+    inserted_by=db.Column(db.String(), nullable=True)
     invoice_no=db.Column(db.Integer,nullable=False)
     supplier_name = db.Column(db.String(), nullable=False)
     payment_type=db.Column(db.String(25),nullable=False)
@@ -131,9 +137,10 @@ class PurchaseItems(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     invoice_no=db.Column(db.Integer,nullable=False)
     product_name = db.Column(db.String(25), nullable=True)
-    expiry_date = db.Column(db.Date(), nullable=False)
-    quantity=db.Column(db.Integer, nullable=True)
+    expiry_date = db.Column(db.Date(), nullable=True)
     in_quantity=db.Column(db.Integer, nullable=True)
+    quantity=db.Column(db.Integer, nullable=True)
+    reorder_level=db.Column(db.Integer, nullable=True)
     buying_price=db.Column(db.Integer, nullable=True)
     sell_price=db.Column(db.Integer, nullable=True)
     total_amount=db.Column(db.Integer, nullable=True)
@@ -146,9 +153,9 @@ class Product(db.Model):
     __tablename__ = "product"
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(), unique=True, nullable=False)
+    inserted_by=db.Column(db.String(), nullable=True)
     product_type= db.Column(db.String(), nullable=True)
     sell_price=db.Column(db.Integer, nullable=True)
-    reoder_level=db.Column(db.Integer, nullable=False)
     purchaseitems_line = db.relationship('PurchaseItems', backref='product')
     orderitems_line = db.relationship('OrderItems', backref='product')
    
@@ -159,6 +166,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.Date(), nullable=False)
     inserted_on= db.Column(db.DateTime(), default=datetime.utcnow)
+    inserted_by=db.Column(db.String(), nullable=True)
     customer_name = db.Column(db.String(), nullable=False)
     visit_type=db.Column(db.String(255), nullable=False)
     patient_id=db.Column(db.String(), nullable=True)
@@ -196,7 +204,8 @@ class Expense(db.Model):
     """ Expense model """  
     __tablename__ = "expenses"
     id = db.Column(db.Integer, primary_key=True)
-    ExpenseCategory_name = db.Column(db.String(100), unique=True, nullable=False)
+    ExpenseCategory_name = db.Column(db.String(100), nullable=False)
+    inserted_by=db.Column(db.String(), nullable=True)
     trackexpenses = db.relationship('TrackExpense', backref='expense')
 
 
@@ -209,6 +218,7 @@ class TrackExpense(db.Model):
     amount= db.Column(db.Integer, nullable=False)
     payment_type=db.Column(db.String(25),nullable=False)
     expense_type=db.Column(db.String(25),nullable=False)
+    inserted_by=db.Column(db.String(), nullable=True)
     expense_id = db.Column(db.Integer(), db.ForeignKey('expenses.id'))  # Foreign key
 
 

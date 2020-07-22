@@ -30,10 +30,11 @@
     </li>
     <li class="nav-item">
       
+        
         <a class="nav-link" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">VIEW TREATMENT/LAB TESTS</a>
       </li>
       <li class="nav-item">
-        <a href="{{url_for('ViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
+        <a href="{{url_for('DoctorViewPatientLabResult',invoice_id=invoice_id,patient_id=patient_id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>VIEW LAB RESULTS</a>
       </li>
       <li class="nav-item">
         <a href="{{url_for('Doctorshowallvisits',patient_id=patient_id)}}" style="color: black;" class="btn btn-secondary m-b-5 m-r-2"><i class="ti-align-justify"> </i>ALL VISITS NOTES</a>
