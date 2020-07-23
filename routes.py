@@ -97,8 +97,8 @@ def AllUsers():
 
 # add users 
 @app.route('/signup/',methods=['GET','POST'])
-@login_required
-@required_roles('Admin')
+# @login_required
+# @required_roles('Admin')
 def signup():
     form=RegisterForm()
     if form.validate_on_submit():
