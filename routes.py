@@ -2794,10 +2794,14 @@ def ProductDetailsReport():
 @app.route('/medicationsalesreport/',methods=['GET','POST'])
 @login_required
 def MedicationSalesReport():
-    sales=OrderItems.query.with_entities(OrderItems.product_name,OrderItems.buying_price,\
-    func.sum(OrderItems.quantity).label('total_quantity') ,func.sum(OrderItems.total_amount).\
-    label('total_amount')).group_by(OrderItems.product_name).filter_by(product_type='Medication').all()
-    return render_template("medsalesreport.html",sales=sales)
+    try:
+        sales=OrderItems.query.with_entities(OrderItems.product_name,OrderItems.buying_price,\
+        func.sum(OrderItems.quantity).label('total_quantity') ,func.sum(OrderItems.total_amount).\
+        label('total_amount')).group_by(OrderItems.product_name).filter_by(product_type='Medication').all()
+        return render_template("medsalesreport.html",sales=sales)
+    except:
+        flash(f'No sales found! click on stock report')
+        return render_template("medsalesreport.html",sales=sales)
 
 
 # stock report (cumulative)
