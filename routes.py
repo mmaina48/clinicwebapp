@@ -2098,24 +2098,26 @@ def processinvoicedata():
             purchaseitem=PurchaseItems.query.filter_by(id=expry).one()
             expry_date_object=purchaseitem.expiry_date
             expry_date= expry_date_object
+
         
-        productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
+            productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
 
-        if (productToreduce is not None) and (expry_date is not None):
-           
-            productToreduce.quantity -=int(qty)
-            itemlines=OrderItems(product_name=prod,expiry_date=expry_date,product_type=prodtyp,quantity=qty,buying_price=price,\
-            total_amount=total,order=newinvoice,product=product_name)
 
-            db.session.add(newinvoice)
-            db.session.add(itemlines)
-            db.session.add(patientToAdd)
-            db.session.add(productToreduce)
+            if (productToreduce is not None) and (expry_date is not None):
 
-            db.session.commit()
-            db.session.commit()
-            db.session.commit()
-            db.session.commit()
+                productToreduce.quantity -=int(qty)
+                itemlines=OrderItems(product_name=prod,expiry_date=expry_date,product_type=prodtyp,quantity=qty,buying_price=price,\
+                total_amount=total,order=newinvoice,product=product_name)
+
+                db.session.add(newinvoice)
+                db.session.add(itemlines)
+                db.session.add(patientToAdd)
+                db.session.add(productToreduce)
+
+                db.session.commit()
+                db.session.commit()
+                db.session.commit()
+                db.session.commit()
         else:
             itemlines=OrderItems(product_name=prod,product_type=prodtyp,quantity=qty,buying_price=price,\
             total_amount=total,order=newinvoice,product=product_name)
