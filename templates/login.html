@@ -8,9 +8,9 @@
     <title>Login</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{url_for('.static', filename='bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle.css')}}">
+    <!-- <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle.css')}}"> -->
     <link rel="stylesheet" href="{{url_for('.static', filename='loginstyle2.css')}}">
-    <link rel="stylesheet" href="{{url_for('.static', filename='fontawesome-all.css')}}">
+    
     <style>
     html,
     body {
@@ -38,13 +38,13 @@
     
     <div class="splash-container">
         <div class="card ">
-            <div class="card-header text-center"><span class="splash-description">Enter the credentials to Log in.</span></div>
+            <div class="card-header text-center">Enter the credentials to Log in</div>
             <div class="container">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                   {%if messages %}
                         {%for category, message in messages %}
                         <div class="alert alert-{{ category }}">
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <button type="button"   class="close" data-dismiss="alert" aria-label="Close">
                            
                           </button>
                           <span>
@@ -65,7 +65,7 @@
                         {{ form.password(class="form-control",placeholder="password", type="password") }}
                     </div>
                     
-                    <button type="submit" class="btn btn-success btn-lg btn-block">Log In</button>
+                    <button type="submit" style="font-weight: bolder;" class="btn btn-success btn-lg btn-block">LOGIN</button>
                 </form>
             </div>
             <div class="card-footer bg-white p-0  ">
