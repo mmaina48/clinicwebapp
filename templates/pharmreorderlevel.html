@@ -16,13 +16,19 @@
       {%endif %}
     {%endwith%}
   </div>
- 
+  <div>
+    <div class="row">
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+          <a  href="{{url_for('pharmStockReportbatch')}}"  class="btn btn-warning btn-sm"  style="color: black; font-weight: bold; float: right;" >GO TO MY STOCK</a>
+      </div>
+      </div>
     <!-- ============================================================== -->
     <!-- end pageheader  -->
     <!-- ============================================================== -->
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
-          <h3 class="card-header" style="color: black; font-weight: bold;">ALL PRESCRIPTIONS </h3>
+          <h3 class="card-header" style="color: black; font-weight: bold;">REORDER LEVEL REPORT</h3>
+          <a  class="btn btn-warning btn-sm"  style="color: black; font-weight: bold; float: right;" ></a>
             <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
@@ -30,29 +36,30 @@
           
               <div class="card-body">
                   <div class="table-responsive">
-                      <table id="example" class="table table-striped table-bordered second" style="width:100%">
+                    <table id="example" class="table table-striped table-bordered second" style="width:100%">
                           <thead>
                               <tr>
-                                <th>Date</th>
-                                  <th>PatientName</th>
-                                  <th>clinic No</th>
-                                  <th>Action</th>
+                                  <th>Medication(unit)</th>
+                                  <th>Expiry</th>
+                                  
+                                  <th style="color: rgb(90, 77, 6);">Current Qty</th>
+                                  <th>Reorder Level</th>
+                            
+                                
                               </tr>
-             
                           </thead>
                           <tbody>
-                            {% for invoice in allinvoices %}
+                            {% for purchase in reorderproducts %}
                               <tr>
-                                 <td>{{invoice.created_on}}</td>
-                                 <td>{{invoice.customer_name}}</td>
-                                 <td>{{invoice.patient_id}}</td>
-                                 
-                                <td><a href="{{url_for('PharmInvoiceDetail', invoice_id =invoice.id)}}" ><button style="font-weight: bolder; color: #000;" type="button" class="btn btn-success btn-xs">View</button></td></a>
+                                  <td>{{purchase.product_name}}</td>
+                                  <td>{{purchase.expiry_date}}</td>
+                                  <td id="qty">{{purchase.quantity}}</td>
+                                  <td id="reoder_level">{{purchase.reorder_level}}</td>
+                                  
                               </tr>
                               {% endfor %} 
                           </tbody>
-                          
-                  
+                        
                       </table>
                   </div>
               </div>
@@ -67,33 +74,8 @@
         </div>
     </div>
   </div>
-      {% endblock %}
-      {% block script %}
-      <script>
-       
-        
-        $('#filter').click(function(){
-        $.fn.dataTable.ext.search.push(
-        function (settings, data, dataIndex) {
-            var min = $('#min').val();
-            var max = $('#max').val();
-            var startDate =(data[0]);
-            if (min == null && max == null) return true;
-            if (min == null && startDate <= max) return true;
-            if (max == null && startDate >= min) return true;
-            if (startDate <= max && startDate >= min) return true;
-            return false;
-        }
-        );
+  {% endblock %}
+  {% block script %}
+ 
 
-            var table = $('#example').DataTable();
-
-            table.draw();
-            // Event listener to the two range filtering inputs to redraw on input
-            // $('#filter').click(function () {
-            //     table.draw();
-            // });
-        });
-  
-      </script>
-      {% endblock %}
+{% endblock %}

@@ -21,7 +21,8 @@
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <div class="column">
-          <a href="{{url_for('PharmAddExpenseCategory')}}" style="float: right;" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add Expense Category</a>
+          <a style="font-weight: bolder;color: black;" href="{{url_for('PharmAddExpenseCategory')}}" style="float: right;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>Add NEW Expense Category</a>
+          <a  href="{{url_for('PharmTrackExpenses')}}" style="float: right; font-weight: bolder;" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>RECORD EXPENSE PAYMENT</a>
           </div>
       </div>
   </div>
@@ -53,8 +54,8 @@
                                     <td align="center">{{category.ExpenseCategory_name}}</td>
                                     
                                     <td align="center">
-
-                                      <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal{{category.id}}" data-whatever="@mdo">Update</button>
+                                      
+                                      <button  style="color: black; font-weight: bolder;" type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal{{category.id}}" data-whatever="@mdo">Update</button>
                                       <div class="modal fade" id="exampleModal{{category.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
@@ -65,13 +66,13 @@
                                             <div class="modal-body">
                                               <form action="{{url_for('Pharmeditexpe', expense_id =category.id)}}" method="POST">
                                                 <div class="form-group">
-                                                  <label for="recipient-name" class="control-label">Expense Name:</label>
-                                                  <input type="text" class="form-control" id="recipient-name" name="expense" value="{{category.ExpenseCategory_name}}">
+                                                  <label style="color: black; font-weight: bolder;" for="recipient-name" class="control-label">Expense Name:</label>
+                                                  <input style="color: black; font-weight: bolder;" type="text" class="form-control" id="recipient-name" name="expense" value="{{category.ExpenseCategory_name}}">
                                                 </div>
                                                 
                                                 <div class="modal-footer">
-                                                  <button type="submit" class="btn btn-success">Save</button>
-                                                  <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                                                  <button style="color: black; font-weight: bolder;" type="submit" class="btn btn-success">Save</button>
+                                                  <button  style="color: black; font-weight: bolder;" type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
                                             
                                                 </div>
                                               </form>

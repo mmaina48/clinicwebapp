@@ -20,11 +20,10 @@
     <link rel="stylesheet" href="{{url_for('.static', filename='daterangepicker.css')}}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
-    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+    <!-- <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet"> -->
     <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
    
-    
-
 
     <title>Clinic|Managment|System</title>
 </head>
@@ -76,6 +75,7 @@
 }
 
     </style>
+  
     <!-- ============================================================== -->
     <!-- main wrapper -->
     <!-- ============================================================== -->
@@ -86,7 +86,6 @@
      
         <div class="dashboard-header">
             <!-- rgb(51, 51, 141) -->
-       
        
        
             <nav class="navbar navbar-expand-lg bg-white justify-content-left fixed-top">
@@ -103,9 +102,10 @@
                             </a>
                             <div class="dropdown-menu">
                             
-                              <a class="dropdown-item"  style="color:rgb(4, 109, 4); font-weight: bold;"href="{{url_for('PharmAddproduct')}}">Add Product</a>
-                              <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmViewallProducts')}}">Products Price List</a>
-                        </li>
+                              <a class="dropdown-item"  style="color:rgb(4, 109, 4);font-weight:bold;" href="{{url_for('PharmAddproduct')}}">Add Product</a>
+                              <a class="dropdown-item" style="color: black;font-weight: bold;" href="{{url_for('PharmViewallProducts')}}">Products Price List</a>
+                            </div>
+                            </li>
                       
                         <li class="nav-item dropdown nav-link mx-1">
                             <a class="btn btn-outline-success m-b-5 m-r-2 dropdown-toggle" style="color: black; font-weight: bold;" href="#" id="navbardrop" data-toggle="dropdown">
@@ -113,9 +113,9 @@
                             </a>
                             <div class="dropdown-menu">
                              
-                              <a class="dropdown-item"  style="color: rgb(4, 109, 4); font-weight: bold;"href="{{url_for('PharmAddSupplier')}}">Add Supplier</a>
+                              <a class="dropdown-item"  style="color: rgb(4, 109, 4); font-weight: bold;" href="{{url_for('PharmAddSupplier')}}">Add Supplier</a>
                               <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmViewAllSuppliers')}}">All Supplier</a>
-                             
+                            </div>
                         </li>
                         <li class="nav-item nav-link mx-1">
                             <a href="{{url_for('PharmAddPurchase')}}" style="color: black; font-weight: bold;" class="btn btn-outline-success"><i class="ti-shopping-cart"></i>New Purchase</a>
@@ -126,11 +126,9 @@
                                   Pharmacy Expenses
                                 </a>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: rgb(4, 109, 4); font-weight: bold;" href="{{url_for('PharmAddExpenseCategory')}}">Add Expense Category</a>
-                                  <a class="dropdown-item"  style="color: rgb(197, 197, 6); font-weight: bold;"href="{{url_for('PharmTrackExpenses')}}">Track Expenses</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmViewAllExpenses')}}">All Expense Category</a>
-                                  
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmViewAllTrackedExpenses')}}">All Paid Expenses</a>
+                                  <a class="dropdown-item" style="font-weight: bold;" href="{{url_for('PharmViewAllExpenses')}}">All Expense Types</a>
+                                  <a class="dropdown-item"  style="color: rgb(58, 58, 2); font-weight: bold;" href="{{url_for('PharmTrackExpenses')}}">Track Expenses</a>
+                                 
                                 </div>
                             </li>
 
@@ -139,11 +137,14 @@
                                   Pharmacy Reports
                                 </a>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmrunProfitforalldrugsReport')}}">Medication Profit/Loss Report </a>
-                                  <a class="dropdown-item"  style="color: rgb(4, 38, 82); font-weight: bold;"href="{{url_for('PharmrunProductDetailsReport')}}">Profit/Loss Report(Per Drug)</a>
-                                  <a class="dropdown-item" style="color: rgb(62, 92, 3); font-weight: bold;" href="">Reorder Level</a>
+                                    <a class="dropdown-item"  style="color: rgb(4, 38, 82); font-weight: bold;" href="{{url_for('pharmStockReportbatch')}}">MY STOCK</a>
+                                    <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('pharmProfitLossReport')}}">Pharmacy Profit/Loss Report </a>
+                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('PharmrunProfitforalldrugsReport')}}">All Drugs Profit/Loss Report </a>
+                                  <a class="dropdown-item"  style="color: rgb(4, 38, 82); font-weight: bold;" href="{{url_for('PharmrunProductDetailsReport')}}">Profit/Loss Report(Per Drug)</a>
+                                  <a class="dropdown-item" style="color: rgb(62, 92, 3); font-weight: bold;" href="{{url_for('PharmReorderLevelReport')}}">Reorder Level</a>
                                   
-                                  <a class="dropdown-item" style="color: red; font-weight: bold;" href="">Expired Drugs</a>
+                                  <a class="dropdown-item" style="color: red; font-weight: bold;" href="{{url_for('PharmallexpireddrugsReport')}}">Expired Drugs</a>
+                                  <a class="dropdown-item"  style="color: rgb(4, 38, 82); font-weight: bold;" href="{{url_for('PharmViewAllPurchase')}}">All Purchases Report</a>
                                 </div>
                             </li>
                             
@@ -165,6 +166,7 @@
                             </div>
                         </li>
                     </ul>
+                    
                 </div>
             </nav>
         </div>
@@ -189,24 +191,19 @@
                                 <a class="nav-link active " href="{{url_for('Pharmacistdashboard')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>PHARMACY DASHBOARD</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                             </li>
-                                <a class="nav-link active" href="{{url_for('PharmDispenseLIst')}}" ><i class="fas fa-child" aria-hidden="true"></i>PHARMACY QUEUE<span class="badge badge-danger">{{count}}</span></a>
+                                <a class="nav-link active" href="{{url_for('PharmDispenseLIst')}}" ><i class="fa fa-wheelchair" aria-hidden="true"></i>PHARMACY QUEUE<span class="badge badge-danger">{{count}}</span></a>
 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmViewallprescriptions')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL PRESCRIPTIONS</a>
+                                <a class="nav-link active" href="{{url_for('PharmViewallprescriptions')}}"  ><i class="fa fa-medkit" aria-hidden="true"></i>ALL PRESCRIPTIONS</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmMedicationSalesReport')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>SALES REPORT(Med)</a>
+                                <a class="nav-link active" href="{{url_for('PharmMedicationSalesReport')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>TODAYS SALES REPORT</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmOTCBill')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>POS INVOICE</a>
+                                <a class="nav-link active" href="{{url_for('PharmOTCBill')}}"><i class="fa fa-money"  aria-hidden="true"></i>BILL WALK-IN</a>
                                 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmAllOtcBill')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>OTC SALES</a>
+                                <a class="nav-link active" href="{{url_for('PharmAllOtcBill')}}"><i class="fa fa-blind" aria-hidden="true"></i>ALL WALK-IN SALES</a>
                                 
                                 
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmStockReport')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>STOCK LEVELS</a>
-                                
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('PharmViewAllPurchase')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL PURCHASE REPORT</a>
                             </li>
                           
                         </ul>
@@ -224,6 +221,7 @@
             <div class="dashboard-ecommerce">
                 <div class="container-fluid dashboard-content ">
                     {% block content %}
+                   
 		        	{% endblock %}
                 </div>
             </div>
@@ -300,10 +298,8 @@
         $(document).ready(function() {
     $('#example').DataTable( {
         dom: 'Bfrtip',
-        buttons:[ {
-                    extend: "csv", title: "csv ReporT", className: "btn-sm"
-                }
-                , {
+        buttons:[ 
+            {
                     extend: "excel", title: "Excel Report", className: "btn-sm"
                 }
                 , {

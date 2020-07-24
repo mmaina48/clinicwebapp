@@ -27,20 +27,20 @@
     
   
         <form class="form-inline justify-content-left" method="POST" action="{{url_for('PharmMedicationSalesReport')}}">
+          <label style="font-weight: bolder; color: #000;">FILTER HERE TO VIEW OTHER DATES> </label>
+          <label style="font-weight: bolder; color: #000;"> Start Date:</label>
+          <input type="date" required class="form-control datepicker" id="min" placeholder="" name="Start_Date">
         
-          <label>Start Date:</label>
-          <input type="date" class="form-control datepicker" id="min" placeholder="" name="Start_Date">
-        
-          <label >End Date:</label> 
-          <input type="date" class="form-control datepicker" id="max" placeholder="" name="End_Date">
-          <button type="submit" id="filter" class="btn btn-success">Find</button>
+          <label style="font-weight: bolder; color: #000;" >>End Date:</label> 
+          <input type="date" required class="form-control datepicker" id="max" placeholder="" name="End_Date">
+          <button style="color: black;" type="submit" id="filter" class="btn btn-success">SEARCH</button>
         </form>
     </div>
    </div>
     </div>
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
-            <h3 class="card-header" style="color: black; font-weight: bold;">{{today}} Inventory sold report </h3>
+            <h3 class="card-header" style="color: black; font-weight: bold;">TODAYS SALES REPORT </h3>
             <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
@@ -135,6 +135,8 @@
             );
         }
     } );
+
+
 } );
 
 

@@ -19,28 +19,7 @@
   <div>
     
     
-    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-      <div class="card">
-          
-          <!-- ============================================================== -->
-      <!-- data table  -->
-      <!-- ============================================================== -->
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-  
-
-      <form class="form-inline justify-content-left">
-      
-        <label style="font-weight: bolder; color: #000;">Start Date:</label>
-        <input style="font-weight: bolder; color: #000;" type="date" class="form-control datepicker" id="min" placeholder="" name="Start_Date">
-      
-        <label style="font-weight: bolder; color: #000;" >End Date:</label> 
-        <input  style="font-weight: bolder; color: #000;"type="date" class="form-control datepicker" id="max" placeholder="" name="Start_Date">
-        <button style="font-weight: bolder; color: #000;" type="button" id="filter" class="btn btn-success">Find</button>
-        
-      </form>
-  </div>
- </div>
-  </div>
+   
 
     <!-- ============================================================== -->
     <!-- end pageheader -->
@@ -52,7 +31,7 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0" style="font-weight: bolder; color: #000;">Expenses</h3>
+                    <h3 class="mb-0" style="font-weight: bolder; color: #000;">ALL PAID EXPENSES</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -74,6 +53,7 @@
                                     <td>{{Expense.amount}}</td>
                                     <td>{{Expense.payment_type}}</td>
                                    
+
                                     <td>
                                       <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteModal{{Expense.id}}" >Delete</button>
                                       <div class="modal fade" id="deleteModal{{Expense.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">

@@ -1310,7 +1310,9 @@ def Pharmacistdashboard():
         Order.id.in_(order_ids),Order.status=="Active")).order_by(desc(Order.inserted_on)).all()
     
     patients=[x.id for x in Patient_on_dispense_queue]
+    
     count=len(patients)
+    
     return render_template('pharmdashboard.html',username=username,count=count)
 
 # Pharm dispense queue
@@ -1466,6 +1468,46 @@ def PharmMedicationSalesReport():
             OrderItems.order_id.in_(orders_idz))).all()
         return render_template("pharmmedsalesreport.html",todaysales=todaysales,today=today)
 
+
+# REORDER LEVEL REPORT
+@app.route('/pharm_Reorder_level/',methods=['GET','POST'])
+@login_required
+def PharmReorderLevelReport():
+    reorderproducts=PurchaseItems.query.filter(PurchaseItems.quantity == PurchaseItems.reorder_level).all()
+    return render_template('pharmreorderlevel.html',reorderproducts=reorderproducts)
+
+
+# ALL EXPIRED DRUGS REPORT
+@app.route('/pharmacy/allexpired_drugs/',methods=['GET','POST'])
+@login_required
+def PharmallexpireddrugsReport():
+    today = date.today()
+    allexpiredproducts=PurchaseItems.query.filter(PurchaseItems.expiry_date == today ).all()
+    return render_template('pharmallexpireddrugs.html',allexpiredproducts=allexpiredproducts)
+
+
+# pharm profit loss report
+@app.route('/Pharmacy/Profit_loss_report/',methods=['GET','POST'])
+@login_required
+def pharmProfitLossReport():
+    today = date.today()
+
+    TodaysExpenses=TrackExpense.query.filter(TrackExpense.inserted_by=="Pharmacist").all()
+    expense_amount=sum([x.amount for x in TodaysExpenses])
+
+    sales=OrderItems.query.filter(OrderItems.product_type=='Medication').all()
+    sales_amount=sum([x.total_amount for x in sales])
+
+    current_stock=PurchaseItems.query.all()
+    stock_value=sum([(x.quantity*x.buying_price) for x in current_stock])
+
+    profit =(sales_amount+stock_value)-(expense_amount)
+    
+
+    return render_template('pharmprofitloss.html',\
+    expense_amount=expense_amount,sales_amount=sales_amount,\
+    stock_value=stock_value,profit=profit,\
+    startdate=today)
 
 #Pharmacy Enter  Purchases
 @app.route('/PharmaddPurchase/',methods=['GET'])
@@ -1850,7 +1892,6 @@ def PharmrunProfitforalldrugsReport():
         purchase_cost=purchase_cost,profit=profit,\
         startdate=today)
     
-
 
 # ----------------------------------
 # ADMINPHARMACY VIEWS
@@ -2280,23 +2321,23 @@ def UpdateInvoice():
                 expry_date= expry_date_object
 
     
-        productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
+            productToreduce=PurchaseItems.query.filter_by(id=expry).filter(PurchaseItems.quantity > 0).first()
         
        
-        if (productToreduce is not None) and (expry_date is not None):
-           
-            productToreduce.quantity -=int(qty)
-            
-            itemlines=OrderItems(product_name=prod,expiry_date=expry_date,product_type=prodtyp,quantity=qty,buying_price=price,\
-            total_amount=total,order=order_to_update,product=product_name)
-            
-            
-            db.session.add(itemlines)
-            db.session.add(productToreduce)
+            if (productToreduce is not None) and (expry_date is not None):
 
-            db.session.commit()
-            db.session.commit()
-           
+                productToreduce.quantity -=int(qty)
+                
+                itemlines=OrderItems(product_name=prod,expiry_date=expry_date,product_type=prodtyp,quantity=qty,buying_price=price,\
+                total_amount=total,order=order_to_update,product=product_name)
+                
+                
+                db.session.add(itemlines)
+                db.session.add(productToreduce)
+
+                db.session.commit()
+                db.session.commit()
+            
             
         elif expry=='sev':
 
