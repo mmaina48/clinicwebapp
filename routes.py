@@ -174,25 +174,31 @@ def AllCustomers():
     customers=Customer.query.all()
     return render_template('allCustomers.html',customers=customers)
 
+
 #add patient by save 
 @app.route('/addpatient/',methods=['GET','POST'])
 @login_required
 def AddCustomer():
-    # generating an patient id function
-    pid=db.session.query(db.func.max(Customer.id)).one()
-    def patientid(setids):
-        import datetime
-        id=['0' if v is None else v for v in setids]
-        year=str(datetime.date.today().year) + '/100'
-        patient_id=year+ str(id[0])
-        return patient_id
+    # generating a patient id function
     
-    opd=patientid(pid)
 
     if request.method == 'POST':
+
+        
        
         try:
-            newcustomer = Customer(patient_id=request.form['patient_opd'],name=request.form['patient_name'],\
+            pid=db.session.query(db.func.max(Customer.id)).one()
+
+
+            def patientid(setids):
+                import datetime
+                id=['0' if v is None else v for v in setids]
+                year=str(datetime.date.today().year) + '/100'
+                patient_id=year+ str(id[0])
+                return patient_id
+            opd=patientid(pid)
+
+            newcustomer = Customer(patient_id=opd,name=request.form['patient_name'],\
             age=request.form['age'],gender=request.form['gendertype'],\
             patient_phone=request.form['patient_phone'],nhif_no=request.form['patient_nhif_no'],\
             National_id=request.form['patient_National_id'])
@@ -205,7 +211,7 @@ def AddCustomer():
             flash(f'This customer already exists','danger')
             return redirect(url_for('AddCustomer'))
     else:
-        return render_template('addCustomer.html',opd=opd)
+        return render_template('addCustomer.html')
 
 #Edit Patient
 @app.route('/patients/<int:customer_id>/edit/', methods = ['GET', 'POST'])
@@ -1357,6 +1363,26 @@ def PharmViewallprescriptions():
     if exists == False:
         flash(f'NO PRESCRIPTIONS FOUND! ','danger')
     return render_template('pharmacyallprescriptions.html',allinvoices=allinvoices)
+
+
+@app.route('/pharmacy/ViewPrescriptionNote/<int:invoice_id>/VIEW',methods=['GET','POST'])
+@login_required
+def PharmViewPrescription(invoice_id):
+    today = date.today()
+    yesterday = today - timedelta(days = 1) 
+    product_purchase=db.session.query(OrderItems).filter(and_( OrderItems.inserted_on >yesterday,\
+        OrderItems.order_id==invoice_id,OrderItems.product_type.like('Medication%'))).order_by(asc(OrderItems.inserted_on)).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient_id=order.customer_id
+    patient_name=order.customer_name
+    patient_data=Customer.query.filter_by(name=patient_name).first()
+    current_debt=patient_data.debt
+    patients=[s.name for s in Customer.query.all()]
+    products=[p.product_name for p in Product.query.all()]
+    patientdetails=Customer.query.filter_by(id=patient_id).one()
+    patvisits=Consultation.query.filter_by(customer_id=patient_id).order_by(desc(Consultation.inserted_on)).first()
+    return render_template('pharmviewprescription.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
+        products=products,current_debt=current_debt,patvisits=patvisits,patient_id=patient_id)
 
 
 @app.route('/pharmviewprescription/<int:invoice_id>/details',methods=['GET','POST'])
