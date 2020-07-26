@@ -171,7 +171,7 @@ def Cashierdashbord():
 @app.route('/allpatients/',methods=['GET','POST'])
 @login_required
 def AllCustomers():
-    customers=Customer.query.all()
+    customers=Customer.query.order_by(desc(Customer.created_on)).all()
     return render_template('allCustomers.html',customers=customers)
 
 
