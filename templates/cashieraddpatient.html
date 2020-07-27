@@ -1,0 +1,114 @@
+{% extends "cashiermain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="column">
+            <a href="{{url_for('CashierAllCustomers')}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Patients</a>
+            </div>
+        </div>
+    </div>
+   
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+             <!-- New customer -->
+             <div class="row">
+             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-body">
+             <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-bd lobidrag">                      
+                                <h3 class="card-header">Add Patient</h3>
+                      <form action="{{url_for('CashierAddCustomer')}}" class="form-vertical" id="insert_customer" method="post" accept-charset="utf-8">
+                        <div class="panel-body">
+                          
+                            <div class="form-group row">
+                                <label for="customer_name" class="col-sm-3 col-form-label">Name:<i class="text-danger">*</i></label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="patient_name" id="patient_name" placeholder="Enter Name" required="">
+                                </div>
+                            </div>
+       
+                               <div class="form-group row">
+                                <label for="email" class="col-sm-3 col-form-label">Age:<i class="text-danger">*</i></label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" required="" name ="age" id="Age" type="number" placeholder="Age" tabindex="2"> 
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">Gender:<i class="text-danger">*</i></label>
+                                <div class="col-sm-6">
+                                    <select name="gendertype" id="gendertype" class="form-control" required="" tabindex="3" >
+                                        <option value="none" selected="" disabled="">Select Gender
+                                        </option>
+                                        <option value="Female">Female</option>
+                                        <option value="Male">Male</option> 
+                                    </select>
+                                </div>
+                            </div>
+                           
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">Mobile No:<i class="text-danger">*</i></label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" required="" name ="patient_phone" id="mobile" type="text" placeholder="Mobile"  tabindex="3">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">National ID</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" required="" name ="patient_National_id" id="National" type="text" placeholder="National ID"  min="0" tabindex="3">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">NHIF</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" name ="patient_nhif_no" id="mobile" type="text" placeholder="NHIF"  tabindex="3">
+                                </div>
+                            </div>
+                            
+    
+                            <div class="form-group row">
+                                <label for="previous_balance" class="col-sm-3 col-form-label">Previous Balance</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" name="previous_balance" id="previous_balance" type="number" value="0" readonly placeholder="Previous Balance" tabindex="5">
+                                </div>
+                            </div>
+    
+                            <div class="form-group row">
+                                <label for="example-text-input" class="col-sm-4 col-form-label"></label>
+                                <div class="col-sm-6">
+                                    
+                                    <input type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="Save And New" tabindex="7"/>
+                                    <a href = "{{ url_for('CashierAllCustomers')}}"><button class="btn btn-warning"  type="button">Back</button></a>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        </form>                </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div>
+      </div>
+      {% endblock %}

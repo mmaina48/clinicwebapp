@@ -1,0 +1,94 @@
+{% extends "cashiermain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+             <!-- New customer -->
+             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-body">
+             <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-bd lobidrag">                      
+                                <h3 class="card-header">{{patient.name}} OPD {{patient.patient_id}} </h3>
+                      <form action="" class="form-vertical" id="insert_customer" method="post" accept-charset="utf-8">
+                        <div class="panel-body">
+    
+                            <div class="form-group row">
+                                <label for="customer_name" class="col-sm-3 col-form-label">Name:<i class="text-danger">*</i></label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="patient_name" id="patient_name" value="{{patient.name}}" required="">
+                                </div>
+                            </div>
+       
+                               <div class="form-group row">
+                                <label for="email" class="col-sm-3 col-form-label">Age:</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" required="" name ="age" id="Age" type="number" value="{{patient.age}}"  tabindex="2"> 
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">Gender:</label>
+                                <div class="col-sm-6">
+                                    <select name="gendertype" id="gendertype" class="form-control" required="" >
+                                        <option value="none" selected="" disabled="">Select Gender
+                                        </option>
+                                        <option value="Female">Female</option>
+                                        <option value="Male">Male</option> 
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">Mobile No:</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" required="" name ="patient_phone" id="mobile" type="text" placeholder="Mobile" value="{{patient.patient_phone}}" min="0" tabindex="3">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">National ID</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" required="" name ="patient_National_id" id="National" type="number" value="{{patient.National_id}}"   min="0" tabindex="3">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-sm-3 col-form-label">NHIF</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" name ="patient_nhif_no" id="mobile" type="number" value="{{patient.nhif_no}}"  tabindex="3">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="example-text-input" class="col-sm-4 col-form-label"></label>
+                                <div class="col-sm-6">
+                                    
+                                    <input style="font-weight: bold;color: black;" type="submit" id="add-customer" class="btn btn-success btn-large" name="add-customer" value="UPDATE" tabindex="7"/>
+                                    <a href = "{{ url_for('CashierAllCustomers')}}"><button class="btn btn-warning" style="font-weight: bold;color: black;"  type="button">Back</button></a>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        </div>
+                        </form>                
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+      </div>
+      {% endblock %}

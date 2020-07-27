@@ -1,0 +1,213 @@
+{% extends "cashiermain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h3 class="mb-2"  style="color: black; font-weight: bold;">CASHIER DASHBOARD</h3>
+               
+              <hr>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader  -->
+    
+    <!-- <div class="row">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Total Products</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1">24</h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-primary font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-primary bg-primary-light"><i class="fa fa-fw fa-arrow-up"></i></span><span class="ml-1">25%</span>
+                    </div>
+                </div>
+                <div class="card-body bg-light p-t-40 p-b-40">
+                    <div id="sparkline-revenue"></div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <a href="{{url_for('allProducts')}}" class="card-link">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Total Invoice</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1">300</h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-info font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-info bg-info-light"><i class="fa fa-fw fa-arrow-up"></i></span><span class="ml-1">25%</span>
+                    </div>
+                </div>
+                <div class="card-body bg-light p-t-40 p-b-40">
+                    <div id="sparkline-revenue3"></div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <a href="{{url_for('AllInvoices')}}" class="card-link">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Out Of stock</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1">200</h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-warning font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-warning bg-warning-light"><i class="fa fa-fw fa-arrow-up"></i></span> <span class="ml-1">25%</span>
+                    </div>
+                </div>
+                <div class="card-body bg-light p-b-40 p-t-40">
+                    <div id="sparkline-revenue4"></div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <a href="#" class="card-link">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Expired</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1">10</h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-secondary font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-danger bg-danger-light"><i class="fa fa-fw fa-arrow-down"></i></span><span class="ml-1">15%</span>
+                    </div>
+                </div>
+                <div class="card-body text-center bg-light p-t-40 p-b-40">
+                    <div id="sparkline-revenue2"></div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <a href="#" class="card-link">View Details</a>
+                </div>
+            </div>
+        </div>
+        
+    </div> -->
+     <!-- Second Counter -->
+
+     <div class="row">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card campaign-card text-center">
+                <div class="card-body">
+                    <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/invoice.png')}}" height="40" width="40" > </span></h2>
+                        <div class="campaign-info">
+                            <div class="small text-primary" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('AddInvoice')}}">Create New Invoice</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="card campaign-card text-center">
+                    <div class="card-body">
+                        <h2><span class="slight" 70px;"><img src="{{url_for('static',filename='images/pos_invoice.png.jpeg')}}" height="40" width="40" > </span></h2>
+                            <div class="campaign-info">
+                                <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('AddPurchase')}}">New Purchase</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card campaign-card text-center">
+                        <div class="card-body">
+                            <h2><span class="slight" 70px;"><img src="{{url_for('static',filename='images/product.png.jpeg')}}" height="40" width="40" > </span></h2>
+                                <div class="campaign-info">
+                                    <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('CashierAddproduct')}}">Add Product</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+       
+                    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="card campaign-card text-center">
+                            <div class="card-body">
+                                <h2><span class="slight" 70px;"><img src="{{url_for('static',filename='images/customer.png')}}" height="40" width="40" > </span></h2>
+                                    <div class="campaign-info">
+                                        <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('CashierAddCustomer')}}">Add Customer</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+</div>
+
+<!-- Third Counter -->
+<div class="row">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card campaign-card text-center">
+            <div class="card-body">
+                <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/sale.png')}}" height="40" width="40" > </span></h2>
+                    <div class="campaign-info">
+                        <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Sales Report</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card campaign-card text-center">
+                <div class="card-body">
+                    <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/purchase.png')}}" height="40" width="40" > </span></h2>
+                        <div class="campaign-info">
+                            <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Purchase Report</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="card campaign-card text-center">
+                    <div class="card-body">
+                        <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/stock.png')}}" height="40" width="40" > </span></h2>
+                            <div class="campaign-info">
+                                <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('StockReport')}}">Stock Report</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card campaign-card text-center">
+                        <div class="card-body">
+                            <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/account.png')}}" height="40" width="40" > </span></h2>
+                                <div class="campaign-info">
+                                    <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Todays Report</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+  
+</div>
+<br>
+<hr>
+    
+    </div>
+      {% endblock %}

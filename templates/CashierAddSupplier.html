@@ -1,0 +1,78 @@
+{% extends "cashiermain.html" %}
+{% block content %}
+<div class="container">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {%if messages %}
+            {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <i class="material-icons">close</i>
+              </button>
+              <span>
+                <b></b> {{ message }}</span>
+            </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+  </div>
+  <div>
+    
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="column">
+            <a href="{{url_for('CashieViewAllSuppliersList')}}" class="btn btn-primary m-b-5 m-r-2"><i class="ti-align-justify"> </i>All Suppliers</a>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- Start validation form -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card" >
+                <h3 class="card-header">Add New Supplier</h3>
+            
+                <div class="card-body">
+                    <form class="needs-validation" novalidate action="{{url_for('CashierAddSupplier')}}" method="POST">
+                        <div class="row">
+                            
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="validationCustom03">Supplier Name</label>
+                                <input type="text" class="form-control" name="supplier_name" id="validationCustom03" placeholder="Enter supplier name" required="">
+                                <div class="invalid-feedback">
+                                    Please Fill this Field.
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                <label for="validationCustom04">supplier phone</label>
+                              
+                                <input required="" type="text" name="supplier_phone" min="0" max="1000000000000" placeholder="Enter Supplier Contact" class="form-control">
+                                <div class="invalid-feedback">
+                                    Please Fill this Field.
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            <button class="btn btn-success" type="submit">Save</button>
+                            <a href = "{{ url_for('CashieViewAllSuppliersList')}}"><button class="btn btn-warning"  type="button">Cancel</button></a>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end validation form -->
+        <!-- ============================================================== -->
+    </div>
+      </div>
+      {% endblock %}

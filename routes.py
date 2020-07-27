@@ -69,7 +69,7 @@ def login():
                 if user.role=="Admin":
                     return redirect(url_for('Admindashbord'))
                 elif user.role=="Cashier":
-                    return redirect(url_for('Cashierdashboard'))
+                    return redirect(url_for('Cashierdashbord'))
                 elif user.role=="Nurse":
                     return redirect(url_for('Nursesdashbord'))
                 elif user.role=="Doctor":
@@ -148,24 +148,12 @@ def deleteUser(user_id):
         return redirect(url_for('AllUsers'))
 
 # ----------------------------------------------------------------------------------------------
-# ALL DASHBOARDS
-# admins
+# ADMINS DASHBOARD
 @app.route('/AdminDashboard/',methods=['GET','POST'])
 @login_required
 def Admindashbord():
     return render_template('admindashboard.html',username=current_user.username)
 
-
-
-
-# Cashiers
-@app.route('/CashierDashboard/',methods=['GET','POST'])
-@login_required
-def Cashierdashbord():
-    return render_template('cashierdashboard.html',username=current_user.username)
-
-
-# ----------------------------------------------------------------------------------------------
 # Patients
 #all patients
 @app.route('/allpatients/',methods=['GET','POST'])
@@ -175,20 +163,16 @@ def AllCustomers():
     return render_template('allCustomers.html',customers=customers)
 
 
+
 #add patient by save 
 @app.route('/addpatient/',methods=['GET','POST'])
 @login_required
 def AddCustomer():
     # generating a patient id function
     
-
     if request.method == 'POST':
-
-        
-       
         try:
             pid=db.session.query(db.func.max(Customer.id)).one()
-
 
             def patientid(setids):
                 import datetime
@@ -238,6 +222,7 @@ def editPatient(customer_id):
     else:
         return render_template('editCustomer.html',customer_id=customer_id, patient= editedItem)
 
+
 #Delete Patient
 @app.route('/patient/<int:patient_id>/delete/', methods = ['POST'])
 @login_required
@@ -248,6 +233,338 @@ def deletePatient(patient_id):
         flash(f'Patient successfully Deleted!','danger')
         return redirect(url_for('AllCustomers', patient_id = patient_id))
 
+# ===============
+
+#Admin Products
+@app.route('/products/',methods=['GET','POST'])
+@login_required
+def allProducts():
+    products = Product.query.all()
+    
+    return render_template('allProducts.html', products = products) 
+
+
+# Add Product 
+@app.route('/addProduct/',methods=['GET','POST'])
+@login_required
+def Addproduct():
+    if request.method == 'POST':
+        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.product_name} Successfully Created!', 'success')
+            return redirect(url_for('allProducts'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This product already exists','danger')
+            return redirect(url_for('Addproduct'))
+    else:
+        return render_template('addProduct.html')
+
+
+#Edit a  product
+@app.route('/product/<int:product_id>/edit/', methods = ['GET', 'POST'])
+@login_required
+def editProduct(product_id):
+    editedItem = Product.query.filter_by(id = product_id).one()
+    if request.method == 'POST':
+        if request.form['product_name']:
+          editedItem.product_name = request.form['product_name']
+        if request.form['product_type']:
+          editedItem.product_type = request.form['product_type']
+        if request.form['sell_price']:
+          editedItem.sell_price = request.form['sell_price'] 
+       
+
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f'Your product {editedItem.product_name}   has been updated!', 'success')
+        return redirect(url_for('allProducts'))
+    else:
+        return render_template('editProduct.html',product_id=product_id, d = editedItem)
+
+
+#Delete a product
+@app.route('/products/<int:product_id>/delete/', methods = ['POST'])
+@login_required
+def deleteProduct(product_id):
+        productToDelete = Product.query.filter_by(id = product_id).one()
+        db.session.delete(productToDelete)
+        db.session.commit()
+        flash(f'product successfully Delete!','danger')
+        return redirect(url_for('allProducts', product_id = product_id))
+
+# ========
+#Admin  Supplier
+@app.route('/suppliers/')
+@login_required
+def AllSuppliers():
+    suppliers = Supplier.query.all()
+    return render_template('allSuppliers.html',suppliers=suppliers)
+
+
+# Add Supplier
+@app.route('/addSupplier/',methods=['GET','POST'])
+@login_required
+def AddSupplier():
+    if request.method == 'POST':
+        newItem = Supplier(supplier_name=request.form['supplier_name'],supplier_phone=request.form['supplier_phone'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.supplier_name} Successfully Created!', 'success')
+            return redirect(url_for('AllSuppliers'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Supplier already exists','danger')
+            return redirect(url_for('AddSupplier'))
+    else:
+        return render_template('addSupplier.html')
+
+
+# Edit suppliers
+@app.route('/supplier/<int:supplier_id>/edit/', methods = ['GET', 'POST'])
+@login_required
+def EditSupplier(supplier_id):
+    editedItem = Supplier.query.filter_by(id = supplier_id).one()
+    if request.method == 'POST':
+        if request.form['supplier_name']:
+          editedItem.supplier_name = request.form['supplier_name']
+        if request.form['supplier_phone']:
+          editedItem.supplier_phone = request.form['supplier_phone']
+    
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f' {editedItem.supplier_name} record has been updated!', 'success')
+        return redirect(url_for('AllSuppliers'))
+    else:
+        return render_template('editSupplier.html',supplier_id=supplier_id, s= editedItem)
+
+
+@app.route('/supplier/<int:supplier_id>/delete/', methods = ['POST'])
+@login_required
+def deleteSupplier(supplier_id):
+        supplierToDelete = Supplier.query.filter_by(id = supplier_id).one()
+        db.session.delete(supplierToDelete)
+        db.session.commit()
+        flash(f'Supplier successfully Deleted!','danger')
+        return redirect(url_for('AllSuppliers', supplier_id = supplier_id))
+
+# ======
+# API ENDPOINT
+@app.route('/productprice/<product>')
+def Productprice(product):
+    data=Product.query.filter_by(product_name=product).all()
+    dataArray=[]
+    for product in data:
+        productobj={}
+        productobj['id']=product.id
+        productobj['product_type']=product.product_type
+        productobj['sell_price']=product.sell_price
+        dataArray.append(productobj)
+    return jsonify({'Productprice': dataArray})
+
+# ---------------------------------------------------------------------------------------------
+
+# Cashiers Dashboard
+@app.route('/CashierDashboard/',methods=['GET','POST'])
+@login_required
+def Cashierdashbord():
+    return render_template('cashierdashboard.html',username=current_user.username)
+
+#Cashier Patients
+@app.route('/Cashier/allpatients/',methods=['GET','POST'])
+@login_required
+def CashierAllCustomers():
+    customers=Customer.query.order_by(desc(Customer.created_on)).all()
+    return render_template('cashierallCustomers.html',customers=customers)
+
+
+#add patient by save 
+@app.route('/cashier/addpatient/',methods=['GET','POST'])
+@login_required
+def CashierAddCustomer():
+    # generating a patient id function
+    if request.method == 'POST':
+        try:
+            pid=db.session.query(db.func.max(Customer.id)).one()
+            def patientid(setids):
+                import datetime
+                id=['0' if v is None else v for v in setids]
+                year=str(datetime.date.today().year) + '/100'
+                patient_id=year+ str(id[0])
+                return patient_id
+            opd=patientid(pid)
+
+            newcustomer = Customer(patient_id=opd,name=request.form['patient_name'],\
+            age=request.form['age'],gender=request.form['gendertype'],\
+            patient_phone=request.form['patient_phone'],nhif_no=request.form['patient_nhif_no'],\
+            National_id=request.form['patient_National_id'])
+            db.session.add(newcustomer)
+            db.session.commit()
+            flash(f' {newcustomer.name} Successfully Added!', 'success')
+            return redirect(url_for('CashierAllCustomers'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This customer already exists','danger')
+            return redirect(url_for('AddCustomer'))
+    else:
+        return render_template('cashieraddpatient.html')
+
+#Edit Patient
+@app.route('/patients/<int:customer_id>/cashier/edit/', methods = ['GET', 'POST'])
+@login_required
+def CashiereditPatient(customer_id):
+    editedItem = Customer.query.filter_by(id = customer_id).one()
+    if request.method == 'POST':
+        if request.form['patient_name']:
+          editedItem.name = request.form['patient_name']
+        if request.form['age']:
+          editedItem.age = request.form['age']
+        if request.form['gendertype']:
+          editedItem.gender = request.form['gendertype']
+        if request.form['patient_phone']:
+          editedItem.patient_phone = request.form['patient_phone']  
+        if request.form['patient_nhif_no']:
+            editedItem.nhif_no = request.form['patient_nhif_no'] 
+        if request.form['patient_National_id']:
+            editedItem.National_id = request.form['patient_National_id'] 
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f'{editedItem.name}record has been updated!', 'success')
+        return redirect(url_for('CashierAllCustomers'))
+    else:
+        return render_template('cashiereditCustomer.html',customer_id=customer_id, patient= editedItem)
+
+
+#Delete Patient
+@app.route('/patient/<int:patient_id>/cashier/delete/', methods = ['POST'])
+@login_required
+def CashierdeletePatient(patient_id):
+        patientToDelete =Customer.query.filter_by(id = patient_id).one()
+        db.session.delete(patientToDelete)
+        db.session.commit()
+        flash(f'Patient successfully Deleted!','danger')
+        return redirect(url_for('CashierAllCustomers', patient_id = patient_id))
+
+
+# ==============
+# Products
+@app.route('/CadhierView/allproducts/',methods=['GET','POST'])
+@login_required
+def CashierViewallProducts():
+    products = Product.query.all()
+    return render_template('chashierviewallProducts.html', products = products) 
+
+
+# Add Product 
+@app.route('/Cashier/addProduct/',methods=['GET','POST'])
+@login_required
+def CashierAddproduct():
+    if request.method == 'POST':
+        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.product_name} Successfully Created!', 'success')
+            return redirect(url_for('CashierViewallProducts'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This product already exists','danger')
+            return redirect(url_for('CashierAddproduct'))
+    else:
+        return render_template('CashierAddproduct.html')
+
+
+#Edit a  product
+@app.route('/product/<int:product_id>/cashier/edit/', methods = ['GET', 'POST'])
+@login_required
+def CashiereditProduct(product_id):
+    editedItem = Product.query.filter_by(id = product_id).one()
+    if request.method == 'POST':
+        if request.form['product_name']:
+          editedItem.product_name = request.form['product_name']
+        if request.form['product_type']:
+          editedItem.product_type = request.form['product_type']
+        if request.form['sell_price']:
+          editedItem.sell_price = request.form['sell_price'] 
+       
+
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f'Your product {editedItem.product_name}   has been updated!', 'success')
+        return redirect(url_for('CashierViewallProducts'))
+    else:
+        return render_template('cashiereditProduct.html',product_id=product_id, d = editedItem)
+
+
+#Delete a product
+@app.route('/products/<int:product_id>/cashier/delete/', methods = ['POST'])
+@login_required
+def CashierdeleteProduct(product_id):
+        productToDelete = Product.query.filter_by(id = product_id).one()
+        db.session.delete(productToDelete)
+        db.session.commit()
+        flash(f'product successfully Delete!','danger')
+        return redirect(url_for('CashierViewallProducts', product_id = product_id))
+
+
+# ===========
+# Supplier
+@app.route('/CashierViewAllsuppliers/')
+@login_required
+def CashieViewAllSuppliersList():
+    suppliers = Supplier.query.all()
+    return render_template('cashierviewallSuppliers.html',suppliers=suppliers)
+
+
+# Add Supplier
+@app.route('/cashier/addSupplier/',methods=['GET','POST'])
+@login_required
+def CashierAddSupplier():
+    if request.method == 'POST':
+        newItem = Supplier(supplier_name=request.form['supplier_name'],supplier_phone=request.form['supplier_phone'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.supplier_name} Successfully Created!', 'success')
+            return redirect(url_for('CashieViewAllSuppliersList'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Supplier already exists','danger')
+            return redirect(url_for('CashierAddSupplier'))
+    else:
+        return render_template('CashierAddSupplier.html')
+
+
+# Edit suppliers
+@app.route('/supplier/<int:supplier_id>/cashier/edit/', methods = ['GET', 'POST'])
+@login_required
+def CashierEditSupplier(supplier_id):
+    editedItem = Supplier.query.filter_by(id = supplier_id).one()
+    if request.method == 'POST':
+        if request.form['supplier_name']:
+          editedItem.supplier_name = request.form['supplier_name']
+        if request.form['supplier_phone']:
+          editedItem.supplier_phone = request.form['supplier_phone']
+    
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f' {editedItem.supplier_name} record has been updated!', 'success')
+        return redirect(url_for('CashieViewAllSuppliersList'))
+    else:
+        return render_template('CashierEditSupplier.html',supplier_id=supplier_id, s= editedItem)
+
+
+@app.route('/supplier/<int:supplier_id>/cashier/delete/', methods = ['POST'])
+@login_required
+def CashierdeleteSupplier(supplier_id):
+        supplierToDelete = Supplier.query.filter_by(id = supplier_id).one()
+        db.session.delete(supplierToDelete)
+        db.session.commit()
+        flash(f'Supplier successfully Deleted!','danger')
+        return redirect(url_for('CashieViewAllSuppliersList', supplier_id = supplier_id))
 
 # ------------------------------------------------------------------------------------------
 # Vitals
@@ -2442,135 +2759,7 @@ def InvoiceDetail(invoice_id):
 
 # -----------------------------------------------------------------------------------------
 
-# Products
-@app.route('/products/',methods=['GET','POST'])
-@login_required
-def allProducts():
-    products = Product.query.all()
-    
-    return render_template('allProducts.html', products = products) 
-
-
-# Add Product 
-@app.route('/addProduct/',methods=['GET','POST'])
-@login_required
-def Addproduct():
-    if request.method == 'POST':
-        newItem = Product(product_name=request.form['product_name'],product_type=request.form['product_type'],sell_price=request.form['sell_price'])
-        db.session.add(newItem)
-        try:
-            db.session.commit()
-            flash(f' {newItem.product_name} Successfully Created!', 'success')
-            return redirect(url_for('allProducts'))
-        except IntegrityError:
-            db.session.rollback()
-            flash(f'This product already exists','danger')
-            return redirect(url_for('Addproduct'))
-    else:
-        return render_template('addProduct.html')
-
-
-#Edit a  product
-@app.route('/product/<int:product_id>/edit/', methods = ['GET', 'POST'])
-@login_required
-def editProduct(product_id):
-    editedItem = Product.query.filter_by(id = product_id).one()
-    if request.method == 'POST':
-        if request.form['product_name']:
-          editedItem.product_name = request.form['product_name']
-        if request.form['product_type']:
-          editedItem.product_type = request.form['product_type']
-        if request.form['sell_price']:
-          editedItem.sell_price = request.form['sell_price'] 
-       
-
-        db.session.add(editedItem)
-        db.session.commit() 
-        flash(f'Your product {editedItem.product_name}   has been updated!', 'success')
-        return redirect(url_for('allProducts'))
-    else:
-        return render_template('editProduct.html',product_id=product_id, d = editedItem)
-
-
-#Delete a product
-@app.route('/products/<int:product_id>/delete/', methods = ['POST'])
-@login_required
-def deleteProduct(product_id):
-        productToDelete = Product.query.filter_by(id = product_id).one()
-        db.session.delete(productToDelete)
-        db.session.commit()
-        flash(f'product successfully Delete!','danger')
-        return redirect(url_for('allProducts', product_id = product_id))
-
-
-# API ENDPOINT
-@app.route('/productprice/<product>')
-def Productprice(product):
-    data=Product.query.filter_by(product_name=product).all()
-    dataArray=[]
-    for product in data:
-        productobj={}
-        productobj['id']=product.id
-        productobj['product_type']=product.product_type
-        productobj['sell_price']=product.sell_price
-        dataArray.append(productobj)
-    return jsonify({'Productprice': dataArray})
-
 # ---------------------------------------------------------------------------------------------
-# Supplier
-@app.route('/suppliers/')
-@login_required
-def AllSuppliers():
-    suppliers = Supplier.query.all()
-    return render_template('allSuppliers.html',suppliers=suppliers)
-
-
-# Add Supplier
-@app.route('/addSupplier/',methods=['GET','POST'])
-@login_required
-def AddSupplier():
-    if request.method == 'POST':
-        newItem = Supplier(supplier_name=request.form['supplier_name'],supplier_phone=request.form['supplier_phone'])
-        db.session.add(newItem)
-        try:
-            db.session.commit()
-            flash(f' {newItem.supplier_name} Successfully Created!', 'success')
-            return redirect(url_for('AllSuppliers'))
-        except IntegrityError:
-            db.session.rollback()
-            flash(f'This Supplier already exists','danger')
-            return redirect(url_for('AddSupplier'))
-    else:
-        return render_template('addSupplier.html')
-
-
-# Edit suppliers
-@app.route('/supplier/<int:supplier_id>/edit/', methods = ['GET', 'POST'])
-@login_required
-def EditSupplier(supplier_id):
-    editedItem = Supplier.query.filter_by(id = supplier_id).one()
-    if request.method == 'POST':
-        if request.form['supplier_name']:
-          editedItem.supplier_name = request.form['supplier_name']
-        if request.form['supplier_phone']:
-          editedItem.supplier_phone = request.form['supplier_phone']
-    
-        db.session.add(editedItem)
-        db.session.commit() 
-        flash(f' {editedItem.supplier_name} record has been updated!', 'success')
-        return redirect(url_for('AllSuppliers'))
-    else:
-        return render_template('editSupplier.html',supplier_id=supplier_id, s= editedItem)
-
-
-@app.route('/supplier/<int:supplier_id>/delete/', methods = ['POST'])
-@login_required
-def deleteSupplier(supplier_id):
-        supplierToDelete = Supplier.query.filter_by(id = supplier_id).one()
-        db.session.delete(supplierToDelete)
-        db.session.commit()
-        flash(f'Supplier successfully Deleted!','danger')
-        return redirect(url_for('AllSuppliers', supplier_id = supplier_id))
 
 # Supplier API
 @app.route('/supplierdata/<supplier>')
