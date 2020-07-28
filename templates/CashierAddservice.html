@@ -17,7 +17,15 @@
     {%endwith%}
   </div>
   <div>
-  
+    
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="column">
+            <a style="font-weight: bold; color: #000;" href="{{url_for('CashierViewservices')}}" class="btn btn-success m-b-5 m-r-2" ><i class="ti-align-justify"> </i>ALL SERVICES</a>
+            </div>
+        </div>
+    </div>
+    
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
@@ -25,48 +33,45 @@
         <!-- ============================================================== -->
         <!-- Start validation form -->
         <!-- ============================================================== -->
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="card">
-                <h3 class="card-header">Edit  {{d.product_name}}</h3>
+        <div class="col-xl-8 col-lg-6 col-md-12 col-sm-12 col-12">
+            <div class="card justify-content-center">
+                <h3 class="card-header" style="font-weight: bold; color: #000;">Add New Service</h3>
             
                 <div class="card-body">
-                    <form class="needs-validation" novalidate action="" method="POST">
+                    <form class="needs-validation justify-content-center" novalidate action="{{url_for('CashierAddservice')}}" method="POST">
                         <div class="row">
-                            
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label style="color: black;" for="validationCustom03">Product Nmae</label>
-                                <input style="color: black;" type="text" class="form-control" name="product_name" id="validationCustom03" placeholder="Enter Product Name" value="{{d.product_name}}" required="">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-2">
+                                <label style="font-weight: bold; color: #000;" for="validationCustom03">Service Name</label>
+                                <input style="font-weight: bold; color: #000;" type="text" class="form-control" name="product_name" id="validationCustom03" placeholder="Enter Product Name" required="">
                                 <div class="invalid-feedback">
                                     Please Fill this Field.
                                 </div>
                             </div>
                             <div style="display: none;" class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label for="validationCustom04">Product Type</label>
-                                <input type="text" class="form-control" name="product_type" id="validationCustom04" value="{{d.product_type}}" placeholder="Enter Product Type" required="">
-                                <div class="invalid-feedback">
-                                    Please Fill this Field.
-                                </div>
+                                <label style="font-weight: bold; color: #000;" for="validationCustom04">Type</label>
+                                <input style="font-weight: bold; color: #000;"  type="text" readonly name="product_type" value="Service" class="form-control">
                             </div>
                         </div>
                         <br>
                         <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label style="color: black;">Selling Price</label>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-2">
+                                <label style="font-weight: bold; color: #000;">Selling Price</label>
                     
-                                <input style="color: black;" required="" type="number" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" value="{{d.sell_price}}" class="form-control">
+                                <input style="font-weight: bold; color: #000;" required="" type="number" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" class="form-control">
                                 <div class="invalid-feedback">
                                     Please provide a valid Selling price.
                                 </div>
                             </div>
-                              
+                                
                         </div>
                         <br>
                         <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                            <button style="color: black;" class="btn btn-success" type="submit">Save</button>
-                            <a style="color: black;" href = "{{ url_for('CashierViewallProducts')}}"><button class="btn btn-warning"   type="button">Cancel</button></a>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 " >
+                            <button style="font-weight: bold; color: #000;" class="btn btn-success" type="submit">Save</button>
+                            <a href = "{{ url_for('CashierViewservices')}}"><button  style="font-weight: bold; color: #000;" class="btn btn-warning"  style="float: center;" type="button">Cancel</button></a>
                         </div>
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            
                             
                         </div>
                     </div>
@@ -79,4 +84,7 @@
         <!-- ============================================================== -->
     </div>
       </div>
+      {% endblock %}
+      {% block script%}
+      
       {% endblock %}

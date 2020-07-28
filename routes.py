@@ -22,9 +22,6 @@ login_manager.login_view='login'
 
 
 
-
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -365,6 +362,99 @@ def Productprice(product):
         dataArray.append(productobj)
     return jsonify({'Productprice': dataArray})
 
+
+# Add Expences
+@app.route('/addexpensecategory/',methods=['GET','POST'])
+@login_required
+def AddExpenseCategory():
+    if request.method == 'POST':
+        newItem = Expense(ExpenseCategory_name=request.form['ExpenseCategory_name'])
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.ExpenseCategory_name} Successfully Added!', 'success')
+            return redirect(url_for('AllExpenses'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Expense Category already exists','danger')
+            return redirect(url_for('AddExpenseCategory'))
+    else:
+        return render_template('addExpenseCategory.html')
+
+
+# all Expences
+@app.route('/allexpenses/')
+@login_required
+def AllExpenses():
+    Expensecategory = Expense.query.all()
+    return render_template('allExpenseCategory.html',Expensecategory=Expensecategory)
+
+
+# edit expense
+@app.route('/expense/<int:expense_id>/edit/', methods = ['POST'])
+@login_required
+def editexpe(expense_id):
+
+    editedItem = Expense.query.filter_by(id =expense_id).one()
+    editedItem.ExpenseCategory_name = request.form['expense']
+    db.session.add(editedItem)
+    db.session.commit() 
+    flash(f'expense has been updated!', 'success')
+    return redirect(url_for('AllExpenses'))
+    
+
+# delete expense
+@app.route('/expense/<int:expense_id>/delete/', methods = ['POST'])
+@login_required
+def deleteExpense(expense_id):
+        expenseToDelete = Expense.query.filter_by(id = expense_id).one()
+        db.session.delete(expenseToDelete)
+        db.session.commit()
+        flash(f'Expense successfully Deleted!','danger')
+        return redirect(url_for('AllExpenses', expense_id = expense_id))
+
+
+# TrackExpense
+@app.route('/trackexpenses/',methods=['GET','POST'])
+@login_required
+def TrackExpenses():
+    entries=[E.ExpenseCategory_name for E in Expense.query.all()]
+    if request.method == 'POST':
+        date_str = request.form['dtpDate']
+        date_object = datetime.strptime(date_str, "%Y-%m-%d").date()
+        newItem = TrackExpense(created_on=date_object,expense_type=request.form['expense_type'],payment_type=request.form['paytype'],amount=int(request.form['amount']))
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.expense_type} Successfully Added!', 'success')
+            return redirect(url_for('AllTrackedExpenses'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Expense Category already exists','danger')
+            return redirect(url_for('TrackExpenses'))
+    else:
+        return render_template('trackExpense.html',entries=entries)
+
+
+# all tracked Expences
+@app.route('/alltrackedexpenses/',methods=['GET','POST'])
+@login_required
+def AllTrackedExpenses():
+    trackedexpense=TrackExpense.query.all()
+    return render_template("expenseStatement.html",trackedexpense=trackedexpense)
+
+
+# delete a tracked expense
+@app.route('/trackedexpense/<int:Expense_id>/delete/', methods = ['POST'])
+@login_required
+def deleteTrackedExpense(Expense_id):
+        expenseToDelete = TrackExpense.query.filter_by(id = Expense_id).one()
+        db.session.delete(expenseToDelete)
+        db.session.commit()
+        flash(f'Expense successfully Deleted!','danger')
+        return redirect(url_for('AllTrackedExpenses'))
+
+
 # ---------------------------------------------------------------------------------------------
 
 # Cashiers Dashboard
@@ -448,13 +538,106 @@ def CashierdeletePatient(patient_id):
         flash(f'Patient successfully Deleted!','danger')
         return redirect(url_for('CashierAllCustomers', patient_id = patient_id))
 
+# ================
+# Cashier Billing
+# show all orders 
+@app.route('/Cashier/patientBill/<int:patient_id>/new/', methods=['GET'])
+@login_required
+def CashierCreatpatientBill(patient_id):
+    patient =Customer.query.filter_by(id=patient_id).one()
+    previusdebt=patient.debt
+    products=[p.product_name for p in Product.query.all()]
+    patients=[s.name for s in Customer.query.all()]
+    patientids=[s.patient_id for s in Customer.query.all()]
+   
+    return render_template('cashieraddpatientInvoice.html', patient_id=patient_id,patient=patient,products=products,patients=patients,previusdebt=previusdebt,patientids=patientids)
+
+
+@app.route('/Cashier/View/allinvoices/',methods=['GET','POST'])
+@login_required
+def CashierAllInvoices():
+    allinvoices=Order.query.order_by(Order.inserted_on.desc()).all()
+    return render_template('cashierviewallinvoices.html',allinvoices=allinvoices)
+
+
+@app.route('/Cashier/InvoiceDetails/<int:invoice_id>/',methods=['GET','POST'])
+@login_required
+def CashierViewInvoiceDetail(invoice_id):
+    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient=order.customer_id
+    patientdetails=Customer.query.filter_by(id=patient).one()
+    return render_template('cashierviewinvoiceDetails.html',product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails)
+
+
+@app.route('/cashier/updateinvoice/<int:invoice_id>/edit',methods=['GET','POST'])
+@login_required
+def CashierInvoiceUpdate(invoice_id):
+    product_purchase=OrderItems.query.filter_by(order_id=invoice_id).all()
+    order=Order.query.filter_by(id=invoice_id).one()
+    patient=order.customer_id
+    patient_name=order.customer_name
+    patient_data=Customer.query.filter_by(name=patient_name).first()
+    current_debt=patient_data.debt
+    patients=[s.name for s in Customer.query.all()]
+    products=[p.product_name for p in Product.query.all()]
+    patientdetails=Customer.query.filter_by(id=patient).one()
+    return render_template('chashiereditinvoice.html',patients=patients,product_purchase=product_purchase,invoice_id=invoice_id,order=order,patientdetails=patientdetails,\
+        products=products,current_debt=current_debt)
+
+
+@app.route('/Cahier/<int:invoice_id>/delete/', methods = ['POST'])
+@login_required
+def CashierdeleteInvoice(invoice_id):
+        InvoiceToDelete =Order.query.filter_by(id = invoice_id).one()
+        customerId=InvoiceToDelete.customer_id
+        balance=InvoiceToDelete.due_balance
+        debt_pay=InvoiceToDelete.paydue_amount
+        
+        patientToAdd=Customer.query.filter_by(id=customerId).one()
+        patientToAdd.debt -=int(balance)
+        patientToAdd.debt +=int(debt_pay)
+       
+        
+        orderitems=OrderItems.query.filter_by(order_id=invoice_id,product_type='Medication').all()
+        print(orderitems)
+        for item in orderitems:
+            prodname=item.product_name
+            prodexpiry=item.expiry_date
+            prodquanty=item.quantity
+
+            print(item.expiry_date)
+
+            stock_item=PurchaseItems.query.filter_by(product_name=prodname,expiry_date=prodexpiry).first()
+            stock_item.quantity += prodquanty
+
+            db.session.add(stock_item)
+            db.session.commit()
+
+            db.session.delete(item)
+            db.session.commit()
+
+        allorderservice=OrderItems.query.filter_by(order_id=invoice_id,product_type='Service').all()
+        for service in allorderservice:
+            db.session.delete(service)
+            db.session.commit()
+            
+        db.session.add(patientToAdd)
+        db.session.commit()
+
+        db.session.delete(InvoiceToDelete)
+        db.session.commit()
+
+        flash(f'Invoice  successfully Deleted!','danger')
+        return redirect(url_for('CashierAllInvoices'))
+
 
 # ==============
 # Products
 @app.route('/CadhierView/allproducts/',methods=['GET','POST'])
 @login_required
 def CashierViewallProducts():
-    products = Product.query.all()
+    products = Product.query.filter(Product.product_type=="Medication").all()
     return render_template('chashierviewallProducts.html', products = products) 
 
 
@@ -508,6 +691,68 @@ def CashierdeleteProduct(product_id):
         db.session.commit()
         flash(f'product successfully Delete!','danger')
         return redirect(url_for('CashierViewallProducts', product_id = product_id))
+
+# =========
+# services
+@app.route('/Cashier/allservice/',methods=['GET','POST'])
+@login_required
+def CashierViewservices():
+    products = Product.query.filter(Product.product_type=="Service").all()
+    return render_template('cashierviewallservices.html', products = products) 
+
+# Add Product 
+@app.route('/Cashier/addservice/',methods=['GET','POST'])
+@login_required
+def CashierAddservice():
+    if request.method == 'POST':
+        username=current_user.role
+        newItem = Product(product_name=request.form['product_name']\
+        ,product_type=request.form['product_type'],sell_price=request.form['sell_price'],\
+            inserted_by=username)
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.product_name} Successfully Created!', 'success')
+            return redirect(url_for('CashierViewservices'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Service already exists','danger')
+            return redirect(url_for('CashierAddservice'))
+    else:
+        return render_template('CashierAddservice.html')
+
+
+#Edit a service
+@app.route('/cashier/<int:product_id>/edit/service/', methods = ['GET', 'POST'])
+@login_required
+def CashiereditService(product_id):
+    editedItem = Product.query.filter_by(id = product_id).one()
+    username=current_user.role
+    if request.method == 'POST':
+        if request.form['product_name']:
+          editedItem.product_name = request.form['product_name']
+    
+        if request.form['sell_price']:
+          editedItem.sell_price = request.form['sell_price'] 
+        editedItem.inserted_by=username
+
+        db.session.add(editedItem)
+        db.session.commit() 
+        flash(f'Your Service {editedItem.product_name} has been updated!', 'success')
+        return redirect(url_for('CashierViewservices'))
+    else:
+        return render_template('cashiereditservice.html',product_id=product_id, d = editedItem)
+
+
+#Delete a product
+@app.route('/Cashier/delete/service/<int:product_id>/', methods = ['POST'])
+@login_required
+def CashierdeleteService(product_id):
+        productToDelete = Product.query.filter_by(id = product_id,).one()
+        db.session.delete(productToDelete)
+        db.session.commit()
+        flash(f'Service successfully Delete!','danger')
+        return redirect(url_for('CashierViewservices', product_id = product_id))
 
 
 # ===========
@@ -565,6 +810,107 @@ def CashierdeleteSupplier(supplier_id):
         db.session.commit()
         flash(f'Supplier successfully Deleted!','danger')
         return redirect(url_for('CashieViewAllSuppliersList', supplier_id = supplier_id))
+
+
+# =========
+
+
+#Cashier Add Expences
+@app.route('/Cashier/addexpensecategory/',methods=['GET','POST'])
+@login_required
+def CashierAddExpenseCategory():
+    if request.method == 'POST':
+        newItem = Expense(ExpenseCategory_name=request.form['ExpenseCategory_name'],\
+            inserted_by=current_user.username)
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.ExpenseCategory_name} Successfully Added!', 'success')
+            return redirect(url_for('CashierViewAllExpenses'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Expense Category already exists','danger')
+            return redirect(url_for('CashierAddExpenseCategory'))
+    else:
+        return render_template('cashieraddExpenseCategory.html')
+
+
+# all Expences
+@app.route('/Cashier/view/allexpenses/')
+@login_required
+def CashierViewAllExpenses():
+    Expensecategory = Expense.query.filter(Expense.inserted_by=='Cashier').all()
+    return render_template('cashierviewallExpenseCategory.html',Expensecategory=Expensecategory)
+
+
+# edit expense
+@app.route('/expense/<int:expense_id>/cashier/edit/', methods = ['POST'])
+@login_required
+def Cashiereditexpe(expense_id):
+
+    editedItem = Expense.query.filter_by(id =expense_id).one()
+    editedItem.ExpenseCategory_name = request.form['expense']
+    editedItem.inserted_by=current_user.username
+    db.session.add(editedItem)
+    db.session.commit() 
+    flash(f'expense has been updated!', 'success')
+    return redirect(url_for('CashierViewAllExpenses'))
+    
+
+# delete expense
+@app.route('/expense/<int:expense_id>/cashier/delete/', methods = ['POST'])
+@login_required
+def CashierdeleteExpense(expense_id):
+        expenseToDelete = Expense.query.filter_by(id = expense_id).one()
+        db.session.delete(expenseToDelete)
+        db.session.commit()
+        flash(f'Expense successfully Deleted!','danger')
+        return redirect(url_for('CashierViewAllExpenses', expense_id = expense_id))
+
+
+# TrackExpense
+@app.route('/Cashier/trackexpenses/',methods=['GET','POST'])
+@login_required
+def CashierTrackExpenses():
+    username=current_user.username
+    entries=[E.ExpenseCategory_name for E in Expense.query.filter(Expense.inserted_by=='Cashier').all()]
+    if request.method == 'POST':
+        date_str = request.form['dtpDate']
+        date_object = datetime.strptime(date_str, "%Y-%m-%d").date()
+        newItem = TrackExpense(created_on=date_object,expense_type=request.form['expense_type'],payment_type=request.form['paytype'],\
+            amount=int(request.form['amount']),inserted_by=username)
+        db.session.add(newItem)
+        try:
+            db.session.commit()
+            flash(f' {newItem.expense_type} Successfully Added!', 'success')
+            return redirect(url_for('CashierViewAllTrackedExpenses'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'This Expense Category already exists','danger')
+            return redirect(url_for('CashierTrackExpenses'))
+    else:
+        return render_template('cashiertrackExpense.html',entries=entries)
+
+
+# all tracked Expences
+@app.route('/cashier/view/alltrackedexpenses/',methods=['GET','POST'])
+@login_required
+def CashierViewAllTrackedExpenses():
+    trackedexpense=TrackExpense.query.filter(TrackExpense.inserted_by=='Cashier').all()
+    return render_template("cashierexpenseStatement.html",trackedexpense=trackedexpense)
+
+
+# delete a tracked expense
+@app.route('/trackedexpense/<int:Expense_id>/cashier/delete/', methods = ['POST'])
+@login_required
+def CashierdeleteTrackedExpense(Expense_id):
+        expenseToDelete = TrackExpense.query.filter_by(id = Expense_id).one()
+        db.session.delete(expenseToDelete)
+        db.session.commit()
+        flash(f'Expense successfully Deleted!','danger')
+        return redirect(url_for('CashierViewAllTrackedExpenses'))
+
+
 
 # ------------------------------------------------------------------------------------------
 # Vitals
@@ -2936,98 +3282,6 @@ def DeletePurchase(purchase_id):
 
 
 # -----------------------------------------------------------------------------------------------
-
-# Add Expences
-@app.route('/addexpensecategory/',methods=['GET','POST'])
-@login_required
-def AddExpenseCategory():
-    if request.method == 'POST':
-        newItem = Expense(ExpenseCategory_name=request.form['ExpenseCategory_name'])
-        db.session.add(newItem)
-        try:
-            db.session.commit()
-            flash(f' {newItem.ExpenseCategory_name} Successfully Added!', 'success')
-            return redirect(url_for('AllExpenses'))
-        except IntegrityError:
-            db.session.rollback()
-            flash(f'This Expense Category already exists','danger')
-            return redirect(url_for('AddExpenseCategory'))
-    else:
-        return render_template('addExpenseCategory.html')
-
-
-# all Expences
-@app.route('/allexpenses/')
-@login_required
-def AllExpenses():
-    Expensecategory = Expense.query.all()
-    return render_template('allExpenseCategory.html',Expensecategory=Expensecategory)
-
-
-# edit expense
-@app.route('/expense/<int:expense_id>/edit/', methods = ['POST'])
-@login_required
-def editexpe(expense_id):
-
-    editedItem = Expense.query.filter_by(id =expense_id).one()
-    editedItem.ExpenseCategory_name = request.form['expense']
-    db.session.add(editedItem)
-    db.session.commit() 
-    flash(f'expense has been updated!', 'success')
-    return redirect(url_for('AllExpenses'))
-    
-
-# delete expense
-@app.route('/expense/<int:expense_id>/delete/', methods = ['POST'])
-@login_required
-def deleteExpense(expense_id):
-        expenseToDelete = Expense.query.filter_by(id = expense_id).one()
-        db.session.delete(expenseToDelete)
-        db.session.commit()
-        flash(f'Expense successfully Deleted!','danger')
-        return redirect(url_for('AllExpenses', expense_id = expense_id))
-
-
-# TrackExpense
-@app.route('/trackexpenses/',methods=['GET','POST'])
-@login_required
-def TrackExpenses():
-    entries=[E.ExpenseCategory_name for E in Expense.query.all()]
-    if request.method == 'POST':
-        date_str = request.form['dtpDate']
-        date_object = datetime.strptime(date_str, "%Y-%m-%d").date()
-        newItem = TrackExpense(created_on=date_object,expense_type=request.form['expense_type'],payment_type=request.form['paytype'],amount=int(request.form['amount']))
-        db.session.add(newItem)
-        try:
-            db.session.commit()
-            flash(f' {newItem.expense_type} Successfully Added!', 'success')
-            return redirect(url_for('AllTrackedExpenses'))
-        except IntegrityError:
-            db.session.rollback()
-            flash(f'This Expense Category already exists','danger')
-            return redirect(url_for('TrackExpenses'))
-    else:
-        return render_template('trackExpense.html',entries=entries)
-
-
-# all tracked Expences
-@app.route('/alltrackedexpenses/',methods=['GET','POST'])
-@login_required
-def AllTrackedExpenses():
-    trackedexpense=TrackExpense.query.all()
-    return render_template("expenseStatement.html",trackedexpense=trackedexpense)
-
-
-# delete a tracked expense
-@app.route('/trackedexpense/<int:Expense_id>/delete/', methods = ['POST'])
-@login_required
-def deleteTrackedExpense(Expense_id):
-        expenseToDelete = TrackExpense.query.filter_by(id = Expense_id).one()
-        db.session.delete(expenseToDelete)
-        db.session.commit()
-        flash(f'Expense successfully Deleted!','danger')
-        return redirect(url_for('AllTrackedExpenses'))
-
 
 # ----------------------------------------------------------------------------
 # REPORTS

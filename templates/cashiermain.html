@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <title>Clinic|Managment|System</title>
 </head>
 
@@ -82,20 +83,20 @@
                         <ul class="navbar-nav ml-auto navbar-center-top">
                             <li class="nav-item dropdown">
                                 <a href="{{url_for('CashierAddCustomer')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Patient</a>
-                                <a href="{{url_for('CashierAddproduct')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Product/Service</a>        
+                                <a href="{{url_for('CashierAddproduct')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Product</a>    
+                                <a href="{{url_for('CashierAddservice')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Service</a>            
                                 <a href="{{url_for('CashierAddSupplier')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >Add Supplier</a>
-                               <a href="{{url_for('AddPurchase')}}" style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2" >New Purchase</a>
-                               <a href="{{url_for('AddInvoice')}}"style="color: black; font-weight: bold;" class="btn btn-success m-b-5 m-r-2">New Invoice </a>
+                               
                                <a style="color: ivory;">.</a>
                                <li class="nav-item dropdown">
                                 <a class="btn btn-success m-b-5 m-r-2 dropdown-toggle" style="color: black; font-weight: bold;" href="#" id="navbardrop" data-toggle="dropdown">
                                   Expense
                                 </a>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AddExpenseCategory')}}">Add Expense</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AllExpenses')}}">All Expenses</a>
-                                  <a class="dropdown-item"  style="color: black; font-weight: bold;"href="{{url_for('TrackExpenses')}}">Pay Expense</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AllTrackedExpenses')}}">All Paid Expenses</a>
+        
+                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('CashierViewAllExpenses')}}">All Expenses Types</a>
+                                  <a class="dropdown-item"  style="color: black; font-weight: bold;"href="{{url_for('CashierTrackExpenses')}}">Record Expense Payment</a>
+
                                 </div>
                             </li>
                               
@@ -105,10 +106,8 @@
                                   Reports
                                 </a>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('AllInvoices')}}">Sales Report</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('MedicationSalesReport')}}">Sales Report(Med)</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('MedicationStockReport')}}">Stock Report</a>
-                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('StockReport')}}">Stock Report(Batch)</a>
+                                  <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('CashierAllInvoices')}}">Sales Report</a>
+                                 
                                  
                                 </div>
                             </li>
@@ -151,13 +150,16 @@
                             </li> -->
                             <li class="nav-item ">
                 
-                                <a class="nav-link active " href="{{url_for('Admindashbord')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>CASHIER DASHBOARD</a>
+                                <a class="nav-link active " href="{{url_for('Cashierdashbord')}}" ><i class="fa fa-home fa-fw" aria-hidden="true"></i>CASHIER DASHBOARD</a>
                             </li>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('CashierAllCustomers')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>All Patients</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllInvoices')}}"><i class="fa fa-credit-card" aria-hidden="true"></i>All Bills</a>     
-                                
+                                <a class="nav-link active" href="{{url_for('CashierAllInvoices')}}"><i class="fa fa-credit-card" aria-hidden="true"></i>All Bills</a>     
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('CashierViewservices')}}"><i class="fas fa-file-medical" aria-hidden="true"></i>All Services</a>     
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('CashierViewallProducts')}}"><i class="fas fa-capsules" aria-hidden="true"></i>All Medications</a>     
                             </li>
                           
                         </ul>

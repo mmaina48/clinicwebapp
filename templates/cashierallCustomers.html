@@ -73,7 +73,7 @@
                                         </button>
                                         <div class="dropdown-menu">
                                           
-                                          <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('newpatientBill',patient_id =patient.id) }}">BILL</a>
+                                          <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('CashierCreatpatientBill',patient_id =patient.id) }}">BILL</a>
                                           <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('CashiereditPatient',customer_id =patient.id) }}">UPDATE</a>
                                           <a class="dropdown-item" style="color: red; font-weight: bold;" data-toggle="modal" data-target="#deleteModal{{patient.id}}" href="#">DELETE</a>
                       

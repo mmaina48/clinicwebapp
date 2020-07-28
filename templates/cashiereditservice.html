@@ -17,7 +17,7 @@
     {%endwith%}
   </div>
   <div>
-  
+    
     <!-- ============================================================== -->
     <!-- end pageheader -->
     <!-- ============================================================== -->
@@ -27,22 +27,22 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h3 class="card-header">Edit  {{d.product_name}}</h3>
+                <h3 class="card-header"  style="font-weight: bold; color: #000;">Edit {{d.product_name}}</h3>
             
                 <div class="card-body">
                     <form class="needs-validation" novalidate action="" method="POST">
                         <div class="row">
                             
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label style="color: black;" for="validationCustom03">Product Nmae</label>
-                                <input style="color: black;" type="text" class="form-control" name="product_name" id="validationCustom03" placeholder="Enter Product Name" value="{{d.product_name}}" required="">
+                                <label  style="font-weight: bold; color: #000;" for="validationCustom03">Service Nmae</label>
+                                <input  style="font-weight: bold; color: #000;" type="text" class="form-control" name="product_name" id="validationCustom03" placeholder="Enter Product Name" value="{{d.product_name}}" required="">
                                 <div class="invalid-feedback">
                                     Please Fill this Field.
                                 </div>
                             </div>
                             <div style="display: none;" class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label for="validationCustom04">Product Type</label>
-                                <input type="text" class="form-control" name="product_type" id="validationCustom04" value="{{d.product_type}}" placeholder="Enter Product Type" required="">
+                                <label  style="font-weight: bold; color: #000;" for="validationCustom04">Product Type</label>
+                                <input  style="font-weight: bold; color: #000;" type="text" class="form-control" name="product_type" id="validationCustom04" value="{{d.product_type}}" placeholder="Enter Product Type" required="">
                                 <div class="invalid-feedback">
                                     Please Fill this Field.
                                 </div>
@@ -51,9 +51,9 @@
                         <br>
                         <div class="row">
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
-                                <label style="color: black;">Selling Price</label>
+                                <label  style="font-weight: bold; color: #000;">Selling Price</label>
                     
-                                <input style="color: black;" required="" type="number" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" value="{{d.sell_price}}" class="form-control">
+                                <input  style="font-weight: bold; color: #000;" required="" type="number" name="sell_price" min="0" max="1000000000000" placeholder="Enter selling price" value="{{d.sell_price}}" class="form-control">
                                 <div class="invalid-feedback">
                                     Please provide a valid Selling price.
                                 </div>
@@ -63,12 +63,10 @@
                         <br>
                         <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                            <button style="color: black;" class="btn btn-success" type="submit">Save</button>
-                            <a style="color: black;" href = "{{ url_for('CashierViewallProducts')}}"><button class="btn btn-warning"   type="button">Cancel</button></a>
+                            <button style="font-weight: bold; color: #000;" class="btn btn-success" type="submit">Save</button>
+                            <a href = "{{ url_for('CashierViewservices')}}"><button  style="font-weight: bold; color: #000;" class="btn btn-warning"   type="button">Cancel</button></a>
                         </div>
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-                            
-                        </div>
+                       
                     </div>
                     </form>
                 </div>
