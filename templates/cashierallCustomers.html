@@ -35,7 +35,7 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">Patients List</h3>
+                    <h3 class="mb-0" style="color: black; font-weight: 700;">Patients List</h3>
                    
 
                 </div>
@@ -74,28 +74,14 @@
                                         <div class="dropdown-menu">
                                           
                                           <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('CashierCreatpatientBill',patient_id =patient.id) }}">BILL</a>
-                                          <a class="dropdown-item" style="color: black; font-weight: bold;" href="{{url_for('CashiereditPatient',customer_id =patient.id) }}">UPDATE</a>
-                                          <a class="dropdown-item" style="color: red; font-weight: bold;" data-toggle="modal" data-target="#deleteModal{{patient.id}}" href="#">DELETE</a>
+                                          <a class="dropdown-item" style="color: rgb(39, 82, 4); font-weight: bold;" href="{{url_for('CashiereditPatient',customer_id =patient.id) }}">UPDATE</a>
+                                          
                       
                                         </div>
                                       </div>
                                       
                                    
-                                      <div class="modal fade" id="deleteModal{{patient.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                       <div class="modal-dialog">
-                                         <form class="modal-content"  action="{{url_for('CashierdeletePatient', patient_id =patient.id) }}" method="POST" >
-                                           <div class="container">
-                                            
-                                             <p><h4>Are you sure you want to delete this patient?</h4></p>
-                                     
-                                             <div class="modal-footer">
-                                               <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                                               <button type="submit" class="btn btn-danger">Delete</button>
-                                             </div>
-                                           </div>
-                                         </form>
-                                         </div>
-                                       </div>
+                                      
                                      </div>
                                     </td>
                                 </tr> 
