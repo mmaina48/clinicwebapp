@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
     <title>Clinic|Managment|System</title>
 </head>
@@ -85,10 +86,7 @@
                         <li class="nav-item">
                            
                         </li>
-                        <li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell" aria-hidden="true"></i><span class="indicator"></span>6</a>
-                          
-                        </li>
+                      
                       
                         <li class="nav-item dropdown nav-user">
                             <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-user-circle"></i></a>
@@ -99,7 +97,7 @@
                                 </div>
                                 <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Change Password</a>
                               
-                                <a class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                                <a style="color: red;" class="dropdown-item" href="{{url_for('logout')}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
                             </div>
                         </li>
                     </ul>
@@ -130,16 +128,16 @@
                                 <a style="color: rgb(39, 21, 58);">.</a>
                             </li> 
                             
-                                <a class="nav-link active" href="{{url_for('NurseAllPatientview')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1" ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL PATIENTS </a>
+                                <a class="nav-link active" href="{{url_for('NurseAllPatientview')}}" ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL PATIENTS </a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                             
                             
-                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1" ><i class="fa fa-align-justify" aria-hidden="true"></i>NURSE WAITING QUEUE<span class="badge badge-success">6</span></a>
+                                <a class="nav-link active" href="{{url_for('CaptureVitalQueue')}}"   ><i class="fas fa-heartbeat" aria-hidden="true"></i>NURSE WAITING QUEUE</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                             
                           
                                
-                                <a class="nav-link active" href="{{url_for('NurseAllPatient')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-align-justify" aria-hidden="true"></i>ALL CAPTURED VITALS</a>
+                                <a class="nav-link active" href="{{url_for('NurseAllPatient')}}" ><i class="fas fa-file-medical-alt"></i>ALL CAPTURED VITALS</a>
                                
 
     

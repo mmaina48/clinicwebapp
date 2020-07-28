@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
     <title>Clinic|Managment|System</title>
 </head>
@@ -63,7 +64,18 @@
             line-height: 40px; /* Vertically center the text there */
             background-color: #f5f5f5;
 }
+input[type="text"] {
+    color: rgb(7, 7, 7);
+}
 
+input[type="select"] {
+    color: rgb(7, 7, 7);
+}
+label {
+    
+    color: rgb(7, 7, 7);
+    
+}
     </style>
     <!-- ============================================================== -->
     <!-- main wrapper -->
@@ -90,7 +102,7 @@
                        
                       
                         <li class="nav-item dropdown nav-user">
-                            <a class="nav-link nav-user-img"  href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-spin fa-1x fa-fw"></i>&nbsp;Settings</a>
+                            <a class="nav-link nav-user-img"  href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-fw fa-user-circle"></i></a>
                             <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                 <div class="nav-user-info">
                                     <h5 class="mb-0 text-white nav-user-name">{{username}} </h5>
@@ -127,14 +139,14 @@
                                 <a style="color: rgb(39, 21, 58);">.</a>
                             </li>
 
-                                <a class="nav-link active" href="{{url_for('Doctorsdashboard')}}" ><i class="fas fa-child" aria-hidden="true"></i>CONSULTATION QUEUE<span class="badge badge-success">{{notification}}</span></a>
+                                <a class="nav-link active" href="{{url_for('Doctorsdashboard')}}" ><i class="fas fa-user-md" aria-hidden="true"></i>CONSULTATION QUEUE<span class="badge badge-success">{{notification}}</span></a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 
                                 
-                                <a class="nav-link active" href="{{url_for('DoctorLabResultQueue')}}"><i class="fa fa-align-justify" aria-hidden="true"></i>LAB RESULTS QUEUE<span class="badge badge-success">{{notifcations_results_back}}</span></a>
+                                <a class="nav-link active" href="{{url_for('DoctorLabResultQueue')}}"><i class="fas fa-microscope" aria-hidden="true"></i>LAB RESULTS QUEUE<span class="badge badge-success">{{notifcations_results_back}}</span></a>
                                 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DoctorallvisitsView')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>ALL VISITS</a>
+                                <a class="nav-link active" href="{{url_for('DoctorallvisitsView')}}"  ><i class="fas fa-procedures" aria-hidden="true"></i>ALL VISITS</a>
                                 
                             </li>
                           

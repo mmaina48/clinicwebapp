@@ -35,7 +35,7 @@
     <div class="row">
         <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Total Products</h5>
+                <h5 class="card-header">All Medications</h5>
                 <div class="card-body">
                     <div class="metric-value d-inline-block">
                         <h1 class="mb-1">24</h1>
@@ -53,7 +53,7 @@
 
         <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Total Invoice</h5>
+                <h5 class="card-header">All Prescriptions</h5>
                 <div class="card-body">
                     <div class="metric-value d-inline-block">
                         <h1 class="mb-1">300</h1>
@@ -71,7 +71,7 @@
 
         <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Out Of stock</h5>
+                <h5 class="card-header">Reoder Level</h5>
                 <div class="card-body">
                     <div class="metric-value d-inline-block">
                         <h1 class="mb-1">200</h1>
@@ -107,102 +107,7 @@
         
     </div>
      <!-- Second Counter -->
-     <hr>
-     <div class="row">
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="card campaign-card text-center">
-                <div class="card-body">
-                    <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/invoice.png')}}" height="40" width="40" > </span></h2>
-                        <div class="campaign-info">
-                            <div class="small text-primary" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('AddInvoice')}}">Create POS Invoice</a></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="card campaign-card text-center">
-                    <div class="card-body">
-                        <h2><span class="slight" 70px;"><img src="{{url_for('static',filename='images/pos_invoice.png.jpeg')}}" height="40" width="40" > </span></h2>
-                            <div class="campaign-info">
-                                <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('AddPurchase')}}">New Purchase</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                    <div class="card campaign-card text-center">
-                        <div class="card-body">
-                            <h2><span class="slight" 70px;"><img src="{{url_for('static',filename='images/product.png.jpeg')}}" height="40" width="40" > </span></h2>
-                                <div class="campaign-info">
-                                    <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('Addproduct')}}">Add Product</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-       
-                    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                        <div class="card campaign-card text-center">
-                            <div class="card-body">
-                                <h2><span class="slight" 70px;"><img src="{{url_for('static',filename='images/customer.png')}}" height="40" width="40" > </span></h2>
-                                    <div class="campaign-info">
-                                        <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Add Customer</a></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-</div>
-
-<!-- Third Counter -->
-<div class="row">
-    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-        <div class="card campaign-card text-center">
-            <div class="card-body">
-                <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/sale.png')}}" height="40" width="40" > </span></h2>
-                    <div class="campaign-info">
-                        <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Sales Report</a></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="card campaign-card text-center">
-                <div class="card-body">
-                    <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/purchase.png')}}" height="40" width="40" > </span></h2>
-                        <div class="campaign-info">
-                            <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Purchase Report</a></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="card campaign-card text-center">
-                    <div class="card-body">
-                        <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/stock.png')}}" height="40" width="40" > </span></h2>
-                            <div class="campaign-info">
-                                <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="{{url_for('StockReport')}}">Stock Report</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                    <div class="card campaign-card text-center">
-                        <div class="card-body">
-                            <h2><span class="slight"  70px;"><img src="{{url_for('static',filename='images/account.png')}}" height="40" width="40" > </span></h2>
-                                <div class="campaign-info">
-                                    <div class="small" style="font-size: 15px;margin-top: 20px;text-align: center;"><a href="">Todays Report</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-  
-</div>
-<br>
-<hr>
+   
     
     </div>
     {% endblock %}

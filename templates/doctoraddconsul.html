@@ -28,7 +28,7 @@
     </li>
 
     <li class="nav-item">
-        <a href="{{url_for('DoctorAddPrescription', invoice_id =invoice_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="ti-align-justify"> </i>ADD PRESCRIPTION / REQUEST LAB TEST</a>
+        <a href="{{url_for('DoctorAddPrescription', invoice_id =invoice_id)}}" style="color: black;" class="btn btn-success m-b-5 m-r-2"><i class="fas fa-prescription"> </i>ADD PRESCRIPTION / REQUEST LAB TEST</a>
        
       </li>
       
@@ -52,7 +52,7 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header">New Visit Notes </h3>
+                        <h3 class="card-header"><i class="fas fa-notes-medical"></i> New Visit Notes </h3>
                     
                         <div class="card-body">
                             <form class="needs-validation"  novalidate  id="insert_sale" name="" enctype="multipart/form-data" accept-charset="utf-8">
@@ -60,9 +60,9 @@
                                     <div class="row">
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
-                                                <label for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
+                                                <label style="color: black;" for="customer_name" class="col-sm-4 col-form-label">Patient name</label>
                                                 <div class="col-sm-6">
-                                                    <input type="text"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
+                                                    <input type="text" style="color: black;"   name="patient_name" class=" form-control" placeholder='Enter Patient Name' value="{{patient.name}}" id="patient_name" tabindex="1" readonly  required  />
                                                     
                                                 </div>  
                                             </div>
@@ -72,9 +72,9 @@
                                         <!-- date -->
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
-                                                <label for="customer_name" class="col-sm-4 col-form-label">Visit Type</label>
+                                                <label style="color: black;" for="customer_name" class="col-sm-4 col-form-label">Visit Type</label>
                                                 <div class="col-sm-6">
-                                                    <select name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
+                                                    <select style="color: black;" name="visittype" id="visittype" class="form-control" required="" tabindex="1" >
                                                         <option value="{{vistType}}" selected="">{{vistType}}
                                                         </option>
                                                         <option value="OPD">Out-Patient</option>
@@ -92,9 +92,9 @@
                                         <!-- patient id -->
                                         <div class="col-sm-6" id="payment_from_1">
                                             <div class="form-group row">
-                                                <label for="patient_id" class="col-sm-4 col-form-label">Clinic No</label>
+                                                <label style="color: black;" for="patient_id" class="col-sm-4 col-form-label">Clinic No</label>
                                                 <div class="col-sm-6">
-                                                    <input type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1" value="{{patient.patient_id}}" required readonly  />
+                                                    <input style="color: black;" type="text"   name="patient_Id" class=" form-control"  id="patient_Id" tabindex="1" value="{{patient.patient_id}}" required readonly  />
                                                     
                                                 </div>  
                                             </div>
@@ -103,9 +103,9 @@
                                         <!-- patient -->
                                         <div class="col-sm-6">
                                             <div class="form-group row">
-                                                <label for="date" class="col-sm-4 col-form-label">Date</label>
+                                                <label style="color: black;" for="date" class="col-sm-4 col-form-label">Date</label>
                                                 <div class="col-sm-6">
-                                            <input class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
+                                            <input style="color: black;" class="datepicker form-control" type="date" size="50" name="invoice_date" id="dtpDate" required value="" tabindex="6" />
                                                 </div>
                                             </div>
                                         </div>
@@ -132,16 +132,16 @@
                                             <tbody id="addinvoiceItem">
                                                 <tr>
                                                     <td >
-                                                        <input type="text" name="patient_height" class="form-control   text-left" value="{{vital.height}}"  id="patient_height"  tabindex="7">
+                                                        <input style="color: black;" type="text" name="patient_height" class="form-control   text-left" value="{{vital.height}}"  id="patient_height"  tabindex="7">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_weight"  class="form-control text-left" value="{{vital.weight}}" id="patient_weight"/>
+                                                        <input style="color: black;" type="text" name="patient_weight"  class="form-control text-left" value="{{vital.weight}}" id="patient_weight"/>
                                                     </td>
                                                     <td >
-                                                        <input type="text" name="patient_BMI" class="form-control text-left" value="{{vital.bmi}}" readonly id="patient_BMI"  tabindex="7">
+                                                        <input style="color: black;" type="text" name="patient_BMI" class="form-control text-left" value="{{vital.bmi}}" readonly id="patient_BMI"  tabindex="7">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="patient_Temp" class="form-control text-left " value="{{vital.temparature}}"  id="patient_Temp"/>
+                                                        <input style="color: black;" type="text" name="patient_Temp" class="form-control text-left " value="{{vital.temparature}}"  id="patient_Temp"/>
                                                     </td>
                                                     <td >
                                                         <input type="text" name="patient_BP"  class="form-control text-left" value="{{vital.bloodpressure}}" tabindex="9"   id="patient_BP"/>
@@ -150,11 +150,11 @@
                                                         <input type="text" name="patient_Pulse"  class="form-control text-left" id="patient_Pulse" value="{{vital.pulse}}" tabindex="9" />
                                                     </td>
                                                     <td style="width: 100px">
-                                                        <input class=" form-control text-left" type="text" name="patient_Rrate" id="patient_Rrate" value="{{vital.respiratory_rate}}"  tabindex="9"/>
+                                                        <input style="color: black;" class=" form-control text-left" type="text" name="patient_Rrate" id="patient_Rrate" value="{{vital.respiratory_rate}}"  tabindex="9"/>
                                                     </td>
             
                                                     <td>
-                                                        <input type="text" name="patient_BOS" class="form-control   text-left" id="patient_BOS" value="{{vital.oxygesaturation}}"  tabindex="7">
+                                                        <input style="color: black;" type="text" name="patient_BOS" class="form-control   text-left" id="patient_BOS" value="{{vital.oxygesaturation}}"  tabindex="7">
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -174,47 +174,47 @@
                                             <div class="card-body">
                                             
                                             <div class="form-group green-border-focus row">
-                                                <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Chief Complain</label>
-                                                <textarea rows="4" name="chief_complain" cols="50"></textarea>
+                                                <label style="color: black;" for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Chief Complain</label>
+                                                <textarea style="color: black;" rows="4" name="chief_complain" cols="50"></textarea>
                                             </div>
                                             <br>
                                             <div class="form-group green-border-focus row">
-                                                <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Patient_history</label>
-                                                <textarea rows="4" name="patient_history" cols="50"></textarea>
+                                                <label style="color: black;" for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Patient_history</label>
+                                                <textarea style="color: black;" rows="4" name="patient_history" cols="50"></textarea>
                                             </div>
                                             <br>
                                             <div class="form-group green-border-focus row">
-                                                <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Clinical Note</label>
-                                                <textarea rows="4"  name="clinical_note" cols="50"></textarea>
+                                                <label style="color: black;" for="exampleFormControlTextarea1" class="col-sm-2 col-form-label" >Clinical Note</label>
+                                                <textarea style="color: black;" rows="4"  name="clinical_note" cols="50"></textarea>
                                             </div> 
                                            
                                         
                                             
                                             <div class="form-group row">
-                                                <label for="email" class="col-sm-2 col-form-label">Diagnosis:<i class="text-danger">*</i></label>
+                                                <label style="color: black;" for="email" class="col-sm-2 col-form-label">Diagnosis:<i class="text-danger">*</i></label>
                                                 <div class="col-sm-4">
                                                     
-                                                    <input class="form-control" style="color: black;" name ="primary_diagnosis" id="primary_diagnosis" type="text" placeholder="Primary Diagnosis" tabindex="2"/>
+                                                    <input style="color: black;" class="form-control" style="color: black;" name ="primary_diagnosis" id="primary_diagnosis" type="text" placeholder="Primary Diagnosis" tabindex="2"/>
                                                     <button style="text-align: right; display: block;" onclick="" class="btn btn-primary btn-sm add_button" type="button" tabindex="12" id="plus">Add-Diagnosis</button>
                                                    
                                             </div>
                                     
                                             </div>
                                             <div class="form-group row" style="display: none;" id="sec">
-                                                <label for="email" class="col-sm-2 col-form-label">Secondary Diagnosis:</label>
+                                                <label style="color: black;" for="email" class="col-sm-2 col-form-label">Secondary Diagnosis:</label>
                                                 <div class="col-sm-4">
                                                     
-                                                    <input class="form-control" style="color: black;"  name ="Secondary_diagnosis" id="Secondary_diagnosis" type="text" placeholder="Secondary Diagnosis" tabindex="3"/>
+                                                    <input style="color: black;" class="form-control" style="color: black;"  name ="Secondary_diagnosis" id="Secondary_diagnosis" type="text" placeholder="Secondary Diagnosis" tabindex="3"/>
                                                    
                                             </div>
                                             </div>
                                         </div>
                                     </div>
                                         <div class="form-group row">
-                                            <label for="example-text-input" class="col-sm-4 col-form-label"></label>
+                                            <label style="color: black;" for="example-text-input" class="col-sm-4 col-form-label"></label>
                                             <div class="col-sm-6">
-                                                <input type="button" id="add_invoice" class="btn btn-success" name="add-invoice" onclick="send()" value="Submit" tabindex="15"/>
-                                                <a href = ""><button class="btn btn-warning"  type="button">Back</button></a>
+                                                <input style="color: black;" type="button" id="add_invoice" class="btn btn-success" name="add-invoice" onclick="send()" value="Submit" tabindex="15"/>
+                                                <a style="color: black;" href  = ""><button class="btn btn-warning"  type="button">Back</button></a>
                                             </div>
                                            
                                         </div>

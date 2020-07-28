@@ -29,7 +29,7 @@
       <a class="nav-link active" style="color: rgb(9, 63, 145);" data-toggle="tab" href="#home" role="tab" aria-controls="home">Add Vitals</a>
     </li>
     <li class="nav-item">
-        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="ti-align-justify"> </i>{{patient.name}} RECENT VITALS </a>
+        <a href="{{url_for('showallvitals',patient_id=patient.id)}}" class="btn btn-warning m-b-5 m-r-2"><i class="fas fa-heartbeat"></i> {{patient.name}} RECENT VITALS </a>
       </li>
   </ul>
   
@@ -47,7 +47,7 @@
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
-                        <h3 class="card-header" style="font-weight: bold; color: #000;">Add New Vitals</h3>
+                        <h3 class="card-header" style="font-weight: bold; color: #000;"><i class="fas fa-stethoscope"></i> Add New Vitals</h3>
                     
                         <div class="card-body">
                             <form class="needs-validation" action="{{url_for('PatientVital',patient_id=patient_id)}}" novalidate  id="insert_sale" name="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
