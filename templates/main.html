@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <title>Clinic|Managment|System</title>
 </head>
 
@@ -163,20 +164,17 @@
                                 <a style="color: rgb(39, 21, 58);">.</a>
                                 <a class="nav-link active" href="{{url_for('AllCustomers')}}"  ><i class="fa fa-align-justify" aria-hidden="true"></i>All Patients</a>
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllInvoices')}}"  >Sales Report</a>     
-                                <!-- <a style="color: rgb(39, 21, 58);">.</a>         
-                                <a class="nav-link active" href="{{url_for('allProducts')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Products/Services<span class="badge badge-success">6</span></a>
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllSuppliers')}}"  aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>All Suppliers<span class="badge badge-success">6</span></a> -->
-                                <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AdminCaptureVitalQueue')}}"  >NURSE WAITING QUEUE</a>
+                                <a class="nav-link active" href="{{url_for('AllInvoices')}}"  ><i class="fas fa-money-check-alt"></i>All Sales</a>     
                                
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('ConsultationQue')}}" >CONSULTATION QUEUE</a> 
+                                <a class="nav-link active" href="{{url_for('AdminCaptureVitalQueue')}}"><i class="fas fa-heartbeat"></i>NURSE WAITING QUEUE</a>
+                               
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('AllLabRequest')}}" >LAB WAITING QUEUE</a>
+                                <a class="nav-link active" href="{{url_for('ConsultationQue')}}" ><i class="fas fa-user-md"></i>CONSULTATION QUEUE</a> 
                                 <a style="color: rgb(39, 21, 58);">.</a>
-                                <a class="nav-link active" href="{{url_for('DispenseLIst')}}" >PHARMACY QUEUE</a>  
+                                <a class="nav-link active" href="{{url_for('AllLabRequest')}}" ><i class="fas fa-microscope"></i>LAB WAITING QUEUE</a>
+                                <a style="color: rgb(39, 21, 58);">.</a>
+                                <a class="nav-link active" href="{{url_for('DispenseLIst')}}"><i class="fas fa-hand-holding-medical "></i>PHARMACY QUEUE</a> 
                             </li>
                           
                         </ul>
@@ -326,10 +324,8 @@ $(document).ready( function() {
         $(document).ready(function() {
     $('#example1').DataTable( {
         dom: 'Bfrtip',
-        buttons:[ {
-                    extend: "csv", title: "ExampleFile", className: "btn-sm"
-                }
-                , {
+        buttons:[
+                {
                     extend: "excel", title: "ExampleFile", className: "btn-sm"
                 }
                 , {
